@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-26T19:42:44.934926+00:00",
+  "generatedAt": "2026-10-26T19:55:54.888314+00:00",
   "title": "Design System: Planejador de Férias",
   "extensions": {
     "colorMeta": {
@@ -385,24 +385,69 @@
     ],
     "motion": [
       {
-        "name": "ease-sheet",
-        "value": "cubic-bezier(.19,1,.22,1)",
-        "purpose": "Entrada da folha de resposta, 220ms."
+        "name": "ease-out",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "--ease-out: entradas e deslocamentos (número, régua, linhas, gaveta, chip). Sem overshoot."
       },
       {
-        "name": "ease-state",
+        "name": "ease-std",
         "value": "cubic-bezier(.22,1,.36,1)",
-        "purpose": "Hover de plano, período, botão e giro da seta, 150ms."
+        "purpose": "--ease-std: trocas de estado, pressionar e saídas."
       },
       {
-        "name": "ease-change",
-        "value": "cubic-bezier(.16,1,.3,1)",
-        "purpose": "Chip de mudança acende em 400ms; reordenação dos planos desliza em 360ms."
+        "name": "dur-press",
+        "value": "80ms (60ms em reduced)",
+        "purpose": "Pressionar: :active desce 1px, sem sombra."
       },
       {
-        "name": "ease-drawer",
-        "value": "cubic-bezier(.16,1,.3,1)",
-        "purpose": "Gaveta desliza 32px e o véu aparece em 280ms; tudo sob prefers-reduced-motion: no-preference."
+        "name": "dur-fb",
+        "value": "120ms (80ms em reduced)",
+        "purpose": "Feedback e esmaecer opacidade (véu em reduced motion, ::details-content)."
+      },
+      {
+        "name": "dur-state",
+        "value": "150ms (80ms em reduced)",
+        "purpose": "Hover, seleção, giro da seta, ícone de marca."
+      },
+      {
+        "name": "dur-enter",
+        "value": "220ms (80ms em reduced)",
+        "purpose": "Folha, linhas de período (stagger 40ms, teto 160ms), item salvo, abrir seção."
+      },
+      {
+        "name": "dur-num",
+        "value": "300ms",
+        "purpose": "Número da resposta e marcas da régua (left/width); não encolhe em reduced (o número vira só opacidade, 80ms)."
+      },
+      {
+        "name": "dur-drawer",
+        "value": "280ms",
+        "purpose": "Entrada da gaveta (deslize de 32px) e do véu; só em no-preference."
+      },
+      {
+        "name": "dur-drawer-out",
+        "value": "160ms",
+        "purpose": "Saída da gaveta, mesmo caminho para Esc, Fechar e véu; rede de segurança de 400ms."
+      },
+      {
+        "name": "dur-exit",
+        "value": "120ms (80ms em reduced)",
+        "purpose": "Saída de item salvo antes de remover da lista."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Sem deslocamento, escala, stagger, FLIP, deslize da gaveta ou contagem; só cor e opacidade em ~80ms."
+      },
+      {
+        "name": "hover-gate",
+        "value": "(hover:hover) and (pointer:fine)",
+        "purpose": "Todo hover só com mouse; :active vale em qualquer dispositivo."
+      },
+      {
+        "name": "focus",
+        "value": "0ms",
+        "purpose": "Anel de foco instantâneo, sem transição."
       }
     ],
     "breakpoints": [
@@ -431,7 +476,7 @@
       "refersTo": "button-primary",
       "description": "Ação primária em azul: Copiar resumo.",
       "html": "<button class=\"ds-copy\">Copiar resumo</button>",
-      "css": ".ds-copy{min-height:52px;padding:0 32px;border:0;border-radius:4px;background:#2563EB;color:#fff;font:700 21px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-copy:hover{background:#1D4ED8}.ds-copy:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+      "css": ".ds-copy{min-height:52px;padding:0 32px;border:0;border-radius:4px;background:#2563EB;color:#fff;font:700 21px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}@media (hover:hover) and (pointer:fine){.ds-copy:hover{background:#1D4ED8}}.ds-copy:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-copy{transition:background-color 150ms cubic-bezier(.22,1,.36,1),color 150ms cubic-bezier(.22,1,.36,1),transform 80ms cubic-bezier(.22,1,.36,1)}.ds-copy:active{transform:translateY(1px)}@media (prefers-reduced-motion:reduce){.ds-copy:active{transform:none}}"
     },
     {
       "name": "Segment Button",
@@ -439,7 +484,7 @@
       "refersTo": "button-segment",
       "description": "Opção de segmento; pressionado fica azul.",
       "html": "<span class=\"ds-seg\"><button>30</button><button aria-pressed=\"true\">20, vendendo 10</button></span>",
-      "css": ".ds-seg{display:flex;gap:6px}.ds-seg button{min-height:44px;padding:0 14px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-seg button[aria-pressed=true]{background:#2563EB;border-color:#2563EB;color:#fff}.ds-seg button:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+      "css": ".ds-seg{display:flex;gap:6px}.ds-seg button{min-height:44px;padding:0 14px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-seg button[aria-pressed=true]{background:#2563EB;border-color:#2563EB;color:#fff}.ds-seg button:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-seg button{transition:background-color 150ms cubic-bezier(.22,1,.36,1),color 150ms cubic-bezier(.22,1,.36,1),transform 80ms cubic-bezier(.22,1,.36,1)}.ds-seg button:active{transform:translateY(1px)}@media (prefers-reduced-motion:reduce){.ds-seg button:active{transform:none}}"
     },
     {
       "name": "Params Bar",
@@ -455,7 +500,7 @@
       "refersTo": "answer-sheet",
       "description": "Folha branca com número gigante, picote e períodos.",
       "html": "<div class=\"ds-sheet\"><div class=\"ds-a\"><span class=\"ds-n\">45</span> <span class=\"ds-u\">dias fora do trabalho</span><p>Você usa 30 dias de férias e ganha +15.</p></div><div class=\"ds-perf\"></div><button class=\"ds-per on\"><b>1º período</b> <span>05/10 a 16/10</span></button></div>",
-      "css": ".ds-sheet{width:340px;position:relative;overflow:hidden;background:#fff;color:#101820;border-radius:8px;box-shadow:0 8px 14px -8px rgb(0 0 0/.55)}.ds-a{padding:18px 24px 16px}.ds-n{font:800 80px/.95 'JetBrains Mono',monospace;letter-spacing:-.02em}.ds-u{font:700 32px/1.1 'Barlow Condensed','Arial Narrow',sans-serif}.ds-a p{margin:4px 0 0;font:500 19px/1.35 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}.ds-perf{position:relative;height:0;border-top:3px dashed #7D8B99}.ds-perf::before,.ds-perf::after{content:'';position:absolute;top:-13px;width:22px;height:22px;border-radius:50%;background:#101820}.ds-perf::before{left:-11px}.ds-perf::after{right:-11px}.ds-per{display:block;width:100%;min-height:44px;text-align:left;border:0;padding:9px 24px;background:none;font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif;color:#101820;cursor:pointer}.ds-per:hover{background:#E6E9ED}.ds-per.on{background:#EFF4FF;box-shadow:inset 0 0 0 2px #2563EB}.ds-per b{font:700 22px 'Barlow Condensed','Arial Narrow',sans-serif}"
+      "css": ".ds-sheet{width:340px;position:relative;overflow:hidden;background:#fff;color:#101820;border-radius:8px;box-shadow:0 8px 14px -8px rgb(0 0 0/.55)}.ds-a{padding:18px 24px 16px}.ds-n{font:800 80px/.95 'JetBrains Mono',monospace;letter-spacing:-.02em}.ds-u{font:700 32px/1.1 'Barlow Condensed','Arial Narrow',sans-serif}.ds-a p{margin:4px 0 0;font:500 19px/1.35 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}.ds-perf{position:relative;height:0;border-top:3px dashed #7D8B99}.ds-perf::before,.ds-perf::after{content:'';position:absolute;top:-13px;width:22px;height:22px;border-radius:50%;background:#101820}.ds-perf::before{left:-11px}.ds-perf::after{right:-11px}.ds-per{display:block;width:100%;min-height:44px;text-align:left;border:0;padding:9px 24px;background:none;font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif;color:#101820;cursor:pointer}@media (hover:hover) and (pointer:fine){.ds-per:hover{background:#E6E9ED}}.ds-per.on{background:#EFF4FF;box-shadow:inset 0 0 0 2px #2563EB}.ds-per b{font:700 22px 'Barlow Condensed','Arial Narrow',sans-serif}"
     },
     {
       "name": "Plan Card",
@@ -463,7 +508,7 @@
       "refersTo": "plan-card",
       "description": "Cartão de plano com selo, chip de mudança e seleção.",
       "html": "<label class=\"ds-plan on\"><span class=\"ds-top\"><b>Plano 1</b><span class=\"ds-badge\">Melhor opção</span><span class=\"ds-chg\">+2 dias</span></span><span class=\"ds-off\"><b>45</b> dias fora</span><span class=\"ds-meta\">2 períodos</span></label>",
-      "css": ".ds-plan{display:flex;flex-direction:column;width:260px;min-height:84px;padding:10px 14px;background:#fff;color:#101820;border-radius:6px;border:2px solid transparent;cursor:pointer}.ds-plan:hover{background:#E6E9ED}.ds-plan.on{background:#EFF4FF;border-color:#2563EB}.ds-top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}.ds-top b{font:700 20px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-badge{background:#101820;color:#fff;border-radius:3px;padding:0 6px;font:600 14px/1.4 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.06em;text-transform:uppercase}.ds-chg{background:#FFB000;color:#101820;border-radius:3px;padding:0 6px;font:700 14px/1.4 'Barlow Condensed','Arial Narrow',sans-serif}.ds-off{font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-off b{font:800 28px 'JetBrains Mono',monospace}.ds-meta{font:500 14px 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}"
+      "css": ".ds-plan{display:flex;flex-direction:column;width:260px;min-height:84px;padding:10px 14px;background:#fff;color:#101820;border-radius:6px;border:2px solid transparent;cursor:pointer}@media (hover:hover) and (pointer:fine){.ds-plan:hover{background:#E6E9ED}}.ds-plan.on{background:#EFF4FF;border-color:#2563EB}.ds-top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}.ds-top b{font:700 20px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-badge{background:#101820;color:#fff;border-radius:3px;padding:0 6px;font:600 14px/1.4 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.06em;text-transform:uppercase}.ds-chg{background:#FFB000;color:#101820;border-radius:3px;padding:0 6px;font:700 14px/1.4 'Barlow Condensed','Arial Narrow',sans-serif}.ds-off{font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-off b{font:800 28px 'JetBrains Mono',monospace}.ds-meta{font:500 14px 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}"
     },
     {
       "name": "Year Ruler",
@@ -487,7 +532,7 @@
       "refersTo": "button-floating",
       "description": "Botão fixo na base da tela que abre a gaveta Mais opções: azul, raio lg de 8px, borda de 2px em grafite, sem sombra.",
       "html": "<div class=\"ds-fab-stage\"><button class=\"ds-fab\" aria-haspopup=\"dialog\" aria-expanded=\"false\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6M10 3v4M6 9v4\"/></svg> Mais opções</button></div>",
-      "css": ".ds-fab-stage{background:#101820;padding:24px;display:flex;justify-content:center}.ds-fab{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border:2px solid #101820;border-radius:8px;background:#2563EB;color:#fff;font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;white-space:nowrap;cursor:pointer}.ds-fab svg{width:16px;height:16px}.ds-fab:hover{background:#1D4ED8}.ds-fab:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+      "css": ".ds-fab-stage{background:#101820;padding:24px;display:flex;justify-content:center}.ds-fab{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border:2px solid #101820;border-radius:8px;background:#2563EB;color:#fff;font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;white-space:nowrap;cursor:pointer}.ds-fab svg{width:16px;height:16px}@media (hover:hover) and (pointer:fine){.ds-fab:hover{background:#1D4ED8}}.ds-fab:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-fab{transition:background-color 150ms cubic-bezier(.22,1,.36,1),color 150ms cubic-bezier(.22,1,.36,1),transform 80ms cubic-bezier(.22,1,.36,1)}.ds-fab:active{transform:translateY(1px)}@media (prefers-reduced-motion:reduce){.ds-fab:active{transform:none}}"
     },
     {
       "name": "Secondary Button",
@@ -495,7 +540,7 @@
       "refersTo": "button-secondary",
       "description": "Salvar PDF, Adicionar ao calendário e Salvar plano (alterna com aria-pressed) em contorno sobre a casca.",
       "html": "<div class=\"ds-sec-stage\"><button class=\"ds-sec\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2.5v7.5M4.5 6.5 8 10l3.5-3.5M3 13.5h10\"/></svg> Salvar PDF</button><button class=\"ds-sec\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 4.5h10v9H3zM3 7.5h10M5.5 2.5v3M10.5 2.5v3\"/></svg> Adicionar ao calendário (.ics)</button><button class=\"ds-sec\" aria-pressed=\"true\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 2.5h8v11L8 10.5 4 13.5z\"/></svg> Plano salvo</button></div>",
-      "css": ".ds-sec-stage{background:#101820;padding:16px;display:flex;flex-wrap:wrap;gap:10px}.ds-sec{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border:1px solid #9FB0C0;border-radius:4px;background:none;color:#fff;font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-sec svg{width:16px;height:16px}.ds-sec:hover{background:#26323F}.ds-sec[aria-pressed=true]{background:#fff;color:#101820;border-color:#fff}.ds-sec[aria-pressed=true] path{fill:currentColor}.ds-sec:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+      "css": ".ds-sec-stage{background:#101820;padding:16px;display:flex;flex-wrap:wrap;gap:10px}.ds-sec{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border:1px solid #9FB0C0;border-radius:4px;background:none;color:#fff;font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-sec svg{width:16px;height:16px}@media (hover:hover) and (pointer:fine){.ds-sec:hover{background:#26323F}}.ds-sec[aria-pressed=true]{background:#fff;color:#101820;border-color:#fff}.ds-sec[aria-pressed=true] path{fill:currentColor}.ds-sec:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-sec{transition:background-color 150ms cubic-bezier(.22,1,.36,1),color 150ms cubic-bezier(.22,1,.36,1),transform 80ms cubic-bezier(.22,1,.36,1)}.ds-sec:active{transform:translateY(1px)}@media (prefers-reduced-motion:reduce){.ds-sec:active{transform:none}}"
     },
     {
       "name": "Saved Plan Item",
@@ -503,7 +548,7 @@
       "refersTo": "saved-item",
       "description": "Retrato de um plano salvo: dias fora, períodos e mini botões Copiar, PDF, Calendário, Remover.",
       "html": "<div class=\"ds-saved-stage\"><div class=\"ds-saved\"><p class=\"ds-so\"><b>45</b> dias fora do trabalho<span class=\"ds-sy\">2026</span></p><ul class=\"ds-sp\"><li>05/10 a 16/10 <span>(12 dias)</span></li><li>14/12 a 31/12 <span>(18 dias)</span></li></ul><div class=\"ds-sa\"><button class=\"ds-mini\">Copiar</button><button class=\"ds-mini\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2.5v7.5M4.5 6.5 8 10l3.5-3.5M3 13.5h10\"/></svg> PDF</button><button class=\"ds-mini\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 4.5h10v9H3zM3 7.5h10M5.5 2.5v3M10.5 2.5v3\"/></svg> Calendário</button><button class=\"ds-mini\">Remover</button></div></div></div>",
-      "css": ".ds-saved-stage{background:#101820;padding:16px}.ds-saved{display:flex;flex-direction:column;gap:6px;width:340px;padding:10px 14px;background:#fff;color:#101820;border-radius:6px}.ds-so{margin:0;display:flex;align-items:baseline;gap:6px;font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-so b{font:800 28px 'JetBrains Mono',monospace}.ds-sy{margin-left:auto;font:700 14px 'JetBrains Mono',monospace;color:#4B5866}.ds-sp{margin:0;padding:0;list-style:none;display:grid;gap:2px;font:500 16px/1.3 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}.ds-sp span{font:500 14px 'JetBrains Mono',monospace}.ds-sa{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.ds-mini{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-mini svg{width:16px;height:16px}.ds-mini:hover{background:#E6E9ED}.ds-mini:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+      "css": ".ds-saved-stage{background:#101820;padding:16px}.ds-saved{display:flex;flex-direction:column;gap:6px;width:340px;padding:10px 14px;background:#fff;color:#101820;border-radius:6px}.ds-so{margin:0;display:flex;align-items:baseline;gap:6px;font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-so b{font:800 28px 'JetBrains Mono',monospace}.ds-sy{margin-left:auto;font:700 14px 'JetBrains Mono',monospace;color:#4B5866}.ds-sp{margin:0;padding:0;list-style:none;display:grid;gap:2px;font:500 16px/1.3 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}.ds-sp span{font:500 14px 'JetBrains Mono',monospace}.ds-sa{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.ds-mini{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-mini svg{width:16px;height:16px}@media (hover:hover) and (pointer:fine){.ds-mini:hover{background:#E6E9ED}}.ds-mini:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-mini{transition:background-color 150ms cubic-bezier(.22,1,.36,1),color 150ms cubic-bezier(.22,1,.36,1),transform 80ms cubic-bezier(.22,1,.36,1)}.ds-mini:active{transform:translateY(1px)}@media (prefers-reduced-motion:reduce){.ds-mini:active{transform:none}}"
     },
     {
       "name": "Options Drawer",
@@ -511,12 +556,12 @@
       "refersTo": "drawer",
       "description": "Gaveta modal (dialog) Mais opções: trilho, cantos superiores de 8px, cabeçalho fixo com Fechar, véu grafite sem sombra.",
       "html": "<div class=\"ds-veil\"><div class=\"ds-drawer\"><div class=\"ds-dh\"><h2>Mais opções</h2><button class=\"ds-close\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 4l8 8M12 4l-8 8\"/></svg> Fechar</button></div><div class=\"ds-db\"><label>Janela de datas</label><input value=\"2026-10-05\"></div></div></div>",
-      "css": ".ds-veil{background:rgba(16,24,32,.72);padding-top:48px;width:420px}.ds-drawer{background:#E6E9ED;color:#101820;border-radius:8px 8px 0 0}.ds-dh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;border-bottom:1px solid #C5CBD3}.ds-dh h2{margin:0;font:700 24px/1.15 'Barlow Condensed','Arial Narrow',sans-serif}.ds-close{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-close svg{width:16px;height:16px}.ds-close:hover{background:#E6E9ED}.ds-close:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-db{padding:12px 16px 16px}.ds-db label{display:block;font:600 14px 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866;margin-bottom:4px}.ds-db input{width:100%;min-height:44px;background:#fff;border:1px solid #6F7C89;border-radius:4px;padding:0 10px;font:500 15px 'JetBrains Mono',monospace;color:#101820}"
+      "css": ".ds-veil{background:rgba(16,24,32,.72);padding-top:48px;width:420px}.ds-drawer{background:#E6E9ED;color:#101820;border-radius:8px 8px 0 0}.ds-dh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;border-bottom:1px solid #C5CBD3}.ds-dh h2{margin:0;font:700 24px/1.15 'Barlow Condensed','Arial Narrow',sans-serif}.ds-close{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-close svg{width:16px;height:16px}@media (hover:hover) and (pointer:fine){.ds-close:hover{background:#E6E9ED}}.ds-close:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-db{padding:12px 16px 16px}.ds-db label{display:block;font:600 14px 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866;margin-bottom:4px}.ds-db input{width:100%;min-height:44px;background:#fff;border:1px solid #6F7C89;border-radius:4px;padding:0 10px;font:500 15px 'JetBrains Mono',monospace;color:#101820}.ds-close{transition:background-color 150ms cubic-bezier(.22,1,.36,1),color 150ms cubic-bezier(.22,1,.36,1),transform 80ms cubic-bezier(.22,1,.36,1)}.ds-close:active{transform:translateY(1px)}@media (prefers-reduced-motion:reduce){.ds-close:active{transform:none}}"
     }
   ],
   "narrative": {
     "northStar": "A Folhinha de Embarque",
-    "overview": "Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurada numa casca grafite, responde com um número gigante e um picote tracejado a separa dos períodos de férias. Tudo o que não é a resposta recua para uma barra de parâmetros mínima, para a gaveta aberta pelo botão fixo Mais opções e para baixo da dobra. Tema único grafite, decisão fechada; nome, slogan e logo fixos. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor.",
+    "overview": "Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurada numa casca grafite, responde com um número gigante e um picote tracejado a separa dos períodos de férias. Tudo o que não é a resposta recua para uma barra de parâmetros mínima, para a gaveta aberta pelo botão fixo Mais opções e para baixo da dobra. Tema único grafite, decisão fechada; nome, slogan e logo fixos. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor. O movimento é um sistema pequeno e explicativo: feedback, estado e continuidade, sem animação decorativa.",
     "keyCharacteristics": [
       "Coluna única de 840px, lida de cima para baixo, resposta antes de qualquer opção.",
       "Número gigante em mono (80px; 68px no celular) como voz principal; palavras em Barlow Condensed.",
@@ -524,7 +569,8 @@
       "Plano: uma única sombra de folha, bordas de 1px (2px no botão flutuante) e troca de superfície para o resto.",
       "Alvos de toque de 44px em todo controle.",
       "Uma ação por vez no plano: Copiar resumo em azul, as demais em contorno; o plano sai como resumo, PDF ou arquivo de calendário.",
-      "\"Mais opções\" é um botão fixo na base da tela que abre uma gaveta modal; nada de opções na página."
+      "\"Mais opções\" é um botão fixo na base da tela que abre uma gaveta modal; nada de opções na página.",
+      "Movimento só explica estado: duas curvas e uma escala de durações em variáveis (--ease-*, --dur-*), lidas também pelo JS; com menos movimento pedido, só cor e opacidade em ~80ms."
     ],
     "rules": [
       {
@@ -566,6 +612,31 @@
         "name": "The Ring, Not Shadow Rule",
         "body": "O que flutua sobre a folha (botão \"Mais opções\") ganha anel de borda de 2px na cor da casca, nunca sombra; a gaveta ganha véu, nunca sombra.",
         "section": "elevation"
+      },
+      {
+        "name": "The Motion Explains State Rule",
+        "body": "Movimento só explica estado, feedback ou continuidade; nunca decora.",
+        "section": "motion"
+      },
+      {
+        "name": "The No Bounce Rule",
+        "body": "Sem overshoot, mola ou bounce; as duas curvas terminam suaves.",
+        "section": "motion"
+      },
+      {
+        "name": "The No Lift Rule",
+        "body": "Cartões e botões não sobem no hover nem projetam sombra; pressionar desce 1px.",
+        "section": "motion"
+      },
+      {
+        "name": "The Always Cancelable Rule",
+        "body": "Toda animação pode ser interrompida e nunca deixa estado preso.",
+        "section": "motion"
+      },
+      {
+        "name": "The Mouse-Only Hover Rule",
+        "body": "Hover só com mouse; o toque tem :active.",
+        "section": "motion"
       }
     ],
     "dos": [
@@ -577,7 +648,10 @@
       "**Do** manter alvos de 44px (52px nos botões de ação do plano, 48px no flutuante) e foco visível de 2px azul.",
       "**Do** manter um único primário azul por área de ações; as demais ações do plano são secundárias em contorno.",
       "**Do** abrir opções adicionais na gaveta modal com foco devolvido ao botão que a abriu, `aria-haspopup`/`aria-expanded` no botão e título ligado por `aria-labelledby`.",
-      "**Do** envolver toda transição e animação em `prefers-reduced-motion: no-preference`; a reordenação dos planos também é pulada quando o usuário pede menos movimento.",
+      "**Do** tirar durações e easings dos tokens `--dur-*` e `--ease-*` (no JS, via `motion.ts`); cor e opacidade de estado valem sempre, mais curtas em reduced motion.",
+      "**Do** manter deslocamento, escala, stagger, FLIP e altura animada só dentro de `prefers-reduced-motion: no-preference`.",
+      "**Do** restringir hover a `(hover:hover) and (pointer:fine)` e dar `:active` de 1px sem sombra; foco aparece instantâneo.",
+      "**Do** cancelar a animação anterior antes de iniciar outra e dar saída curta (120-160ms) ao que sai.",
       "**Do** reutilizar os degraus documentados de tamanho (13 a 32px, 68/80px) e de raio (1, 2, 3, 4, 6, 8px, 50%); a pílula flutuante usa o raio `lg` de 8px."
     ],
     "donts": [
@@ -587,6 +661,7 @@
       "**Don't** dar sombra ao botão flutuante, à gaveta ou aos botões; o botão flutuante se separa por borda de 2px.",
       "**Don't** colocar \"Mais opções\" de volta como painel na coluna, nem criar um segundo botão flutuante.",
       "**Don't** adicionar sombras além das folhas, nem reintroduzir rail lateral, tabela de planos, cartões com código de barras ou a imagem de praia do hero.",
+      "**Don't** animar sem que o movimento explique estado, feedback ou continuidade; sem bounce, sem lift em cartões ou botões, sem animação decorativa.",
       "**Don't** usar outras famílias tipográficas nem texto abaixo de 14px em rótulos novos."
     ]
   }

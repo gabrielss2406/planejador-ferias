@@ -1,6 +1,8 @@
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { fmt } from '../lib/dates';
 import type { KeyDate, Period, PlanOption, PlanResult } from '../lib/types';
-import { plural, short } from './format';
+import { planKey, plural, short } from './format';
+import { canAnimate, dur, ease, reduced } from './motion';
 import { KeyStatus } from './planParts';
 
 interface Props {
@@ -37,6 +39,43 @@ function PeriodRow({ p, i, on, onPick }: { p: Period; i: number; on: boolean; on
   );
 }
 
+/** O número da resposta: quando o valor muda, o novo entra deslizando de baixo (sobe) ou de cima (desce). Nunca na primeira carga. */
+function AnswerNumber({ value }: { value: number }) {
+  const el = useRef<HTMLSpanElement>(null);
+  const prev = useRef(value);
+  useLayoutEffect(() => {
+    const was = prev.current;
+    prev.current = value;
+    const n = el.current;
+    if (was === value || !n || !canAnimate(n)) return;
+    n.getAnimations().forEach((a) => a.cancel());
+    const from = reduced()
+      ? { opacity: 0.4 }
+      : { opacity: 0, transform: `translateY(${value > was ? '.28em' : '-.28em'})` };
+    n.animate([from, { opacity: 1, transform: 'none' }], { duration: reduced() ? dur('fb', 80) : dur('num', 300), easing: ease('out') });
+  }, [value]);
+  return <span ref={el} className="answer-num">{value}</span>;
+}
+
+/** Linhas de período: entram em sequência curta só quando o plano selecionado muda, não a cada render. */
+function Periods({ id, label, children }: { id: string; label: string; children: ReactNode }) {
+  const ul = useRef<HTMLUListElement>(null);
+  const prev = useRef(id);
+  useLayoutEffect(() => {
+    const was = prev.current;
+    prev.current = id;
+    const list = ul.current;
+    if (was === id || !list || reduced()) return;
+    Array.from(list.children).forEach((li, i) => {
+      if (!canAnimate(li)) return;
+      li.getAnimations().forEach((a) => a.cancel());
+      li.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
+        { duration: dur('enter', 220), delay: Math.min(i * 40, 160), easing: ease('out'), fill: 'backwards' });
+    });
+  }, [id]);
+  return <ul ref={ul} className="periods" aria-labelledby={label}>{children}</ul>;
+}
+
 /** A resposta: quanto de folga o plano rende, em uma frase, e as datas de cada período. */
 export function Ticket({ selected, result, year, custom, active, onPick }: Props) {
   if (!selected || result.error || selected.off <= 0) {
@@ -52,7 +91,7 @@ export function Ticket({ selected, result, year, custom, active, onPick }: Props
     <section className="ticket" aria-label="Resumo do plano">
       <div className="answer">
         <p className="answer-top" aria-hidden="true">
-          <span className="answer-num">{off}</span>
+          <AnswerNumber value={off} />
           <span className="answer-unit">dias fora do trabalho</span>
         </p>
         <p className="answer-sentence" aria-live="polite">
@@ -65,11 +104,11 @@ export function Ticket({ selected, result, year, custom, active, onPick }: Props
       <div className="perf" aria-hidden="true" />
       <div className="periods-wrap">
         <h2 id="datas-t">Tire férias nestas datas em {year}</h2>
-        <ul className="periods" aria-labelledby="datas-t">
+        <Periods id={planKey(selected)} label="datas-t">
           {selected.periods.map((p, i) => (
             <PeriodRow key={p.s} p={p} i={i} on={active === i} onPick={() => onPick(active === i ? null : i)} />
           ))}
-        </ul>
+        </Periods>
         {custom.some((c) => c.type === 'incluir') && (
           <div className="keys-status">
             <h3>Suas datas-chave</h3>

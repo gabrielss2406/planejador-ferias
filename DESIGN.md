@@ -235,6 +235,8 @@ Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurad
 
 O sistema é de tema único grafite, decisão fechada do usuário: não existe tema claro e nenhum deve ser inventado. Nome, slogan e logo (placa clara no cabeçalho) também são fixos. Papel branco é o que se lê e se compara; trilho cinza-claro é tudo que se preenche; o resto é grafite. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor.
 
+O movimento é um sistema pequeno e explicativo, não decoração: existe para dar feedback (o toque foi recebido), mostrar estado (o que mudou, o que ficou selecionado) e manter continuidade (o número, a régua e os cartões mudam de lugar em vez de piscar). Nada se move sem motivo de estado; ver "Motion system" em Components.
+
 **Key Characteristics:**
 - Coluna única de 840px, lida de cima para baixo, resposta antes de qualquer opção.
 - Número gigante em mono (80px; 68px no celular) como voz principal; palavras em Barlow Condensed.
@@ -243,6 +245,7 @@ O sistema é de tema único grafite, decisão fechada do usuário: não existe t
 - Alvos de toque de 44px em todo controle.
 - Uma ação por vez no plano: Copiar resumo em azul, as demais em contorno; o plano sai como resumo, PDF ou arquivo de calendário.
 - "Mais opções" é um botão fixo na base da tela que abre uma gaveta modal; nada de opções na página.
+- Movimento só explica estado: duas curvas e uma escala de durações em variáveis (`--ease-*`, `--dur-*`), lidas também pelo JS; com menos movimento pedido, só cor e opacidade em ~80ms.
 
 ## Colors
 
@@ -318,7 +321,7 @@ Silhueta recorrente: o picote, tracejado de 3px com recortes semicirculares de 2
 ## Components
 
 ### Buttons
-- **Primary** (`button-primary`): "Copiar resumo", azul, texto branco, 52px, 4px, 21px/700, hover em `azul-escuro`; ao copiar, o rótulo vira "Copiado" por 1,8s. No celular ocupa a largura toda. Botão "Adicionar" na gaveta: 44px, 18px/700.
+- **Primary** (`button-primary`): "Copiar resumo", azul, texto branco, 52px, 4px, 21px/700, hover em `azul-escuro`; ao copiar, o rótulo vira "Copiado" por 1,8s com fundo `ok` (`data-done`), ícone de marca que entra com escala de .8 a 1 em 150ms e sem hover de azul enquanto dura. No celular ocupa a largura toda. Botão "Adicionar" na gaveta: 44px, 18px/700.
 - **Secondary** (`button-secondary`): "Salvar PDF", "Adicionar ao calendário (.ics)" e "Salvar plano", sobre a casca. Sem fundo, contorno de 1px em `sobre-grafite`, texto branco, 52px, 4px, 20px de padding lateral, 18px/700, ícone de traço de 16px à esquerda com 8px de vão; hover em `grafite-3`. Linha própria sob o primário (10px de vão), uma por linha no celular. "Salvar plano" alterna com `aria-pressed`: pressionado vira branco com texto tinta, o ícone de marcador preenchido e o rótulo "Plano salvo" (estado por texto, ícone e cor). Desabilitado a 60% de opacidade quando há 12 planos salvos, com aviso em texto ligado por `aria-describedby`.
 - **Floating** (`button-floating`): "Mais opções", fixo, centrado na base (16px da borda ou da área segura, z-index 10), azul, texto branco, 48px, 24px de padding lateral, raio `lg` de 8px, borda de 2px em `grafite`, sem sombra, 18px/700, ícone de ajustes de 16px; hover em `azul-escuro`. `aria-haspopup="dialog"` e `aria-expanded` acompanham a gaveta.
 - **Mini** (`button-mini`): botões do item salvo ("Copiar", "PDF", "Calendário", "Remover") e "Fechar" da gaveta: branco, contorno de 1px (`controle`), 44px, 4px, 12-14px de padding lateral, 17px/600, hover em `trilho`. Os rótulos curtos levam texto só para leitor de tela com o nome do plano.
@@ -332,13 +335,13 @@ Branco, contorno 1px (`controle`), 4px, 44px, valor em mono 16px (15px em data);
 Faixa trilho de 8px, 14px/16px de padding, rótulos de 14px/600 em `tinta-2`, dica de cidade abaixo. Três perguntas: cidade e UF, dias (30 ou "20, vendendo 10"), períodos (até 1, 2, 3).
 
 ### Answer sheet (folha de resposta)
-Folha branca de 8px com sombra. No topo o número de 80px com a unidade e a frase de 19px; picote tracejado; abaixo, "Tire férias nestas datas" com linhas de período de 44px+, divididas por filetes de 1px. Período ativo: fundo `azul-claro` e contorno interno azul de 2px; clicar o destaca na régua. Entra com 220ms. Estado vazio é um bloco de `ambar-claro`.
+Folha branca de 8px com sombra. No topo o número de 80px com a unidade e a frase de 19px; picote tracejado; abaixo, "Tire férias nestas datas" com linhas de período de 44px+, divididas por filetes de 1px. Período ativo: fundo `azul-claro` e contorno interno azul de 2px; clicar o destaca na régua. Entra com 220ms (deslize de 8px, opacidade de .35 a 1); ao trocar de plano, o número troca em 300ms e as linhas de período entram em sequência (ver Motion system). Estado vazio é um bloco de `ambar-claro`.
 
 ### Plan cards
-Cartão branco de 6px, 84px mínimo, borda de 2px transparente; selecionado ganha `azul-claro`, borda azul e ícone de marca. Nome (20px), figura de dias fora (28px mono), contagem de períodos. **Selo** "Melhor opção" em grafite, 3px, só no primeiro. **Chip de mudança**: âmbar, texto tinta, ícone de seta e "+2 dias", "−1 dia" ou "novo"; acende em 400ms e a lista reordena no lugar por deslize de 360ms.
+Cartão branco de 6px, 84px mínimo, borda de 2px transparente; selecionado ganha `azul-claro`, borda azul e ícone de marca. Nome (20px), figura de dias fora (28px mono), contagem de períodos. **Selo** "Melhor opção" em grafite, 3px, só no primeiro. **Chip de mudança**: âmbar, texto tinta, ícone de seta e "+2 dias", "−1 dia" ou "novo"; acende em 400ms e a lista reordena no lugar por deslize (FLIP) de 360ms; o plano que passa a selecionado ganha o ícone de marca com entrada de 150ms.
 
 ### Year ruler ("Seu ano de relance")
-Sem fundo próprio, direto sobre a casca: meses em caixa alta 14px, pista `grafite-3` de 28px, folga em `folga` (altura total), férias azuis de 16px, feriados em âmbar de 3px; período ativo ganha contorno branco de 2px. Legenda de 16px abaixo.
+Sem fundo próprio, direto sobre a casca: meses em caixa alta 14px, pista `grafite-3` de 28px, folga em `folga` (altura total), férias azuis de 16px, feriados em âmbar de 3px; período ativo ganha contorno branco de 2px. As marcas de folga e férias transitam `left` e `width` em 300ms (`--dur-num`), então a régua desliza de um plano ao outro em vez de saltar. Legenda de 16px abaixo.
 
 ### Month sheet and calendar
 Folha branca com faixa azul de 8px e furos; dias em grade de 7: férias azul/branco, folga `trilho`, feriado âmbar com sigla, dia-chave com ponto de tinta no canto, dia indisponível `divisor` riscado. O calendário do ano usa os mesmos códigos em meses de 4 colunas.
@@ -347,10 +350,32 @@ Folha branca com faixa azul de 8px e furos; dias em grade de 7: férias azul/bra
 Abaixo dos cartões, 16px de margem: Copiar resumo (azul) e, em linha própria, Salvar PDF, Adicionar ao calendário (.ics) e Salvar plano (botões secundários). Depois o aviso do art. 136 em 16px, `sobre-grafite`, até 70ch (e, se o limite de 12 for atingido, o aviso de lista cheia). Salvar PDF abre a impressão do navegador (ver Print sheet); o calendário baixa `ferias-AAAA.ics`.
 
 ### Saved plans ("Planos salvos")
-Bloco recolhível sob as ações, aberto por padrão no desktop e fechado no celular, com título de 24px, filete de `divisor-escuro` e seta que gira. Mostra só quando há planos. Cada item (`saved-item`) é um cartão branco de 6px, 10px/14px de padding, sem borda nem sombra: figura de dias fora em mono 800 28px com "dias fora do trabalho" em 18px, ano em mono 14px à direita, uma linha por período em 16px `tinta-2` com a duração em mono 14px, e a linha de mini botões (6px de vão). É um retrato de datas e dias guardado no navegador (localStorage), mais novo primeiro, no máximo 12. Remover leva o foco ao título da lista, ou ao plano selecionado se a lista esvaziou.
+Bloco recolhível sob as ações, aberto por padrão no desktop e fechado no celular, com título de 24px, filete de `divisor-escuro` e seta que gira. Mostra só quando há planos. Cada item (`saved-item`) é um cartão branco de 6px, 10px/14px de padding, sem borda nem sombra: figura de dias fora em mono 800 28px com "dias fora do trabalho" em 18px, ano em mono 14px à direita, uma linha por período em 16px `tinta-2` com a duração em mono 14px, e a linha de mini botões (6px de vão). É um retrato de datas e dias guardado no navegador (localStorage), mais novo primeiro, no máximo 12. Item salvo depois da primeira carga entra em 220ms (sobe 6px com opacidade); Remover esmaece o item em 120ms e só então o tira da lista, levando o foco ao título da lista, ou ao plano selecionado se a lista esvaziou. Os itens da primeira carga não animam.
 
 ### Drawer ("Mais opções")
-Gaveta modal em `<dialog>` aberta com `showModal()`: base da tela, largura de até 840px, até 85% da altura, fundo `trilho`, cantos superiores de 8px, rolagem interna sem encadeamento. Véu `grafite` a 72%; o fundo da página não rola. Cabeçalho fixo de `trilho` com filete de 1px (`divisor`), título de 24px e botão "Fechar" (mini com ícone de cruz); corpo com 16px de padding, seções recolhíveis separadas por filete de 1px. Fecha com Esc, com o botão ou clicando no véu, e devolve o foco ao botão flutuante; o título nomeia o diálogo por `aria-labelledby`. Entra por deslize de 32px em 280ms.
+Gaveta modal em `<dialog>` aberta com `showModal()`: base da tela, largura de até 840px, até 85% da altura, fundo `trilho`, cantos superiores de 8px, rolagem interna sem encadeamento. Véu `grafite` a 72%; o fundo da página não rola. Cabeçalho fixo de `trilho` com filete de 1px (`divisor`), título de 24px e botão "Fechar" (mini com ícone de cruz); corpo com 16px de padding, seções recolhíveis separadas por filete de 1px. Fecha com Esc, com o botão ou clicando no véu (todos passam pela mesma saída de 160ms, que desce 32px e esmaece o véu; sem animação suportada, fecha direto), e devolve o foco ao botão flutuante; o título nomeia o diálogo por `aria-labelledby`. Entra por deslize de 32px em 280ms e sai em 160ms (ver Motion system).
+
+### Motion system
+Tese: movimento é feedback (o toque chegou), estado (o que mudou) e continuidade (de onde veio). Se um movimento não explica uma dessas três coisas, ele não existe. Os tokens vivem em `:root` em `src/styles.css` e o JS (`src/components/motion.ts`) lê os mesmos valores, então há uma fonte só.
+
+- **Easings.** `--ease-out` `cubic-bezier(.16,1,.3,1)`: entradas e deslocamentos (número, régua, linhas, gaveta, chip). `--ease-std` `cubic-bezier(.22,1,.36,1)`: trocas de estado, pressionar e saídas. Sem overshoot nem bounce.
+- **Durações.** `--dur-press` 80ms (pressionar); `--dur-fb` 120ms (feedback, esmaecer opacidade); `--dur-state` 150ms (hover, seleção, seta, ícone de marca); `--dur-enter` 220ms (folha, linhas de período, item salvo, abrir seção); `--dur-num` 300ms (número da resposta e marcas da régua); `--dur-drawer` 280ms (entrada da gaveta); `--dur-drawer-out` 160ms (saída da gaveta); `--dur-exit` 120ms (saída de item).
+- **Reduced motion.** Em `prefers-reduced-motion: reduce` as durações encolhem (`--dur-press` 60ms; `--dur-fb`, `--dur-state`, `--dur-enter` e `--dur-exit` 80ms) e ficam só cor e opacidade: sem deslocamento, escala, stagger, FLIP, deslize da gaveta (só o véu esmaece em `--dur-fb`) nem contagem do número (ele troca com opacidade de .4 a 1 em 80ms). Deslocamento, escala e altura só existem dentro de `no-preference`.
+- **Hover só com mouse.** Todo hover mora em `@media (hover:hover) and (pointer:fine)`; no toque não há efeito grudado. `:active` vale em todo dispositivo.
+- **Pressionar.** `:active` troca a cor de fundo e, em `no-preference`, desce 1px (`translateY(1px)`; o botão flutuante, `translateX(-50%) translateY(1px)`), sem sombra e sem escala.
+- **Foco.** Anel de 2px azul aparece instantaneamente; nenhuma transição no foco.
+- **Número da resposta** (`AnswerNumber`): ao mudar o valor, o novo número entra em 300ms deslizando .28em de baixo (aumentou) ou de cima (diminuiu); nunca na primeira carga.
+- **Períodos** (`Periods`): ao trocar de plano, as linhas entram em 220ms com stagger de 40ms por linha e teto de 160ms de atraso; não rodam em re-render sem troca.
+- **Reordenação dos planos** (`PlanBoard`): FLIP com Web Animations, 360ms, só na mesma lista e fora de reduced motion.
+- **Abrir e fechar seções** (`details`): `::details-content` com `interpolate-size: allow-keywords` e `content-visibility` com `allow-discrete` animam altura e opacidade em 220ms; sem suporte a `::details-content`, abre e fecha direto e o conteúdo nunca fica escondido.
+- **Interrupção.** Toda animação por JS cancela as anteriores (`getAnimations().cancel()`) antes de começar e é protegida por `canAnimate`; a saída da gaveta tem rede de segurança de 400ms e Esc, Fechar e véu passam pelo mesmo caminho; o foco volta ao botão ao fechar.
+
+### Named Rules (movimento)
+**The Motion Explains State Rule.** Movimento só explica estado, feedback ou continuidade; nunca decora.
+**The No Bounce Rule.** Sem overshoot, mola ou bounce; as duas curvas terminam suaves.
+**The No Lift Rule.** Cartões e botões não sobem no hover nem projetam sombra; pressionar desce 1px.
+**The Always Cancelable Rule.** Toda animação pode ser interrompida e nunca deixa estado preso.
+**The Mouse-Only Hover Rule.** Hover só com mouse; o toque tem `:active`.
 
 ### Print sheet (PDF)
 Folha de impressão fora da tela (`display:none`), só visível em `@media print` com `@page` A4 e margem de 18mm; esconde tudo o mais, inclusive botão flutuante e gaveta. Papel branco, texto tinta, cores exatas: logo de 48px, ano em 24px `tinta-2`, número em mono 800 80px com "dias fora do trabalho" em 32px, frase de 19px, lista de períodos sob um picote tracejado de 3px (sem recortes), cada um com título de 22px, datas em mono 18px e "Sem trabalhar de..." em 16px, sem quebra no meio do item, o aviso do art. 136 e a data de geração em 14px. Sem sombras, sem azul de interface; fica fora da árvore de acessibilidade (`aria-hidden`).
@@ -366,7 +391,10 @@ Folha de impressão fora da tela (`display:none`), só visível em `@media print
 - **Do** manter alvos de 44px (52px nos botões de ação do plano, 48px no flutuante) e foco visível de 2px azul.
 - **Do** manter um único primário azul por área de ações; as demais ações do plano são secundárias em contorno.
 - **Do** abrir opções adicionais na gaveta modal com foco devolvido ao botão que a abriu, `aria-haspopup`/`aria-expanded` no botão e título ligado por `aria-labelledby`.
-- **Do** envolver toda transição e animação em `prefers-reduced-motion: no-preference`; a reordenação dos planos também é pulada quando o usuário pede menos movimento.
+- **Do** tirar durações e easings dos tokens `--dur-*` e `--ease-*` (no JS, via `motion.ts`); cor e opacidade de estado valem sempre, mais curtas em reduced motion.
+- **Do** manter deslocamento, escala, stagger, FLIP e altura animada só dentro de `prefers-reduced-motion: no-preference`.
+- **Do** restringir hover a `(hover:hover) and (pointer:fine)` e dar `:active` de 1px sem sombra; foco aparece instantâneo.
+- **Do** cancelar a animação anterior antes de iniciar outra e dar saída curta (120-160ms) ao que sai.
 - **Do** reutilizar os degraus documentados de tamanho (13 a 32px, 68/80px) e de raio (1, 2, 3, 4, 6, 8px, 50%); a pílula flutuante usa o raio `lg` de 8px.
 
 ### Don't:
@@ -376,4 +404,5 @@ Folha de impressão fora da tela (`display:none`), só visível em `@media print
 - **Don't** dar sombra ao botão flutuante, à gaveta ou aos botões; o botão flutuante se separa por borda de 2px.
 - **Don't** colocar "Mais opções" de volta como painel na coluna, nem criar um segundo botão flutuante.
 - **Don't** adicionar sombras além das folhas, nem reintroduzir rail lateral, tabela de planos, cartões com código de barras ou a imagem de praia do hero.
+- **Don't** animar sem que o movimento explique estado, feedback ou continuidade; sem bounce, sem lift em cartões ou botões, sem animação decorativa.
 - **Don't** usar outras famílias tipográficas nem texto abaixo de 14px em rótulos novos.

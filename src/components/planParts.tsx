@@ -49,9 +49,10 @@ export function CopyButton({ text, label = 'Copiar resumo', className = 'copy', 
     setShown(ok ? 'Copiado' : 'Não foi possível copiar');
     setTimeout(() => setShown(null), 1800);
   };
+  const ok = shown === 'Copiado';
   return (
-    <button type="button" className={className} onClick={() => {
+    <button type="button" className={className} data-done={ok || undefined} onClick={() => {
       try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch { done(false); }
-    }}>{shown ?? label}{context && <span className="sr"> {context}</span>}</button>
+    }}>{ok && <span className="done-ic"><Icon name="check" /></span>}{shown ?? label}{context && <span className="sr"> {context}</span>}</button>
   );
 }

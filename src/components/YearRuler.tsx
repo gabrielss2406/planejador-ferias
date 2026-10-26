@@ -19,11 +19,11 @@ export function YearRuler({ year, selected, result, active }: Props) {
           {MN.map((m, k) => <span key={m} style={{ flex: idx(year, k + 1, 1) - idx(year, k, 1) }}>{m.slice(0, 3)}</span>)}
         </div>
         <div className="ruler-track" role="img" aria-label={label}>
-          {selected?.periods.map((p) => (
-            <i key={'x' + p.s} className="f" style={{ left: pct(p.xs) + '%', width: ((p.xe - p.xs + 1) / total) * 100 + '%' }} />
+          {selected?.periods.map((p, i) => (
+            <i key={'x' + i} className="f" style={{ left: pct(p.xs) + '%', width: ((p.xe - p.xs + 1) / total) * 100 + '%' }} />
           ))}
           {selected?.periods.map((p, i) => (
-            <i key={'v' + p.s} className={'v' + (active === i ? ' on' : '')} style={{ left: pct(p.s) + '%', width: (p.L / total) * 100 + '%' }} />
+            <i key={'v' + i} className={'v' + (active === i ? ' on' : '')} style={{ left: pct(p.s) + '%', width: (p.L / total) * 100 + '%' }} />
           ))}
           {hols.map((i) => <i key={i} className="h" style={{ left: pct(i) + '%' }} />)}
         </div>
