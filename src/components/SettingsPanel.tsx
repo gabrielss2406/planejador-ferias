@@ -1,6 +1,8 @@
 import { MN } from '../lib/dates';
 import { CITIES, findCity, UFS } from '../lib/holidays';
+import type { CityStatus } from '../hooks/useCityHolidays';
 import type { PlanResult, Settings } from '../lib/types';
+import { CityPicker } from './CityPicker';
 import { KeyDatesForm } from './KeyDatesForm';
 import { NumberField } from './NumberField';
 
@@ -16,7 +18,16 @@ const SPLIT_HINTS = [
   'Divide só se ganhar pelo menos 3 dias a mais por período extra.',
 ];
 
-function cityHint(S: Settings, result: PlanResult) {
+function cityHint(S: Settings, result: PlanResult, status: CityStatus) {
+  if (S.ibge) {
+    const nome = S.city, info = S.cityInfo?.ibge === S.ibge ? S.cityInfo : null;
+    if (status === 'loading' && !info) return `Buscando os feriados de ${nome}...`;
+    if (info) {
+      if (info.count > 0) return `${nome}/${S.uf}: ${info.count} feriado${info.count === 1 ? '' : 's'} municipa${info.count === 1 ? 'l' : 'is'} em ${S.year}, de uma base aberta. Confirme com a prefeitura.`;
+      return `${nome}/${S.uf}: nenhum feriado municipal registrado na base${info.inBase ? ' para este ano' : ''}. Se existir, adicione em Mais opções, em Datas-chave.`;
+    }
+    if (status === 'error') return `Não consegui buscar os feriados de ${nome}. Uso os nacionais e do estado; adicione os municipais em Mais opções, em Datas-chave.`;
+  }
   const ck = findCity(S.city);
   if (ck) {
     const n = CITIES[ck][1].length;
@@ -27,25 +38,17 @@ function cityHint(S: Settings, result: PlanResult) {
 }
 
 /** Os três campos que respondem à pergunta: onde, quantos dias, em quantos períodos. */
-export function QuickParams({ settings: S, update, result }: Props & { result: PlanResult }) {
-  const setCity = (city: string) => {
-    const ck = findCity(city);
-    update(ck ? { city, uf: CITIES[ck][0] } : { city });
-  };
+export function QuickParams({ settings: S, update, result, cityStatus }: Props & { result: PlanResult; cityStatus: CityStatus }) {
   // "até N": o app usa o maior número de períodos marcado
   const maxK = ([3, 2, 1] as const).find((k) => S.parts[k]) ?? 0;
-  const hint = cityHint(S, result);
+  const hint = cityHint(S, result, cityStatus);
 
   return (
     <section className="params" aria-label="Seus dados">
       <div className="p-city" role="group" aria-labelledby="city-l">
         <span className="lbl" id="city-l">Cidade e estado</span>
         <div className="pair">
-          <input type="text" id="city" list="cities" placeholder="Digite sua cidade" autoComplete="off" aria-label="Cidade"
-            value={S.city} onChange={(e) => setCity(e.target.value)} aria-describedby="city-hint" />
-          <datalist id="cities">
-            {Object.keys(CITIES).map((c) => <option key={c} value={c} />)}
-          </datalist>
+          <CityPicker settings={S} update={update} describedBy="city-hint" />
           <select id="uf" aria-label="Estado" value={S.uf} onChange={(e) => update({ uf: e.target.value })}>
             <option value="">UF</option>
             {UFS.map((u) => <option key={u}>{u}</option>)}

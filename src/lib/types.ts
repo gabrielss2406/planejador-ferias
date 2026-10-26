@@ -31,6 +31,20 @@ export interface Settings {
   penal: boolean;
   split: number;
   custom: KeyDate[];
+  /** município escolhido na busca (código IBGE); sem ele, vale a lista curta de cidades do app */
+  ibge?: string;
+  /** feriados municipais do município escolhido (anos vizinhos ao do plano), vindos da API */
+  cityHol?: { i: number; name: string }[];
+  /** o que a API disse sobre a cobertura do município */
+  cityInfo?: CityInfo;
+}
+
+export interface CityInfo {
+  ibge: string;
+  /** feriados municipais encontrados na base para o ano do plano */
+  count: number;
+  /** a base tem registro desse município? */
+  inBase: boolean;
 }
 
 /** Um período de férias (s..e) e a folga contínua que ele gera (xs..xe). */

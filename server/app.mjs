@@ -1,5 +1,6 @@
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, sep } from 'node:path';
+import { YEAR_MAX, YEAR_MIN } from './holidays.mjs';
 import { validCode, validId } from './store.mjs';
 
 const MIME = {
@@ -9,8 +10,8 @@ const MIME = {
 };
 const MAX_BODY = 4096;
 
-function send(res, status, body) {
-  res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+function send(res, status, body, cache = 'no-store') {
+  res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': cache });
   res.end(body === undefined ? '' : JSON.stringify(body));
 }
 
@@ -44,14 +45,32 @@ function limiter(max, windowMs, now) {
   };
 }
 
-export function createApp(store, { distDir = null, now = () => Date.now(), maxPerMinute = 90 } = {}) {
+export function createApp(store, { distDir = null, holidays = null, now = () => Date.now(), maxPerMinute = 240 } = {}) {
   const allow = limiter(maxPerMinute, 60_000, now);
+
+  const DAY_CACHE = 'public, max-age=86400';
+
+  /** Feriados por cidade (dados em memória, só leitura): /api/municipios e /api/feriados. */
+  function holidayApi(req, res, kind) {
+    if (!holidays) return send(res, 404, { error: 'not_found' });
+    if (req.method !== 'GET') return send(res, 405, { error: 'method' });
+    const q = new URL(req.url ?? '/', 'http://x').searchParams;
+    if (kind === 'municipios') {
+      const uf = (q.get('uf') ?? '').toUpperCase();
+      return send(res, 200, { municipios: holidays.search(q.get('q') ?? '', /^[A-Z]{2}$/.test(uf) ? uf : '', q.get('limit')) }, DAY_CACHE);
+    }
+    const ibge = q.get('ibge') ?? '', ano = Number(q.get('ano'));
+    if (!/^\d{7}$/.test(ibge) || !Number.isInteger(ano) || ano < YEAR_MIN || ano > YEAR_MAX) return send(res, 400, { error: 'invalid' });
+    const r = holidays.holidays(ibge, ano);
+    return r ? send(res, 200, r, DAY_CACHE) : send(res, 404, { error: 'not_found' });
+  }
 
   async function api(req, res, path) {
     const ip = req.socket.remoteAddress ?? '?';
     if (!allow(ip)) return send(res, 429, { error: 'too_many' });
     const seg = path.split('/').filter(Boolean); // api rooms [code] [members id]
     try {
+      if (seg[1] === 'municipios' || seg[1] === 'feriados') return holidayApi(req, res, seg[1]);
       if (seg[1] !== 'rooms') return send(res, 404, { error: 'not_found' });
       if (seg.length === 2 && req.method === 'POST') {
         const code = store.createRoom();

@@ -7,7 +7,7 @@ export function HolidayList({ result, year }: { result: PlanResult; year: number
   return (
     <details className="hol-list paper">
       <summary>Feriados considerados em {year} ({arr.length})</summary>
-      <p className="hint">A base de feriados municipais deste protótipo é demonstrativa: confirme com a prefeitura e use as datas-chave para completar o que faltar.</p>
+      <p className="hint">Os feriados municipais vêm de uma base aberta, sem garantia de precisão: confirme com a prefeitura e use as datas-chave para completar o que faltar.</p>
       <ul>
         {arr.map(([i, h]) => (
           <li key={i}><span>{fmt(i)} · {h.name}</span><span>{KIND[h.kind]}</span></li>

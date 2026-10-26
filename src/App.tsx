@@ -14,6 +14,7 @@ import { Calendar } from './components/YearView';
 import { YearRuler } from './components/YearRuler';
 import { arrange, useDiscarded } from './hooks/useDiscarded';
 import { useChosen } from './hooks/useChosen';
+import { useCityHolidays } from './hooks/useCityHolidays';
 import { useGroup } from './hooks/useGroup';
 import { useSavedPlans } from './hooks/useSavedPlans';
 import { useSettings } from './hooks/useSettings';
@@ -30,6 +31,7 @@ const snapshot = (r: PlanResult) => {
 
 export default function App() {
   const { settings, update } = useSettings();
+  const cityStatus = useCityHolidays(settings, update);
   const saved = useSavedPlans();
   const chosen = useChosen();
   const group = useGroup(chosen.chosen);
@@ -106,7 +108,7 @@ export default function App() {
         </header>
 
         <main className="page" id="plano">
-          <QuickParams settings={settings} update={update} result={result} />
+          <QuickParams settings={settings} update={update} result={result} cityStatus={cityStatus} />
           <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick}
             discarded={discarded.has(selKey)} isChosen={!!selected && chosen.chosen?.id === planId(deferred.year, selected)} striking={fresh === selKey} onDiscard={() => discard(selKey)} />
           <YearRuler year={deferred.year} selected={selected} result={result} active={active} />

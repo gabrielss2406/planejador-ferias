@@ -3,4 +3,4 @@ dist/
 .impeccable/mocks/
 .impeccable/review/
 
-data/
+/data/

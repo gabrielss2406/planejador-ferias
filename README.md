@@ -14,7 +14,9 @@ respeitando as regras da CLT (até 3 períodos, menor com 5 dias ou mais, maior 
     src/styles.css           estilos e tokens da identidade visual
     src/assets/              logo e imagem do hero (otimizadas a partir de logo.png e image.png)
     server/                  servidor Node: serve o dist e a API dos grupos (SQLite embutido, sem dependências)
-    shared/planShape.mjs     validação do plano, usada pelo navegador e pelo servidor
+    shared/                  código usado pelo navegador e pelo servidor: validação do plano, feriados nacionais/estaduais e Páscoa
+    server/holidays.mjs      busca de municípios e feriados por cidade (dados em server/data/)
+    scripts/import-holidays.mjs importa a base aberta de feriados municipais
     Dockerfile               build com Node, depois o servidor Node servindo o dist e a API
     docker-compose.yml       sobe o container na porta 8080, com volume para o banco
 
@@ -40,6 +42,22 @@ ele e um apelido. Cada uma vê, numa régua do ano, o plano escolhido dos colega
 - Quem tem o código vê o apelido e as datas do plano escolhido. Não há senha: não use para dados sensíveis.
 - Até 20 pessoas por grupo; grupos sem uso há 90 dias são apagados; há limite de pedidos por IP.
 - Os dados ficam em SQLite (`DB_FILE`, padrão `data/ferias.db`; no Docker, o volume `/data`).
+
+## API de feriados por cidade
+
+O campo de cidade busca **qualquer município do Brasil** (5.570) pelo nome. O servidor expõe:
+
+- `GET /api/municipios?q=ribeirao&uf=SP&limit=8`: busca sem acento, prefixo primeiro.
+- `GET /api/feriados?ibge=3543402&ano=2027`: nacionais, estaduais, municipais e pontos facultativos da cidade, com `tipo`,
+  `data` e um bloco `cobertura` (se a cidade tem registro na base, de que ano vem e se foi projetado para outro ano).
+  Anos de 2020 a 2035. Respostas com cache de 1 dia e limite de pedidos por IP.
+
+Os feriados municipais vêm de uma **base aberta** ([joaopbini/feriados-brasil](https://github.com/joaopbini/feriados-brasil), MIT),
+importada para `server/data/` e versionada, então o deploy não depende de rede. Ela cobre cerca de 3.800 municípios; os demais
+aparecem como "sem registro". Não é fonte oficial: o app sempre pede para confirmar com a prefeitura. Para atualizar:
+`npm run import:holidays` (precisa de rede) e revise o diff. Feriados municipais fixos e os ligados à Páscoa (Carnaval, Corpus Christi,
+Sexta Santa) são projetados para outros anos; os que só existem com data de 2026 não são inventados. Sem servidor, o app cai para a
+lista curta de cidades embutida.
 
 ## Desenvolvimento
 
@@ -69,7 +87,6 @@ apontando para localhost:8080. Exemplo com Caddy:
 - Para HTTPS, crie um registro DNS tipo A do seu domínio apontando para o IP da VPS antes de configurar o proxy reverso.
 - As fontes vêm do Google Fonts. Se quiser zero dependência externa, baixe-as e sirva localmente.
 - As configurações, os planos salvos e o plano escolhido ficam no localStorage do navegador.
-- A base de feriados municipais está em `CITIES`, em `src/lib/holidays.ts` e é demonstrativa.
-  Confirme as datas com a prefeitura antes de confiar nelas.
-- Próximo passo planejado: consulta a uma API de feriados e uma tabela própria
-  de feriados municipais por código IBGE (no mesmo servidor).
+- Os feriados municipais vêm da base aberta acima (e, sem servidor, de `CITIES` em `src/lib/holidays.ts`, que é demonstrativa).
+  Confirme as datas com a prefeitura antes de confiar nelas. Os estaduais ainda não cobrem todas as UFs (ES parcial; GO, MG e MT sem registro).
+- Próximo passo planejado: conferir os feriados estaduais de todas as UFs em fontes oficiais.
