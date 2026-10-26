@@ -1,0 +1,7 @@
+services:
+  ferias:
+    build: .
+    container_name: planejador-ferias
+    restart: unless-stopped
+    ports:
+      - "8080:80"

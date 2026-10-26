@@ -1,0 +1,13 @@
+# Para usar com nginx instalado direto na VPS (sem Docker).
+# Copie para /etc/nginx/sites-available/ferias e troque o domínio.
+server {
+    listen 80;
+    server_name ferias.seudominio.com.br;
+    root /var/www/ferias;
+    index index.html;
+    gzip on;
+    gzip_types text/html text/css application/javascript;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
