@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { fmt, parseISO } from '../lib/dates';
 import { Icon } from './Icon';
-import type { KeyDate, PlanOption } from '../lib/types';
+import type { KeyDate, PlanLike, PlanOption } from '../lib/types';
 
-export function summaryText(r: PlanOption, year: number, N: number) {
+/** Resumo em texto: serve ao plano calculado e ao plano salvo. */
+export function summaryText(r: PlanLike, year: number, N: number) {
   const lines = [`Plano de férias ${year}: ${N} dias → ${r.off} dias fora do trabalho`];
   r.periods.forEach((p, i) => {
     lines.push(`${i + 1}) ${fmt(p.s)} a ${fmt(p.e)} (${p.L} dias) — sem trabalhar de ${fmt(p.xs)} a ${fmt(p.xe)}`);
@@ -39,15 +40,18 @@ export function KeyStatus({ r, custom }: { r: PlanOption; custom: KeyDate[] }) {
   );
 }
 
-export function CopyButton({ text }: { text: string }) {
-  const [label, setLabel] = useState('Copiar resumo');
+interface CopyProps { text: string; label?: string; className?: string; context?: string }
+
+/** `context` entra só para leitor de tela, para distinguir botões iguais em uma lista. */
+export function CopyButton({ text, label = 'Copiar resumo', className = 'copy', context }: CopyProps) {
+  const [shown, setShown] = useState<string | null>(null);
   const done = (ok: boolean) => {
-    setLabel(ok ? 'Copiado' : 'Não foi possível copiar');
-    setTimeout(() => setLabel('Copiar resumo'), 1800);
+    setShown(ok ? 'Copiado' : 'Não foi possível copiar');
+    setTimeout(() => setShown(null), 1800);
   };
   return (
-    <button type="button" className="copy" onClick={() => {
+    <button type="button" className={className} onClick={() => {
       try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch { done(false); }
-    }}>{label}</button>
+    }}>{shown ?? label}{context && <span className="sr"> {context}</span>}</button>
   );
 }

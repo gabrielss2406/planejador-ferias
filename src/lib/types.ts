@@ -73,3 +73,29 @@ export interface PlanResult {
   groups: Record<GroupKey, PlanOption[]>;
   error: string | null;
 }
+
+/** Período de um plano salvo: só datas (índices de dia) e tamanho, sem pontuação do motor. */
+export interface SavedPeriod {
+  s: number;
+  e: number;
+  L: number;
+  xs: number;
+  xe: number;
+}
+
+/** Plano guardado como foto: não depende dos parâmetros que o geraram. */
+export interface SavedPlan {
+  id: string;
+  year: number;
+  N: number;
+  off: number;
+  k: number;
+  periods: SavedPeriod[];
+  savedAt: number;
+}
+
+/** O que o resumo em texto precisa de um plano (serve ao plano calculado e ao salvo). */
+export interface PlanLike {
+  off: number;
+  periods: SavedPeriod[];
+}

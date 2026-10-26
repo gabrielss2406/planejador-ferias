@@ -1,6 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { fmt } from '../lib/dates';
-import type { GroupKey, PlanOption, PlanResult } from '../lib/types';
+import { buildIcs, downloadFile, planId, toSaved } from '../lib/export';
+import type { SavedApi } from '../hooks/useSavedPlans';
+import type { GroupKey, PlanOption, PlanResult, SavedPlan } from '../lib/types';
 import { Icon } from './Icon';
 import { planKey, plural } from './format';
 import { CopyButton, summaryText, tradeoff } from './planParts';
@@ -22,12 +24,14 @@ interface Props {
   selected: PlanOption | null;
   changes: Record<string, Change>;
   onInteract: () => void;
+  saved: SavedApi;
+  onPrint: (p: SavedPlan) => void;
 }
 
 const changeText = (c: Change) =>
   c.kind === 'new' ? 'novo' : `${c.kind === 'up' ? '+' : '−'}${plural(c.n, 'dia', 'dias')}`;
 
-export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract }: Props) {
+export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract, saved, onPrint }: Props) {
   const list = result.groups[tab] || [];
   const [more, setMore] = useState(false);
   const canMore = result.groups.all.length > TOP || tab !== 'all';
@@ -104,12 +108,31 @@ export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected
           )}
         </div>
       )}
-      {selected && (
-        <div className="act">
-          <CopyButton text={summaryText(selected, year, result.N)} />
-          <p className="art136">Quem define a época das férias é o empregador (CLT, art. 136): leve isto como uma proposta para negociar.</p>
-        </div>
-      )}
+      {selected && <Actions selected={selected} year={year} N={result.N} saved={saved} onPrint={onPrint} />}
     </section>
+  );
+}
+
+function Actions({ selected, year, N, saved, onPrint }: { selected: PlanOption; year: number; N: number; saved: SavedApi; onPrint: (p: SavedPlan) => void }) {
+  const id = planId(year, selected);
+  const on = saved.has(id);
+  const blocked = saved.full && !on;
+  const snap = () => toSaved(selected, year, N);
+  return (
+    <div className="act">
+      <div className="act-btns">
+        <CopyButton text={summaryText(selected, year, N)} />
+        <button type="button" className="sec" onClick={() => onPrint(snap())}><Icon name="download" />Salvar PDF</button>
+        <button type="button" className="sec" onClick={() => downloadFile(`ferias-${year}.ics`, buildIcs(snap()), 'text/calendar')}>
+          <Icon name="calendar" />Adicionar ao calendário (.ics)
+        </button>
+        <button type="button" className="sec keep" aria-pressed={on} disabled={blocked} aria-describedby={blocked ? 'saved-full' : undefined}
+          onClick={() => saved.toggle(snap())}>
+          <Icon name="bookmark" />{on ? 'Plano salvo' : 'Salvar plano'}
+        </button>
+      </div>
+      {blocked && <p className="art136" id="saved-full">Você já salvou 12 planos. Remova um da lista para salvar outro.</p>}
+      <p className="art136">Quem define a época das férias é o empregador (CLT, art. 136): leve isto como uma proposta para negociar.</p>
+    </div>
   );
 }

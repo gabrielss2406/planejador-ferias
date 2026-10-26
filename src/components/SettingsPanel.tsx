@@ -80,94 +80,88 @@ export function QuickParams({ settings: S, update, result }: Props & { result: P
   );
 }
 
-/** Tudo o resto, num painel só e recolhido. */
-export function MoreOptions({ settings: S, update }: Props) {
+/** Corpo da gaveta "Mais opções": tudo o que não é a pergunta principal. */
+export function OptionsBody({ settings: S, update }: Props) {
   const toggleMonth = (i: number) => update({ months: S.months.map((m, j) => (j === i ? !m : m)) });
 
   return (
-    <details className="more">
-      <summary>
-        <span className="more-t">Mais opções</span>
-        <span className="more-s">Ano, feriados, datas-chave, meses e regras</span>
-      </summary>
-      <div className="more-body">
-        <div className="row field">
-          <div>
-            <label htmlFor="year">Ano</label>
-            <select id="year" value={S.year} onChange={(e) => update({ year: +e.target.value })}>
-              {[2026, 2027, 2028].map((y) => <option key={y}>{y}</option>)}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="total">Outro número de dias de férias</label>
-            <NumberField id="total" value={S.total} min={5} max={30} fallback={30} onChange={(total) => update({ total })} />
-          </div>
+    <div className="opts">
+      <div className="row field">
+        <div>
+          <label htmlFor="year">Ano</label>
+          <select id="year" value={S.year} onChange={(e) => update({ year: +e.target.value })}>
+            {[2026, 2027, 2028].map((y) => <option key={y}>{y}</option>)}
+          </select>
         </div>
-        <p className="hint">&ldquo;Vendendo 10&rdquo; é o abono: você troca 10 dias por dinheiro e descansa 20. O app não calcula valores.</p>
-
-        <h3>Feriados e blocos</h3>
-        <label className="check">
-          <input type="checkbox" checked={S.carnaval} onChange={(e) => update({ carnaval: e.target.checked })} />
-          <span>Carnaval (segunda e terça)<small>Ponto facultativo: depende da empresa</small></span>
-        </label>
-        <label className="check">
-          <input type="checkbox" checked={S.corpus} onChange={(e) => update({ corpus: e.target.checked })} />
-          <span>Corpus Christi<small>Ponto facultativo: depende da empresa</small></span>
-        </label>
-        <label className="check">
-          <input type="checkbox" checked={S.penal} onChange={(e) => update({ penal: e.target.checked })} />
-          <span>Evitar feriado dentro das férias<small>Feriado em dia útil dentro do período é folga que você já teria de graça</small></span>
-        </label>
-        <div className="field split">
-          <label htmlFor="split">Preferência por blocos grandes</label>
-          <input type="range" id="split" min={0} max={3} step={1} value={S.split}
-            aria-describedby="split-hint" onChange={(e) => update({ split: +e.target.value })} />
-          <p className="hint" id="split-hint">Quanto mais à direita, mais o app prefere férias em poucos blocos longos, em vez de vários curtos. {SPLIT_HINTS[S.split]}</p>
+        <div>
+          <label htmlFor="total">Outro número de dias de férias</label>
+          <NumberField id="total" value={S.total} min={5} max={30} fallback={30} onChange={(total) => update({ total })} />
         </div>
-
-        <KeyDatesForm custom={S.custom} onChange={(custom) => update({ custom })} />
-
-        <details>
-          <summary>Janela e meses</summary>
-          <div className="det-body">
-            <div className="row dates field">
-              <div>
-                <label htmlFor="wStart">Começar a partir de</label>
-                <input type="date" id="wStart" value={S.wStart} onChange={(e) => update({ wStart: e.target.value })} />
-              </div>
-              <div>
-                <label htmlFor="wEnd">Terminar até</label>
-                <input type="date" id="wEnd" value={S.wEnd} onChange={(e) => update({ wEnd: e.target.value })} />
-              </div>
-            </div>
-            <span className="lbl" id="months-l">Meses permitidos</span>
-            <div className="months" role="group" aria-labelledby="months-l">
-              {MN.map((m, i) => (
-                <button key={m} type="button" className="chip-btn" aria-pressed={S.months[i]} onClick={() => toggleMonth(i)}>
-                  {m.slice(0, 3)}
-                </button>
-              ))}
-            </div>
-          </div>
-        </details>
-
-        <details>
-          <summary>Regras da CLT</summary>
-          <div className="det-body">
-            <div className="row field">
-              <div>
-                <label htmlFor="minPart">Menor período (mín.)</label>
-                <NumberField id="minPart" value={S.minPart} min={5} max={15} fallback={5} onChange={(minPart) => update({ minPart })} />
-              </div>
-              <div>
-                <label htmlFor="maxMin">Maior período (mín.)</label>
-                <NumberField id="maxMin" value={S.maxMin} min={14} max={30} fallback={14} onChange={(maxMin) => update({ maxMin })} />
-              </div>
-            </div>
-            <p className="hint">A lei exige que o menor período tenha 5 dias ou mais e que o maior tenha 14 dias ou mais, em até 3 períodos. Os campos só deixam você ser mais exigente.</p>
-          </div>
-        </details>
       </div>
-    </details>
+      <p className="hint">&ldquo;Vendendo 10&rdquo; é o abono: você troca 10 dias por dinheiro e descansa 20. O app não calcula valores.</p>
+
+      <h3>Feriados e blocos</h3>
+      <label className="check">
+        <input type="checkbox" checked={S.carnaval} onChange={(e) => update({ carnaval: e.target.checked })} />
+        <span>Carnaval (segunda e terça)<small>Ponto facultativo: depende da empresa</small></span>
+      </label>
+      <label className="check">
+        <input type="checkbox" checked={S.corpus} onChange={(e) => update({ corpus: e.target.checked })} />
+        <span>Corpus Christi<small>Ponto facultativo: depende da empresa</small></span>
+      </label>
+      <label className="check">
+        <input type="checkbox" checked={S.penal} onChange={(e) => update({ penal: e.target.checked })} />
+        <span>Evitar feriado dentro das férias<small>Feriado em dia útil dentro do período é folga que você já teria de graça</small></span>
+      </label>
+      <div className="field split">
+        <label htmlFor="split">Preferência por blocos grandes</label>
+        <input type="range" id="split" min={0} max={3} step={1} value={S.split}
+          aria-describedby="split-hint" onChange={(e) => update({ split: +e.target.value })} />
+        <p className="hint" id="split-hint">Quanto mais à direita, mais o app prefere férias em poucos blocos longos, em vez de vários curtos. {SPLIT_HINTS[S.split]}</p>
+      </div>
+
+      <KeyDatesForm custom={S.custom} onChange={(custom) => update({ custom })} />
+
+      <details>
+        <summary>Janela e meses</summary>
+        <div className="det-body">
+          <div className="row dates field">
+            <div>
+              <label htmlFor="wStart">Começar a partir de</label>
+              <input type="date" id="wStart" value={S.wStart} onChange={(e) => update({ wStart: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="wEnd">Terminar até</label>
+              <input type="date" id="wEnd" value={S.wEnd} onChange={(e) => update({ wEnd: e.target.value })} />
+            </div>
+          </div>
+          <span className="lbl" id="months-l">Meses permitidos</span>
+          <div className="months" role="group" aria-labelledby="months-l">
+            {MN.map((m, i) => (
+              <button key={m} type="button" className="chip-btn" aria-pressed={S.months[i]} onClick={() => toggleMonth(i)}>
+                {m.slice(0, 3)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Regras da CLT</summary>
+        <div className="det-body">
+          <div className="row field">
+            <div>
+              <label htmlFor="minPart">Menor período (mín.)</label>
+              <NumberField id="minPart" value={S.minPart} min={5} max={15} fallback={5} onChange={(minPart) => update({ minPart })} />
+            </div>
+            <div>
+              <label htmlFor="maxMin">Maior período (mín.)</label>
+              <NumberField id="maxMin" value={S.maxMin} min={14} max={30} fallback={14} onChange={(maxMin) => update({ maxMin })} />
+            </div>
+          </div>
+          <p className="hint">A lei exige que o menor período tenha 5 dias ou mais e que o maior tenha 14 dias ou mais, em até 3 períodos. Os campos só deixam você ser mais exigente.</p>
+        </div>
+      </details>
+    </div>
   );
 }

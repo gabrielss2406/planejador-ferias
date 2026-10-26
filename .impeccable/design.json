@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-26T19:28:31.585017+00:00",
+  "generatedAt": "2026-10-26T19:42:44.934926+00:00",
   "title": "Design System: Planejador de Férias",
   "extensions": {
     "colorMeta": {
@@ -365,13 +365,22 @@
       "answer-unit-mobile": {
         "displayName": "Answer unit (mobile)",
         "purpose": "Unidade do número gigante abaixo de 640px, 26px."
+      },
+      "button-label": {
+        "displayName": "Button label",
+        "purpose": "Botão flutuante, botões secundários do plano e Adicionar, 18px/700."
       }
     },
     "shadows": [
       {
         "name": "sheet-lift",
         "value": "0 8px 14px -8px rgb(0 0 0 / .55)",
-        "purpose": "Única sombra: descola a folha de resposta e a folha do mês da casca."
+        "purpose": "Única sombra: descola a folha de resposta e a folha do mês da casca. O botão flutuante (borda de 2px) e a gaveta (véu) não projetam sombra."
+      },
+      {
+        "name": "none-floating",
+        "value": "none",
+        "purpose": "Botão flutuante e gaveta: sem sombra; o botão usa borda de 2px em grafite, a gaveta o véu grafite a 72% e filete de 1px."
       }
     ],
     "motion": [
@@ -389,6 +398,11 @@
         "name": "ease-change",
         "value": "cubic-bezier(.16,1,.3,1)",
         "purpose": "Chip de mudança acende em 400ms; reordenação dos planos desliza em 360ms."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Gaveta desliza 32px e o véu aparece em 280ms; tudo sob prefers-reduced-motion: no-preference."
       }
     ],
     "breakpoints": [
@@ -403,6 +417,10 @@
       {
         "name": "narrow",
         "value": "max-width 420px"
+      },
+      {
+        "name": "print",
+        "value": "@media print, @page A4 com margem de 18mm"
       }
     ]
   },
@@ -462,17 +480,51 @@
       "description": "Folha do mês com faixa de encadernação e dias coloridos.",
       "html": "<div class=\"ds-ms\"><h3>Outubro <em>2026</em></h3><div class=\"ds-days\"><span class=\"b\">5</span><span class=\"b\">6</span><span class=\"g\">10</span><span class=\"a\">12</span></div></div>",
       "css": ".ds-ms{width:240px;position:relative;overflow:hidden;background:#fff;color:#101820;border-radius:8px 8px 0 0;padding:10px 18px 12px;box-shadow:0 8px 14px -8px rgb(0 0 0/.55)}.ds-ms::before{content:'';display:block;height:8px;margin:-10px -18px 8px;background:radial-gradient(circle at 50% 50%,#101820 0 2.5px,transparent 3px) 0 0/22px 8px repeat-x,#2563EB}.ds-ms h3{margin:0 0 6px;font:700 22px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-ms em{font:500 16px 'Barlow Condensed','Arial Narrow',sans-serif;font-style:normal;color:#4B5866}.ds-days{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}.ds-days span{height:44px;border-radius:3px;text-align:center;font:700 24px/44px 'JetBrains Mono',monospace}.ds-days .b{background:#2563EB;color:#fff}.ds-days .g{background:#E6E9ED}.ds-days .a{background:#FFB000}"
+    },
+    {
+      "name": "Floating Options Button",
+      "kind": "button",
+      "refersTo": "button-floating",
+      "description": "Botão fixo na base da tela que abre a gaveta Mais opções: azul, raio lg de 8px, borda de 2px em grafite, sem sombra.",
+      "html": "<div class=\"ds-fab-stage\"><button class=\"ds-fab\" aria-haspopup=\"dialog\" aria-expanded=\"false\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6M10 3v4M6 9v4\"/></svg> Mais opções</button></div>",
+      "css": ".ds-fab-stage{background:#101820;padding:24px;display:flex;justify-content:center}.ds-fab{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border:2px solid #101820;border-radius:8px;background:#2563EB;color:#fff;font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;white-space:nowrap;cursor:pointer}.ds-fab svg{width:16px;height:16px}.ds-fab:hover{background:#1D4ED8}.ds-fab:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Salvar PDF, Adicionar ao calendário e Salvar plano (alterna com aria-pressed) em contorno sobre a casca.",
+      "html": "<div class=\"ds-sec-stage\"><button class=\"ds-sec\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2.5v7.5M4.5 6.5 8 10l3.5-3.5M3 13.5h10\"/></svg> Salvar PDF</button><button class=\"ds-sec\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 4.5h10v9H3zM3 7.5h10M5.5 2.5v3M10.5 2.5v3\"/></svg> Adicionar ao calendário (.ics)</button><button class=\"ds-sec\" aria-pressed=\"true\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 2.5h8v11L8 10.5 4 13.5z\"/></svg> Plano salvo</button></div>",
+      "css": ".ds-sec-stage{background:#101820;padding:16px;display:flex;flex-wrap:wrap;gap:10px}.ds-sec{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border:1px solid #9FB0C0;border-radius:4px;background:none;color:#fff;font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-sec svg{width:16px;height:16px}.ds-sec:hover{background:#26323F}.ds-sec[aria-pressed=true]{background:#fff;color:#101820;border-color:#fff}.ds-sec[aria-pressed=true] path{fill:currentColor}.ds-sec:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+    },
+    {
+      "name": "Saved Plan Item",
+      "kind": "card",
+      "refersTo": "saved-item",
+      "description": "Retrato de um plano salvo: dias fora, períodos e mini botões Copiar, PDF, Calendário, Remover.",
+      "html": "<div class=\"ds-saved-stage\"><div class=\"ds-saved\"><p class=\"ds-so\"><b>45</b> dias fora do trabalho<span class=\"ds-sy\">2026</span></p><ul class=\"ds-sp\"><li>05/10 a 16/10 <span>(12 dias)</span></li><li>14/12 a 31/12 <span>(18 dias)</span></li></ul><div class=\"ds-sa\"><button class=\"ds-mini\">Copiar</button><button class=\"ds-mini\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2.5v7.5M4.5 6.5 8 10l3.5-3.5M3 13.5h10\"/></svg> PDF</button><button class=\"ds-mini\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 4.5h10v9H3zM3 7.5h10M5.5 2.5v3M10.5 2.5v3\"/></svg> Calendário</button><button class=\"ds-mini\">Remover</button></div></div></div>",
+      "css": ".ds-saved-stage{background:#101820;padding:16px}.ds-saved{display:flex;flex-direction:column;gap:6px;width:340px;padding:10px 14px;background:#fff;color:#101820;border-radius:6px}.ds-so{margin:0;display:flex;align-items:baseline;gap:6px;font:500 18px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-so b{font:800 28px 'JetBrains Mono',monospace}.ds-sy{margin-left:auto;font:700 14px 'JetBrains Mono',monospace;color:#4B5866}.ds-sp{margin:0;padding:0;list-style:none;display:grid;gap:2px;font:500 16px/1.3 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866}.ds-sp span{font:500 14px 'JetBrains Mono',monospace}.ds-sa{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.ds-mini{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-mini svg{width:16px;height:16px}.ds-mini:hover{background:#E6E9ED}.ds-mini:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+    },
+    {
+      "name": "Options Drawer",
+      "kind": "custom",
+      "refersTo": "drawer",
+      "description": "Gaveta modal (dialog) Mais opções: trilho, cantos superiores de 8px, cabeçalho fixo com Fechar, véu grafite sem sombra.",
+      "html": "<div class=\"ds-veil\"><div class=\"ds-drawer\"><div class=\"ds-dh\"><h2>Mais opções</h2><button class=\"ds-close\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 4l8 8M12 4l-8 8\"/></svg> Fechar</button></div><div class=\"ds-db\"><label>Janela de datas</label><input value=\"2026-10-05\"></div></div></div>",
+      "css": ".ds-veil{background:rgba(16,24,32,.72);padding-top:48px;width:420px}.ds-drawer{background:#E6E9ED;color:#101820;border-radius:8px 8px 0 0}.ds-dh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;border-bottom:1px solid #C5CBD3}.ds-dh h2{margin:0;font:700 24px/1.15 'Barlow Condensed','Arial Narrow',sans-serif}.ds-close{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed','Arial Narrow',sans-serif;cursor:pointer}.ds-close svg{width:16px;height:16px}.ds-close:hover{background:#E6E9ED}.ds-close:focus-visible{outline:2px solid #2563EB;outline-offset:2px}.ds-db{padding:12px 16px 16px}.ds-db label{display:block;font:600 14px 'Barlow Condensed','Arial Narrow',sans-serif;color:#4B5866;margin-bottom:4px}.ds-db input{width:100%;min-height:44px;background:#fff;border:1px solid #6F7C89;border-radius:4px;padding:0 10px;font:500 15px 'JetBrains Mono',monospace;color:#101820}"
     }
   ],
   "narrative": {
     "northStar": "A Folhinha de Embarque",
-    "overview": "Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurada numa casca grafite, responde com um número gigante e um picote tracejado a separa dos períodos de férias. Tudo o que não é a resposta recua para uma barra de parâmetros mínima, para o painel Mais opções e para baixo da dobra. Tema único grafite, decisão fechada; nome, slogan e logo fixos. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor.",
+    "overview": "Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurada numa casca grafite, responde com um número gigante e um picote tracejado a separa dos períodos de férias. Tudo o que não é a resposta recua para uma barra de parâmetros mínima, para a gaveta aberta pelo botão fixo Mais opções e para baixo da dobra. Tema único grafite, decisão fechada; nome, slogan e logo fixos. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor.",
     "keyCharacteristics": [
       "Coluna única de 840px, lida de cima para baixo, resposta antes de qualquer opção.",
       "Número gigante em mono (80px; 68px no celular) como voz principal; palavras em Barlow Condensed.",
       "Picote tracejado com recortes semicirculares como assinatura estrutural, usado uma vez na folha de resposta.",
-      "Plano: uma única sombra de folha, bordas de 1px e troca de superfície para o resto.",
-      "Alvos de toque de 44px em todo controle."
+      "Plano: uma única sombra de folha, bordas de 1px (2px no botão flutuante) e troca de superfície para o resto.",
+      "Alvos de toque de 44px em todo controle.",
+      "Uma ação por vez no plano: Copiar resumo em azul, as demais em contorno; o plano sai como resumo, PDF ou arquivo de calendário.",
+      "\"Mais opções\" é um botão fixo na base da tela que abre uma gaveta modal; nada de opções na página."
     ],
     "rules": [
       {
@@ -509,6 +561,11 @@
         "name": "The One Lift Rule",
         "body": "Só as folhas projetam sombra. Cartões de plano, linhas e campos se distinguem por borda, fundo e cor.",
         "section": "elevation"
+      },
+      {
+        "name": "The Ring, Not Shadow Rule",
+        "body": "O que flutua sobre a folha (botão \"Mais opções\") ganha anel de borda de 2px na cor da casca, nunca sombra; a gaveta ganha véu, nunca sombra.",
+        "section": "elevation"
       }
     ],
     "dos": [
@@ -517,13 +574,18 @@
       "**Do** usar azul só para férias, ação e seleção; âmbar só para feriado e mudança.",
       "**Do** compor números em JetBrains Mono tabular e palavras em Barlow Condensed.",
       "**Do** dar a todo estado um segundo canal (texto, ícone, ponto, risco, barra, contorno).",
-      "**Do** manter alvos de 44px e foco visível de 2px azul.",
-      "**Do** reutilizar os degraus documentados de tamanho (13 a 32px, 68/80px) e de raio (1, 2, 3, 4, 6, 8px, 50%)."
+      "**Do** manter alvos de 44px (52px nos botões de ação do plano, 48px no flutuante) e foco visível de 2px azul.",
+      "**Do** manter um único primário azul por área de ações; as demais ações do plano são secundárias em contorno.",
+      "**Do** abrir opções adicionais na gaveta modal com foco devolvido ao botão que a abriu, `aria-haspopup`/`aria-expanded` no botão e título ligado por `aria-labelledby`.",
+      "**Do** envolver toda transição e animação em `prefers-reduced-motion: no-preference`; a reordenação dos planos também é pulada quando o usuário pede menos movimento.",
+      "**Do** reutilizar os degraus documentados de tamanho (13 a 32px, 68/80px) e de raio (1, 2, 3, 4, 6, 8px, 50%); a pílula flutuante usa o raio `lg` de 8px."
     ],
     "donts": [
       "**Don't** criar tema claro ou variante de casca; a decisão de tema único é do usuário.",
       "**Don't** trocar nome, slogan ou logo.",
       "**Don't** usar âmbar como decoração ou seleção, nem azul como fundo de seção.",
+      "**Don't** dar sombra ao botão flutuante, à gaveta ou aos botões; o botão flutuante se separa por borda de 2px.",
+      "**Don't** colocar \"Mais opções\" de volta como painel na coluna, nem criar um segundo botão flutuante.",
       "**Don't** adicionar sombras além das folhas, nem reintroduzir rail lateral, tabela de planos, cartões com código de barras ou a imagem de praia do hero.",
       "**Don't** usar outras famílias tipográficas nem texto abaixo de 14px em rótulos novos."
     ]

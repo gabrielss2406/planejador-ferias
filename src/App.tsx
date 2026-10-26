@@ -5,13 +5,17 @@ import { HolidayList } from './components/HolidayList';
 import { HowItWorks } from './components/HowItWorks';
 import { MonthSheet } from './components/MonthSheet';
 import { PlanBoard, type Change } from './components/PlanBoard';
-import { MoreOptions, QuickParams } from './components/SettingsPanel';
+import { FloatingOptions } from './components/FloatingOptions';
+import { PrintSheet } from './components/PrintSheet';
+import { SavedPlans } from './components/SavedPlans';
+import { QuickParams } from './components/SettingsPanel';
 import { Ticket } from './components/Ticket';
 import { Calendar } from './components/YearView';
 import { YearRuler } from './components/YearRuler';
+import { useSavedPlans } from './hooks/useSavedPlans';
 import { useSettings } from './hooks/useSettings';
 import { plan } from './lib/planner';
-import type { GroupKey, PlanResult } from './lib/types';
+import type { GroupKey, PlanResult, SavedPlan } from './lib/types';
 
 /** plano (identidade) -> dias fora, de todas as abas */
 const snapshot = (r: PlanResult) => {
@@ -22,6 +26,16 @@ const snapshot = (r: PlanResult) => {
 
 export default function App() {
   const { settings, update } = useSettings();
+  const saved = useSavedPlans();
+  // PDF: monta a folha de impressão, chama o diálogo do navegador e desmonta ao terminar
+  const [printPlan, setPrintPlan] = useState<SavedPlan | null>(null);
+  useEffect(() => {
+    if (!printPlan) return;
+    const clear = () => setPrintPlan(null);
+    window.addEventListener('afterprint', clear, { once: true });
+    const raf = requestAnimationFrame(() => window.print());
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('afterprint', clear); };
+  }, [printPlan]);
   const deferred = useDeferredValue(settings);
   const result = useMemo(() => plan(deferred), [deferred]);
   const [tab, setTab] = useState<GroupKey>('all');
@@ -71,31 +85,36 @@ export default function App() {
   const pick = (i: number | null) => { if (selected) setPerSel(i === null ? null : { key: selKey, i }); };
 
   return (
-    <div className="app">
-      <header className="top">
-        <h1 className="brand"><img src={logo} alt="Planejador de Férias" /></h1>
-        <p className="slogan">Mais tempo para o que importa</p>
-      </header>
+    <>
+      <div className="app">
+        <header className="top">
+          <h1 className="brand"><img src={logo} alt="Planejador de Férias" /></h1>
+          <p className="slogan">Mais tempo para o que importa</p>
+        </header>
 
-      <main className="page" id="plano">
-        <QuickParams settings={settings} update={update} result={result} />
-        <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
-        <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick} />
-        <PlanBoard result={result} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
-          selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen} />
-        <MoreOptions settings={settings} update={update} />
+        <main className="page" id="plano">
+          <QuickParams settings={settings} update={update} result={result} />
+          <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
+          <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick} />
+          <PlanBoard result={result} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
+            selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen}
+            saved={saved} onPrint={setPrintPlan} />
+          <SavedPlans saved={saved} onPrint={setPrintPlan} />
 
-        <details className="cal-block" open={calOpen} onToggle={(e) => setCalOpen(e.currentTarget.open)}>
-          <summary>Ver calendário do ano</summary>
-          <div className="cal-body">
-            {selected && <MonthSheet period={selected.periods[per]} number={per + 1} result={result} />}
-            <Calendar year={deferred.year} selected={selected} result={result} />
-          </div>
-        </details>
+          <details className="cal-block" open={calOpen} onToggle={(e) => setCalOpen(e.currentTarget.open)}>
+            <summary>Ver calendário do ano</summary>
+            <div className="cal-body">
+              {selected && <MonthSheet period={selected.periods[per]} number={per + 1} result={result} />}
+              <Calendar year={deferred.year} selected={selected} result={result} />
+            </div>
+          </details>
 
-        <HowItWorks />
-        <HolidayList result={result} year={deferred.year} />
-      </main>
-    </div>
+          <HowItWorks />
+          <HolidayList result={result} year={deferred.year} />
+        </main>
+        <FloatingOptions settings={settings} update={update} />
+      </div>
+    {printPlan && <PrintSheet plan={printPlan} />}
+    </>
   );
 }

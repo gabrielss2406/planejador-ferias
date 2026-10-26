@@ -1,6 +1,6 @@
 ---
 name: Planejador de Férias
-description: Uma pergunta, uma resposta: folha branca com número gigante e picote sobre uma casca grafite, em coluna única.
+description: Uma pergunta, uma resposta: folha branca com número gigante e picote sobre uma casca grafite, em coluna única, com opções numa gaveta e plano que sai em PDF, calendário ou resumo.
 colors:
   grafite: "#101820"
   grafite-2: "#1B2631"
@@ -58,6 +58,10 @@ typography:
     fontFamily: "Barlow Condensed, Arial Narrow, Liberation Sans Narrow, sans-serif"
     fontSize: "21px"
     fontWeight: 700
+  button-label:
+    fontFamily: "Barlow Condensed, Arial Narrow, Liberation Sans Narrow, sans-serif"
+    fontSize: "18px"
+    fontWeight: 700
   card-title:
     fontFamily: "Barlow Condensed, Arial Narrow, Liberation Sans Narrow, sans-serif"
     fontSize: "20px"
@@ -109,7 +113,7 @@ spacing:
   md: "12px"
   lg: "16px"
   xl: "24px"
-  page-bottom: "56px"
+  page-bottom: "96px"
 components:
   button-primary:
     backgroundColor: "{colors.azul}"
@@ -141,11 +145,43 @@ components:
     textColor: "{colors.tinta}"
     rounded: "{rounded.lg}"
     padding: "14px 16px"
-  more-panel:
+  button-floating:
+    backgroundColor: "{colors.azul}"
+    textColor: "{colors.papel}"
+    typography: "{typography.button-label}"
+    rounded: "{rounded.lg}"
+    padding: "0 24px"
+    height: "48px"
+  button-floating-hover:
+    backgroundColor: "{colors.azul-escuro}"
+  button-secondary:
+    backgroundColor: "{colors.grafite}"
+    textColor: "{colors.papel}"
+    typography: "{typography.button-label}"
+    rounded: "{rounded.sm}"
+    padding: "0 20px"
+    height: "52px"
+  button-secondary-pressed:
+    backgroundColor: "{colors.papel}"
+    textColor: "{colors.tinta}"
+  button-mini:
+    backgroundColor: "{colors.papel}"
+    textColor: "{colors.tinta}"
+    typography: "{typography.control}"
+    rounded: "{rounded.sm}"
+    padding: "0 12px"
+    height: "44px"
+  drawer:
     backgroundColor: "{colors.trilho}"
     textColor: "{colors.tinta}"
     rounded: "{rounded.lg}"
-    height: "60px"
+    padding: "4px 16px 16px"
+    width: "840px"
+  saved-item:
+    backgroundColor: "{colors.papel}"
+    textColor: "{colors.tinta}"
+    rounded: "{rounded.md}"
+    padding: "10px 14px"
   answer-sheet:
     backgroundColor: "{colors.papel}"
     textColor: "{colors.tinta}"
@@ -195,7 +231,7 @@ components:
 
 **Creative North Star: "A Folhinha de Embarque"**
 
-Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurada numa casca grafite, responde com um número gigante ("45 dias fora do trabalho") e um picote tracejado a separa dos períodos de férias. Tudo o que não é a resposta recua: os parâmetros cabem numa barra mínima acima dela, o resto mora no painel recolhido "Mais opções" e abaixo da dobra. É um refinamento do redesign anterior, mesma identidade, menos peças: sem rail lateral, sem coluna de planos, sem tabela, sem cartões com código de barras.
+Uma pergunta, uma resposta. Uma folha de calendário de parede, branca, pendurada numa casca grafite, responde com um número gigante ("45 dias fora do trabalho") e um picote tracejado a separa dos períodos de férias. Tudo o que não é a resposta recua: os parâmetros cabem numa barra mínima acima dela, o resto mora numa gaveta aberta por um botão fixo "Mais opções" e abaixo da dobra. É um refinamento do redesign anterior, mesma identidade, menos peças: sem rail lateral, sem coluna de planos, sem tabela, sem cartões com código de barras.
 
 O sistema é de tema único grafite, decisão fechada do usuário: não existe tema claro e nenhum deve ser inventado. Nome, slogan e logo (placa clara no cabeçalho) também são fixos. Papel branco é o que se lê e se compara; trilho cinza-claro é tudo que se preenche; o resto é grafite. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor.
 
@@ -203,15 +239,17 @@ O sistema é de tema único grafite, decisão fechada do usuário: não existe t
 - Coluna única de 840px, lida de cima para baixo, resposta antes de qualquer opção.
 - Número gigante em mono (80px; 68px no celular) como voz principal; palavras em Barlow Condensed.
 - Picote tracejado com recortes semicirculares como assinatura estrutural, usado uma vez na folha de resposta.
-- Plano: uma única sombra de folha, bordas de 1px e troca de superfície para o resto.
+- Plano: uma única sombra de folha, bordas de 1px (2px no botão flutuante) e troca de superfície para o resto.
 - Alvos de toque de 44px em todo controle.
+- Uma ação por vez no plano: Copiar resumo em azul, as demais em contorno; o plano sai como resumo, PDF ou arquivo de calendário.
+- "Mais opções" é um botão fixo na base da tela que abre uma gaveta modal; nada de opções na página.
 
 ## Colors
 
 Grafite e papel como par de superfícies, um azul funcional e um âmbar de aviso, sem terceira cor de acento.
 
 ### Primary
-- **Azul Embarque** (`azul`): dias de férias, botão primário, segmento pressionado, plano e período selecionados, faixa de encadernação, filete de 2px do cabeçalho, foco, accent de slider e caixas.
+- **Azul Embarque** (`azul`): dias de férias, botão primário, botão flutuante "Mais opções", segmento pressionado, plano e período selecionados, faixa de encadernação, filete de 2px do cabeçalho, foco, accent de slider e caixas.
 - **Azul Profundo** (`azul-escuro`): hover do botão primário.
 - **Azul Névoa** (`azul-claro`): fundo do plano e do período selecionados.
 
@@ -220,9 +258,9 @@ Grafite e papel como par de superfícies, um azul funcional e um âmbar de aviso
 
 ### Neutral
 - **Grafite** (`grafite`), **Grafite Elevado** (`grafite-2`), **Grafite Trilho** (`grafite-3`): casca e recortes do picote; `grafite-3` é a pista da régua do ano. `grafite-2` é mantido na paleta, mas hoje não pinta nenhuma superfície do CSS.
-- **Papel** (`papel`) e **Trilho Claro** (`trilho`): folha, cartões e campos; trilho da barra de parâmetros, do painel "Mais opções" e dos dias de folga.
-- **Tinta** (`tinta`) e **Tinta Secundária** (`tinta-2`): texto sobre papel. **Névoa sobre Grafite** (`sobre-grafite`): texto secundário sobre grafite.
-- **Contorno de Controle** (`controle`), **Divisor** (`divisor`), **Divisor Escuro** (`divisor-escuro`), **Picote** (`picote`), **Folga** (`folga`): bordas de campos, filetes, tracejado do picote e barras de folga na régua.
+- **Papel** (`papel`) e **Trilho Claro** (`trilho`): folha, cartões e campos; trilho da barra de parâmetros, da gaveta "Mais opções" e dos dias de folga.
+- **Tinta** (`tinta`) e **Tinta Secundária** (`tinta-2`): texto sobre papel. **Névoa sobre Grafite** (`sobre-grafite`): texto secundário sobre grafite e contorno dos botões secundários sobre a casca.
+- **Contorno de Controle** (`controle`; também o contorno dos mini botões), **Divisor** (`divisor`), **Divisor Escuro** (`divisor-escuro`), **Picote** (`picote`), **Folga** (`folga`): bordas de campos, filetes, tracejado do picote e barras de folga na régua.
 - **Verde Regra** (`ok`) e **Vermelho Regra** (`erro`): estado das datas-chave, sempre com ícone e texto.
 
 ### Named Rules
@@ -242,9 +280,9 @@ O CSS declara uma escala de seis variáveis (`--t-num` 80px, `--t-tit` 24px, `--
 - **Answer number** (mono 800, 80px, 0.95; 68px no celular): total de dias fora do trabalho. **Answer unit** (cond 700, 32px; 26px no celular): "dias fora do trabalho".
 - **Plan figure** (mono 800, 28px): dias fora em cada cartão de plano.
 - **Section title** (cond 700, 24px, 1.15; 22px no celular, sem caixa alta): títulos de seção, "Mais opções", "Seu ano de relance", "Escolha um plano". **Period title** (cond 700, 22px): "1º período" e nome do mês na folha do ano.
-- **Action** (cond 700, 21px): "Copiar resumo". **Card title** (cond 700, 20px): nome do plano, nome do mês, subtítulos do painel.
+- **Action** (cond 700, 21px): "Copiar resumo". **Button label** (cond 700, 18px): botão flutuante, botões secundários do plano e "Adicionar" na gaveta. **Card title** (cond 700, 20px): nome do plano, nome do mês, subtítulos do painel.
 - **Sentence** (cond 500, 19px, 1.35; 18px no celular, máx. 70ch): frase-resumo sob o número.
-- **Value** (mono 700, 18px): datas dos períodos. **Control** (cond 600-700, 17-18px): texto de segmento, botão, link "Ver mais planos", texto de apoio e linhas de lista.
+- **Value** (mono 700, 18px): datas dos períodos. **Control** (cond 600-700, 17-18px): texto de segmento, mini botão, "Fechar" da gaveta, link "Ver mais planos", texto de apoio e linhas de lista.
 - **Body** (cond 500, 16px, 1.35): texto corrido, legendas, campo em mono 16px. **Field compact** (mono 500, 15px): campo de data, filtro de planos, sigla do feriado na lista; também o slogan no celular.
 - **Label** (cond 600, 14px): rótulos de campo, dicas, selo, chip de mudança, dias da semana, meses da régua (esses em caixa alta com 0.04em). **Day tag** (cond 600, 13px): sigla de feriado dentro do dia da folha.
 
@@ -255,13 +293,13 @@ O CSS declara uma escala de seis variáveis (`--t-num` 80px, `--t-tit` 24px, `--
 
 ## Layout
 
-Uma coluna central de até 840px (`min(100%, 840px)`) sobre a casca, com padding lateral de 24px (16px no celular), 56px de respiro final e 22px entre blocos (24px no celular). Ordem fixa: cabeçalho de 64px com filete azul de 2px, barra de parâmetros, folha de resposta (número, picote, períodos), "Escolha um plano" com três cartões e "Copiar resumo", régua "Seu ano de relance", "Mais opções" recolhido, calendário do ano recolhido, "Como funciona" e feriados.
+Uma coluna central de até 840px (`min(100%, 840px)`) sobre a casca, com padding lateral de 24px (16px no celular), 96px de respiro final (mais a área segura do aparelho, para o botão flutuante não cobrir o último bloco) e 22px entre blocos (24px no celular). Ordem fixa: cabeçalho de 64px com filete azul de 2px, barra de parâmetros, folha de resposta (número, picote, períodos), "Escolha um plano" com três cartões e a área de ações, régua "Seu ano de relance", "Planos salvos" (só quando há algum), calendário do ano recolhido, "Como funciona" e feriados. "Mais opções" não ocupa lugar na coluna: é o botão fixo, centrado na base da tela a 16px da borda (ou da área segura).
 
-A barra de parâmetros quebra em linha: cidade e UF (flex 2), dias, períodos. Cartões de plano em grade auto-fit de 230px, 10px de vão. Calendário anual em 4 colunas, 2 no celular. Ritmo: 4, 6, 8, 10, 12, 14, 16, 18 e 24px. Ponto de quebra único: 640px (celular), mais 420px para segmentos de dias que esticam. Alvo mínimo de toque 44px.
+A barra de parâmetros quebra em linha: cidade e UF (flex 2), dias, períodos. Cartões de plano em grade auto-fit de 230px, 10px de vão; planos salvos em grade auto-fit de 340px (uma coluna no celular), 10px de vão. Área de ações: Copiar resumo e os botões secundários em linha de 10px de vão, cada um em linha própria no celular. Calendário anual em 4 colunas, 2 no celular. Ritmo: 4, 6, 8, 10, 12, 14, 16, 18 e 24px. Ponto de quebra único: 640px (celular), mais 420px para segmentos de dias que esticam. Alvo mínimo de toque 44px.
 
 ## Elevation & Depth
 
-Plano por padrão. Profundidade vem da troca de superfície (grafite, papel, trilho), de filetes de 1px e do picote. A única sombra é a das folhas (resposta e mês), que as descola da casca; não há sombras de hover.
+Plano por padrão. Profundidade vem da troca de superfície (grafite, papel, trilho), de filetes de 1px e do picote. A única sombra é a das folhas (resposta e mês), que as descola da casca; não há sombras de hover. O botão flutuante e a gaveta não projetam sombra: o botão se separa do conteúdo que rola por baixo com borda de 2px em grafite, e a gaveta com o véu grafite a 72% (`::backdrop`) e o filete de 1px do cabeçalho.
 
 ### Shadow Vocabulary
 - **Sheet lift** (`box-shadow: 0 8px 14px -8px rgb(0 0 0 / .55)`): folha de resposta e folha do mês.
@@ -269,17 +307,21 @@ Plano por padrão. Profundidade vem da troca de superfície (grafite, papel, tri
 
 ### Named Rules
 **The One Lift Rule.** Só as folhas projetam sombra. Cartões de plano, linhas e campos se distinguem por borda, fundo e cor.
+**The Ring, Not Shadow Rule.** O que flutua sobre a folha (botão "Mais opções") ganha anel de borda de 2px na cor da casca, nunca sombra; a gaveta ganha véu, nunca sombra.
 
 ## Shapes
 
-Cantos pequenos e práticos, em degraus reais do CSS: 8px nas folhas, painéis e na barra de parâmetros (`lg`; as folhas do calendário só nos cantos superiores, 8px 8px 0 0, como folha pendurada); 6px em cartões de plano e na placa do logo (`md`); 4px em controles (`sm`); 3px em dias de calendário, selos, chip de mudança e pista da régua (`cell`, usado em seis lugares, degrau legítimo); 2px em quadradinhos de legenda (`xs`); 1px apenas na marca de feriado da régua (`hairline`, acidental por natureza: é a ponta de uma barra de 3px e não deve ser herdado por componente novo); 50% em pontos e nos recortes do picote.
+Cantos pequenos e práticos, em degraus reais do CSS: 8px nas folhas, painéis, na barra de parâmetros e no botão flutuante "Mais opções" (`lg`: a pílula é de canto de 8px, não totalmente arredondada; também os cantos superiores da gaveta, 8px 8px 0 0; as folhas do calendário só nos cantos superiores, 8px 8px 0 0, como folha pendurada); 6px em cartões de plano, itens de plano salvo e na placa do logo (`md`); 4px em controles, botões secundários e mini botões (`sm`); 3px em dias de calendário, selos, chip de mudança e pista da régua (`cell`, usado em seis lugares, degrau legítimo); 2px em quadradinhos de legenda (`xs`); 1px apenas na marca de feriado da régua (`hairline`, acidental por natureza: é a ponta de uma barra de 3px e não deve ser herdado por componente novo); 50% em pontos e nos recortes do picote.
 
 Silhueta recorrente: o picote, tracejado de 3px com recortes semicirculares de 22px na cor da casca nas bordas da folha de resposta; faixa de encadernação azul de 8px com furos redondos no topo da folha do mês.
 
 ## Components
 
 ### Buttons
-- **Primary** (`button-primary`): "Copiar resumo", azul, texto branco, 52px, 4px, 21px/700, hover em `azul-escuro`. No celular ocupa a largura toda. Botão "Adicionar" no painel: 44px, 18px/700.
+- **Primary** (`button-primary`): "Copiar resumo", azul, texto branco, 52px, 4px, 21px/700, hover em `azul-escuro`; ao copiar, o rótulo vira "Copiado" por 1,8s. No celular ocupa a largura toda. Botão "Adicionar" na gaveta: 44px, 18px/700.
+- **Secondary** (`button-secondary`): "Salvar PDF", "Adicionar ao calendário (.ics)" e "Salvar plano", sobre a casca. Sem fundo, contorno de 1px em `sobre-grafite`, texto branco, 52px, 4px, 20px de padding lateral, 18px/700, ícone de traço de 16px à esquerda com 8px de vão; hover em `grafite-3`. Linha própria sob o primário (10px de vão), uma por linha no celular. "Salvar plano" alterna com `aria-pressed`: pressionado vira branco com texto tinta, o ícone de marcador preenchido e o rótulo "Plano salvo" (estado por texto, ícone e cor). Desabilitado a 60% de opacidade quando há 12 planos salvos, com aviso em texto ligado por `aria-describedby`.
+- **Floating** (`button-floating`): "Mais opções", fixo, centrado na base (16px da borda ou da área segura, z-index 10), azul, texto branco, 48px, 24px de padding lateral, raio `lg` de 8px, borda de 2px em `grafite`, sem sombra, 18px/700, ícone de ajustes de 16px; hover em `azul-escuro`. `aria-haspopup="dialog"` e `aria-expanded` acompanham a gaveta.
+- **Mini** (`button-mini`): botões do item salvo ("Copiar", "PDF", "Calendário", "Remover") e "Fechar" da gaveta: branco, contorno de 1px (`controle`), 44px, 4px, 12-14px de padding lateral, 17px/600, hover em `trilho`. Os rótulos curtos levam texto só para leitor de tela com o nome do plano.
 - **Segment / chip** (`button-segment`): branco com contorno de 1px (`controle`), 44px, 17px/600; pressionado vira azul preenchido. Meses em grade de 4. Períodos usam rádio escondido sob o segmento ("até 1/2/3").
 - **Link** : "Ver mais planos", texto branco sublinhado (4px de recuo, traço em `picote`), 44px de alvo.
 
@@ -301,8 +343,17 @@ Sem fundo próprio, direto sobre a casca: meses em caixa alta 14px, pista `grafi
 ### Month sheet and calendar
 Folha branca com faixa azul de 8px e furos; dias em grade de 7: férias azul/branco, folga `trilho`, feriado âmbar com sigla, dia-chave com ponto de tinta no canto, dia indisponível `divisor` riscado. O calendário do ano usa os mesmos códigos em meses de 4 colunas.
 
-### More options
-Painel trilho de 8px, cabeçalho de 60px com título de 24px e resumo à direita (oculto no celular), seta que gira 180 graus; dentro, seções recolhíveis separadas por filete de 1px.
+### Actions (área de ações do plano)
+Abaixo dos cartões, 16px de margem: Copiar resumo (azul) e, em linha própria, Salvar PDF, Adicionar ao calendário (.ics) e Salvar plano (botões secundários). Depois o aviso do art. 136 em 16px, `sobre-grafite`, até 70ch (e, se o limite de 12 for atingido, o aviso de lista cheia). Salvar PDF abre a impressão do navegador (ver Print sheet); o calendário baixa `ferias-AAAA.ics`.
+
+### Saved plans ("Planos salvos")
+Bloco recolhível sob as ações, aberto por padrão no desktop e fechado no celular, com título de 24px, filete de `divisor-escuro` e seta que gira. Mostra só quando há planos. Cada item (`saved-item`) é um cartão branco de 6px, 10px/14px de padding, sem borda nem sombra: figura de dias fora em mono 800 28px com "dias fora do trabalho" em 18px, ano em mono 14px à direita, uma linha por período em 16px `tinta-2` com a duração em mono 14px, e a linha de mini botões (6px de vão). É um retrato de datas e dias guardado no navegador (localStorage), mais novo primeiro, no máximo 12. Remover leva o foco ao título da lista, ou ao plano selecionado se a lista esvaziou.
+
+### Drawer ("Mais opções")
+Gaveta modal em `<dialog>` aberta com `showModal()`: base da tela, largura de até 840px, até 85% da altura, fundo `trilho`, cantos superiores de 8px, rolagem interna sem encadeamento. Véu `grafite` a 72%; o fundo da página não rola. Cabeçalho fixo de `trilho` com filete de 1px (`divisor`), título de 24px e botão "Fechar" (mini com ícone de cruz); corpo com 16px de padding, seções recolhíveis separadas por filete de 1px. Fecha com Esc, com o botão ou clicando no véu, e devolve o foco ao botão flutuante; o título nomeia o diálogo por `aria-labelledby`. Entra por deslize de 32px em 280ms.
+
+### Print sheet (PDF)
+Folha de impressão fora da tela (`display:none`), só visível em `@media print` com `@page` A4 e margem de 18mm; esconde tudo o mais, inclusive botão flutuante e gaveta. Papel branco, texto tinta, cores exatas: logo de 48px, ano em 24px `tinta-2`, número em mono 800 80px com "dias fora do trabalho" em 32px, frase de 19px, lista de períodos sob um picote tracejado de 3px (sem recortes), cada um com título de 22px, datas em mono 18px e "Sem trabalhar de..." em 16px, sem quebra no meio do item, o aviso do art. 136 e a data de geração em 14px. Sem sombras, sem azul de interface; fica fora da árvore de acessibilidade (`aria-hidden`).
 
 ## Do's and Don'ts
 
@@ -312,12 +363,17 @@ Painel trilho de 8px, cabeçalho de 60px com título de 24px e resumo à direita
 - **Do** usar azul só para férias, ação e seleção; âmbar só para feriado e mudança.
 - **Do** compor números em JetBrains Mono tabular e palavras em Barlow Condensed.
 - **Do** dar a todo estado um segundo canal (texto, ícone, ponto, risco, barra, contorno).
-- **Do** manter alvos de 44px e foco visível de 2px azul.
-- **Do** reutilizar os degraus documentados de tamanho (13 a 32px, 68/80px) e de raio (1, 2, 3, 4, 6, 8px, 50%).
+- **Do** manter alvos de 44px (52px nos botões de ação do plano, 48px no flutuante) e foco visível de 2px azul.
+- **Do** manter um único primário azul por área de ações; as demais ações do plano são secundárias em contorno.
+- **Do** abrir opções adicionais na gaveta modal com foco devolvido ao botão que a abriu, `aria-haspopup`/`aria-expanded` no botão e título ligado por `aria-labelledby`.
+- **Do** envolver toda transição e animação em `prefers-reduced-motion: no-preference`; a reordenação dos planos também é pulada quando o usuário pede menos movimento.
+- **Do** reutilizar os degraus documentados de tamanho (13 a 32px, 68/80px) e de raio (1, 2, 3, 4, 6, 8px, 50%); a pílula flutuante usa o raio `lg` de 8px.
 
 ### Don't:
 - **Don't** criar tema claro ou variante de casca; a decisão de tema único é do usuário.
 - **Don't** trocar nome, slogan ou logo.
 - **Don't** usar âmbar como decoração ou seleção, nem azul como fundo de seção.
+- **Don't** dar sombra ao botão flutuante, à gaveta ou aos botões; o botão flutuante se separa por borda de 2px.
+- **Don't** colocar "Mais opções" de volta como painel na coluna, nem criar um segundo botão flutuante.
 - **Don't** adicionar sombras além das folhas, nem reintroduzir rail lateral, tabela de planos, cartões com código de barras ou a imagem de praia do hero.
 - **Don't** usar outras famílias tipográficas nem texto abaixo de 14px em rótulos novos.
