@@ -14,7 +14,10 @@ interface Props {
 /** Deixa digitar livremente (ex.: "2" a caminho de "20"); só o valor já limitado vai para o estado. */
 export function NumberField({ id, value, min, max, fallback, onChange }: Props) {
   const [text, setText] = useState(String(value));
-  useEffect(() => { setText(String(value)); }, [value]);
+  // Sincroniza só mudanças externas; não sobrescreve o que o usuário digita (ex.: "2" a caminho de "20").
+  useEffect(() => {
+    setText((t) => (clamp(parseInt(t, 10) || fallback, min, max) === value ? t : String(value)));
+  }, [value, fallback, min, max]);
   return (
     <input
       type="number" id={id} min={min} max={max} step={1} value={text}
