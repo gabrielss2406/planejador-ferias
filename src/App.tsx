@@ -1,5 +1,5 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
-import logo from './assets/logo.png';
+import logo from './assets/logo-negativo.png';
 import { defaultPeriod, planKey } from './components/format';
 import { HolidayList } from './components/HolidayList';
 import { HowItWorks } from './components/HowItWorks';

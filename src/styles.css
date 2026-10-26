@@ -37,8 +37,8 @@ button,input,select{font:inherit;color:inherit}
 
 /* ---- cabeçalho e coluna ---- */
 .top{display:flex;align-items:center;gap:22px;height:64px;padding:0 var(--pad);border-bottom:2px solid var(--azul)}
-.brand{margin:0;display:flex;background:var(--papel);border-radius:6px;padding:3px 10px}
-.brand img{display:block;height:38px;width:auto}
+.brand{margin:0;display:flex}
+.brand img{display:block;height:46px;width:auto}
 .slogan{font:600 18px var(--cond);color:var(--sobre-grafite);letter-spacing:.02em}
 .page{width:min(100%,840px);margin:0 auto;padding:20px var(--pad) calc(96px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:22px;min-width:0}
 .page h2{font:700 var(--t-tit)/1.15 var(--cond);letter-spacing:.01em}
@@ -282,7 +282,7 @@ body:has(.drawer[open]){overflow:hidden}
   :root{--pad:16px;--t-num:68px;--t-tit:22px}
   .top{gap:14px}
   .slogan{font-size:15px;line-height:1.15}
-  .brand img{height:34px}
+  .brand img{height:40px}
   .page{gap:24px;padding-top:16px}
   .answer-unit{font-size:26px}
   .answer-sentence{font-size:18px}
