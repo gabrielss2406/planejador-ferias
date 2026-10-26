@@ -23,9 +23,14 @@ export function KeyDatesForm({ custom, onChange }: Props) {
     setLabel(''); setStart(''); setEnd('');
   };
 
+  const [open, setOpen] = useState(custom.length > 0);
+  const count = custom.length;
+
   return (
-    <fieldset>
-      <legend>Datas-chave</legend>
+    <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+      <summary>{count > 0 ? `Datas-chave (${count})` : 'Datas-chave'}</summary>
+      <div className="det-body">
+      <p className="hint lead-hint">Data-chave é um dia ou período que pesa na escolha: você quer estar de folga, não pode tirar férias ou tem uma folga extra (como feriado local).</p>
       <div className="field">
         <label htmlFor="kLabel">O que é</label>
         <input type="text" id="kLabel" placeholder="Ex.: casamento da Ana" value={label} onChange={(e) => setLabel(e.target.value)} />
@@ -48,7 +53,7 @@ export function KeyDatesForm({ custom, onChange }: Props) {
           <option value="folga">Folga extra (feriado local, recesso)</option>
         </select>
       </div>
-      <button type="button" className="btn" onClick={add}>Adicionar data</button>
+      <button type="button" className="btn add" onClick={add}>Adicionar data</button>
       <ul className="keys">
         {custom.map((c) => {
           const a = parseISO(c.start), b = parseISO(c.end);
@@ -56,11 +61,12 @@ export function KeyDatesForm({ custom, onChange }: Props) {
           return (
             <li key={c.id}>
               <span>{c.label || 'Sem nome'}<br /><span className="t">{d} · {TYPE_LABEL[c.type]}</span></span>
-              <button type="button" aria-label="Remover" onClick={() => onChange(custom.filter((x) => x.id !== c.id))}>×</button>
+              <button type="button" aria-label={`Remover data-chave: ${c.label || 'Sem nome'}`} onClick={() => onChange(custom.filter((x) => x.id !== c.id))}><span aria-hidden="true">×</span></button>
             </li>
           );
         })}
       </ul>
-    </fieldset>
+      </div>
+    </details>
   );
 }

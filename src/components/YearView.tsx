@@ -1,9 +1,9 @@
 import { fmt, idx, isWeekend, MN, wd } from '../lib/dates';
 import type { PlanOption, PlanResult } from '../lib/types';
 
-interface Sets { vac: Set<number>; ext: Set<number>; must: Set<number> }
+export interface Sets { vac: Set<number>; ext: Set<number>; must: Set<number> }
 
-function setsFor(r: PlanOption | null, result: PlanResult): Sets {
+export function setsFor(r: PlanOption | null, result: PlanResult): Sets {
   const vac = new Set<number>(), ext = new Set<number>();
   r?.periods.forEach((p) => {
     for (let d = p.xs; d <= p.xe; d++) (d >= p.s && d <= p.e ? vac : ext).add(d);
@@ -11,7 +11,7 @@ function setsFor(r: PlanOption | null, result: PlanResult): Sets {
   return { vac, ext, must: new Set(result.must) };
 }
 
-function dayCls(i: number, result: PlanResult, sets: Sets) {
+export function dayCls(i: number, result: PlanResult, sets: Sets) {
   const c: string[] = [];
   const isH = result.hol.has(i), inPlan = sets.vac.has(i) || sets.ext.has(i);
   if (sets.vac.has(i)) c.push('v');
@@ -40,14 +40,12 @@ export function Ribbon({ year, selected, result }: Props) {
   const sets = setsFor(selected, result);
 
   return (
-      <section className="card ribbon-card" aria-live="polite">
+      <section className="card ribbon-card">
         <div className="ribbon-head">
           <h2>{`Seu ${year}${selected ? ' com a opção selecionada' : ''}`}</h2>
-          <span>
-            {selected ? `${selected.off} dias fora do trabalho com ${result.N} dias de férias` : 'Sem sugestão para mostrar'}
-          </span>
+          {!selected && <span>Sem sugestão para mostrar</span>}
         </div>
-        <div className="ribbon" style={{ '--n': total } as React.CSSProperties}>
+        <div className="ribbon" role="img" aria-label={selected ? `Faixa do ano ${year}. Férias: ${selected.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ')}. ${selected.off} dias fora do trabalho.` : `Faixa do ano ${year} sem sugestão`} style={{ '--n': total } as React.CSSProperties}>
           {Array.from({ length: total }, (_, k) => {
             const i = j1 + k;
             return <i key={i} className={dayCls(i, result, sets)} title={title(i, result)} />;
@@ -64,10 +62,39 @@ export function Ribbon({ year, selected, result }: Props) {
           <span><b className="h" />Feriado</span>
           <span><b />Fim de semana</span>
           <span><b className="k" />Data-chave coberta</span>
+          <span><b className="hh" />Feriado na folga</span>
           <span><b className="a" />Data bloqueada</span>
         </div>
       </section>
   );
+}
+
+/** "1 a 3 e 9" a partir de dias do mês (1-based), agrupando sequências. */
+function ranges(days: number[]) {
+  const out: string[] = [];
+  for (let i = 0; i < days.length; i++) {
+    let j = i;
+    while (days[j + 1] === days[j] + 1) j++;
+    out.push(j === i ? `${days[i]}` : j === i + 1 ? `${days[i]} e ${days[j]}` : `${days[i]} a ${days[j]}`);
+    i = j;
+  }
+  return out.join(', ');
+}
+
+/** Texto só para leitor de tela: o que acontece em cada mês, em vez de 365 células com rótulo. */
+function monthSummary(first: number, dim: number, result: PlanResult, sets: Sets) {
+  const vac: number[] = [], ext: number[] = [], hol: string[] = [];
+  for (let d = 1; d <= dim; d++) {
+    const i = first + d - 1;
+    if (sets.vac.has(i)) vac.push(d); else if (sets.ext.has(i)) ext.push(d);
+    const h = result.hol.get(i);
+    if (h) hol.push(`dia ${d}, ${h.name}`);
+  }
+  const parts = [];
+  if (vac.length) parts.push(`Férias nos dias ${ranges(vac)}.`);
+  if (ext.length) parts.push(`Folga emendada nos dias ${ranges(ext)}.`);
+  if (hol.length) parts.push(`Feriados: ${hol.join('; ')}.`);
+  return parts.join(' ') || 'Sem férias nem feriados neste mês.';
 }
 
 export function Calendar({ year, selected, result }: Props) {
@@ -76,13 +103,14 @@ export function Calendar({ year, selected, result }: Props) {
   return (
     <>
       <div className="cal-head"><h2>{`Calendário de ${year}`}</h2><span className="hint" /></div>
-      <section className="cal">
+      <section className="cal" aria-label={`Calendário de ${year}, mês a mês`}>
         {MN.map((m, k) => {
           const first = idx(year, k, 1), dim = idx(year, k + 1, 1) - first, lead = wd(first);
           return (
-            <div className="month" key={m}>
-              <h3>{m}</h3>
-              <div className="grid7">
+            <div className="month" key={m} role="group" aria-labelledby={`mes-${k}`}>
+              <h3 id={`mes-${k}`}>{m}</h3>
+              <p className="sr">{monthSummary(first, dim, result, sets)}</p>
+              <div className="grid7" aria-hidden="true">
                 {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((x, j) => <span key={j} className="wdh">{x}</span>)}
                 {Array.from({ length: lead }, (_, b) => <span key={'b' + b} />)}
                 {Array.from({ length: dim }, (_, d) => (
