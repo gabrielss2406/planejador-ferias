@@ -79,10 +79,10 @@ export default function App() {
 
       <main className="page" id="plano">
         <QuickParams settings={settings} update={update} result={result} />
+        <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
         <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick} />
         <PlanBoard result={result} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
           selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen} />
-        <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
         <MoreOptions settings={settings} update={update} />
 
         <details className="cal-block" open={calOpen} onToggle={(e) => setCalOpen(e.currentTarget.open)}>
