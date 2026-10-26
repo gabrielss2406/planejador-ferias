@@ -1,14 +1,12 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import logo from './assets/logo.png';
-import { BoardingCards } from './components/BoardingCards';
 import { defaultPeriod, planKey } from './components/format';
-import { Hero } from './components/Hero';
 import { HolidayList } from './components/HolidayList';
 import { HowItWorks } from './components/HowItWorks';
 import { MonthSheet } from './components/MonthSheet';
-import { KeyStatus } from './components/planParts';
 import { PlanBoard, type Change } from './components/PlanBoard';
-import { SettingsPanel } from './components/SettingsPanel';
+import { MoreOptions, QuickParams } from './components/SettingsPanel';
+import { Ticket } from './components/Ticket';
 import { Calendar } from './components/YearView';
 import { YearRuler } from './components/YearRuler';
 import { useSettings } from './hooks/useSettings';
@@ -33,10 +31,15 @@ export default function App() {
   // mudar qualquer parâmetro volta a seleção para a melhor opção
   useEffect(() => { setSelIdx(0); }, [result]);
 
-  const list = result.groups[tab] || [];
+  // filtro sem planos (ex.: depois de mudar um parâmetro) volta para "qualquer número"
+  const eff: GroupKey = result.groups[tab].length ? tab : 'all';
+  const list = result.groups[eff] || [];
   const selected = list[selIdx] ?? list[0] ?? null;
   const selKey = selected ? planKey(selected) : '';
-  const per = selected ? (perSel?.key === selKey ? Math.min(perSel.i, selected.periods.length - 1) : defaultPeriod(selected)) : 0;
+  const active = selected && perSel?.key === selKey ? Math.min(perSel.i, selected.periods.length - 1) : null;
+  const per = active ?? (selected ? defaultPeriod(selected) : 0);
+  // o calendário do ano abre sozinho no desktop; no celular fica recolhido
+  const [calOpen, setCalOpen] = useState(() => !!window.matchMedia?.('(min-width: 981px)').matches);
 
   // Linhas que mudaram desde a última vez que o usuário olhou a tabela: o que foi visto por último
   // fica em baseline e só é comparável com o mesmo ano.
@@ -65,7 +68,7 @@ export default function App() {
     setChanges((c) => (Object.keys(c).length ? {} : c));
   }, []);
 
-  const pick = (i: number) => { if (selected) setPerSel({ key: selKey, i }); };
+  const pick = (i: number | null) => { if (selected) setPerSel(i === null ? null : { key: selKey, i }); };
 
   return (
     <div className="app">
@@ -74,45 +77,25 @@ export default function App() {
         <p className="slogan">Mais tempo para o que importa</p>
       </header>
 
-      <main className="center" id="plano">
-        <Hero selected={selected} result={result} />
-        {selected ? (
-          <>
-            <MonthSheet period={selected.periods[per]} number={per + 1} result={result} />
-            <div className="perf" aria-hidden="true" />
-            <BoardingCards option={selected} position={selIdx + 1} active={per} onPick={pick} />
-          </>
-        ) : (
-          <section className="sheet sheet-empty" aria-label="Folha do período">
-            <p>Quando houver um plano, a folha do período aparece aqui.</p>
-          </section>
-        )}
-      </main>
+      <main className="page" id="plano">
+        <QuickParams settings={settings} update={update} result={result} />
+        <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick} />
+        <PlanBoard result={result} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
+          selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen} />
+        <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
+        <MoreOptions settings={settings} update={update} />
 
-      <PlanBoard result={result} year={deferred.year} tab={tab} onTab={(t) => { setTab(t); setSelIdx(0); }}
-        selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen} />
-
-      <footer className="ruler">
-        <YearRuler year={deferred.year} selected={selected} result={result} />
-      </footer>
-
-      <div className="below">
-        <Calendar year={deferred.year} selected={selected} result={result} />
-        <div className="below-cols">
-          <HowItWorks />
-          <div className="below-stack">
-            <HolidayList result={result} year={deferred.year} />
-            {selected && deferred.custom.some((c) => c.type === 'incluir') && (
-              <section className="paper keys-status" aria-labelledby="chaves-t">
-                <h2 id="chaves-t">Datas-chave no plano selecionado</h2>
-                <KeyStatus r={selected} custom={deferred.custom} />
-              </section>
-            )}
+        <details className="cal-block" open={calOpen} onToggle={(e) => setCalOpen(e.currentTarget.open)}>
+          <summary>Ver calendário do ano</summary>
+          <div className="cal-body">
+            {selected && <MonthSheet period={selected.periods[per]} number={per + 1} result={result} />}
+            <Calendar year={deferred.year} selected={selected} result={result} />
           </div>
-        </div>
-      </div>
+        </details>
 
-      <SettingsPanel settings={settings} update={update} result={result} />
+        <HowItWorks />
+        <HolidayList result={result} year={deferred.year} />
+      </main>
     </div>
   );
 }

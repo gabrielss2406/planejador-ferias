@@ -1,11 +1,14 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { fmt } from '../lib/dates';
 import type { GroupKey, PlanOption, PlanResult } from '../lib/types';
 import { Icon } from './Icon';
 import { planKey, plural } from './format';
 import { CopyButton, summaryText, tradeoff } from './planParts';
 
-const TABS: [GroupKey, string][] = [['all', 'Melhores'], ['1', '1 período'], ['2', '2 períodos'], ['3', '3 períodos']];
+const FILTERS: [GroupKey, string][] = [
+  ['all', 'qualquer número de períodos'], ['1', '1 período'], ['2', '2 períodos'], ['3', '3 períodos'],
+];
+const TOP = 3;
 
 export interface Change { kind: 'up' | 'down' | 'new'; n: number }
 
@@ -26,24 +29,28 @@ const changeText = (c: Change) =>
 
 export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract }: Props) {
   const list = result.groups[tab] || [];
-  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [more, setMore] = useState(false);
+  const canMore = result.groups.all.length > TOP || tab !== 'all';
+  const open = more && canMore;
+  const shown = open ? list : list.slice(0, TOP);
   const rows = useRef(new Map<string, HTMLElement>());
-  const tops = useRef(new Map<string, number>());
+  const tops = useRef(new Map<string, { x: number; y: number }>());
   const lastTab = useRef(tab);
 
-  // Reordena no lugar: cada linha tem a identidade do plano (datas de início) e desliza da posição
+  // Reordena no lugar: cada cartão tem a identidade do plano (datas de início) e desliza da posição
   // antiga para a nova (FLIP com Web Animations). Sem animação com prefers-reduced-motion.
   useLayoutEffect(() => {
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const sameList = lastTab.current === tab;
     lastTab.current = tab;
-    const next = new Map<string, number>();
+    const next = new Map<string, { x: number; y: number }>();
     rows.current.forEach((el, k) => {
-      next.set(k, el.offsetTop);
+      const pos = { x: el.offsetLeft, y: el.offsetTop };
+      next.set(k, pos);
       const before = tops.current.get(k);
-      if (!reduce && sameList && before !== undefined && before !== el.offsetTop && typeof el.animate === 'function') {
+      if (!reduce && sameList && before && (before.x !== pos.x || before.y !== pos.y) && typeof el.animate === 'function') {
         el.animate(
-          [{ transform: `translateY(${before - el.offsetTop}px)` }, { transform: 'translateY(0)' }],
+          [{ transform: `translate(${before.x - pos.x}px,${before.y - pos.y}px)` }, { transform: 'translate(0,0)' }],
           { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' },
         );
       }
@@ -51,70 +58,58 @@ export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected
     tops.current = next;
   });
 
-  const onTabKey = (e: React.KeyboardEvent) => {
-    const enabled = TABS.filter(([k]) => result.groups[k].length).map(([k]) => k);
-    const cur = enabled.indexOf(tab);
-    let next = -1;
-    if (e.key === 'ArrowRight') next = (cur + 1) % enabled.length;
-    else if (e.key === 'ArrowLeft') next = (cur - 1 + enabled.length) % enabled.length;
-    else if (e.key === 'Home') next = 0;
-    else if (e.key === 'End') next = enabled.length - 1;
-    if (next < 0 || !enabled.length) return;
-    e.preventDefault();
-    onTab(enabled[next]);
-    tabRefs.current[enabled[next]]?.focus();
+  const toggle = () => {
+    if (open && selIdx >= TOP) onSelect(0);
+    setMore(!open);
   };
 
   return (
-    <section className="side" aria-labelledby="planos-t" onPointerEnter={onInteract} onFocusCapture={onInteract} onClick={onInteract}>
-      <h2 id="planos-t" className="sr">Planos de férias</h2>
-      <div className="tabs" role="tablist" aria-label="Filtrar por número de períodos" onKeyDown={onTabKey}>
-        {TABS.map(([key, label]) => (
-          <button key={key} id={`tab-${key}`} ref={(el) => { tabRefs.current[key] = el; }} className="tab" role="tab"
-            aria-selected={tab === key} aria-controls="plans-panel" tabIndex={tab === key ? 0 : -1}
-            disabled={!result.groups[key].length} title={result.groups[key].length ? undefined : key === 'all' ? 'Nenhuma opção encontrada' : `Nenhuma opção com ${label.toLowerCase()}`}
-            onClick={() => onTab(key)}>
-            {label}{!result.groups[key].length && <span className="sr"> (sem opções)</span>}
+    <section className="plans-sec" aria-labelledby="planos-t" onPointerEnter={onInteract} onFocusCapture={onInteract} onClick={onInteract}>
+      <h2 id="planos-t">Escolha um plano</h2>
+      {shown.length > 0 && (
+        <div className="chips" role="radiogroup" aria-labelledby="planos-t">
+          {shown.map((r, i) => {
+            const k = planKey(r), ch = changes[k], on = i === selIdx, best = tab === 'all' && i === 0;
+            const ranges = r.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ');
+            return (
+              <label key={k} className={'plan' + (on ? ' on' : '')} ref={(el) => { if (el) rows.current.set(k, el); else rows.current.delete(k); }}>
+                <input type="radio" className="plan-radio" name="plano" checked={on} onChange={() => onSelect(i)}
+                  aria-label={`${best ? 'Melhor opção: ' : ''}Plano ${i + 1}, ${r.off} dias fora do trabalho, ${tradeoff(r)}. Férias: ${ranges}.${ch ? ` Mudou: ${ch.kind === 'new' ? 'plano novo' : `${ch.kind === 'up' ? 'mais' : 'menos'} ${plural(ch.n, 'dia', 'dias')} fora`}.` : ''}`} />
+                <span className="plan-top">
+                  <b>Plano {i + 1}</b>
+                  {best && <span className="badge">Melhor opção</span>}
+                  {ch && <span className={'plan-change ' + ch.kind} aria-hidden="true">{ch.kind !== 'new' && <Icon name={ch.kind} />}{changeText(ch)}</span>}
+                  {on && <span className="plan-on" aria-hidden="true"><Icon name="check" /></span>}
+                </span>
+                <span className="plan-off"><b className="mono">{r.off}</b> dias fora</span>
+                <span className="plan-meta">{plural(r.k, 'período', 'períodos')}</span>
+              </label>
+            );
+          })}
+        </div>
+      )}
+      {canMore && (
+        <div className="more-plans">
+          <button type="button" className="link-btn" aria-expanded={open} onClick={toggle}>
+            {open ? 'Ver só os 3 melhores' : 'Ver mais planos'}
           </button>
-        ))}
-      </div>
-      <div id="plans-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="board">
-        {!list.length ? (
-          <div className="empty">
-            <b>{result.error ?? 'Nenhuma combinação encontrada.'}</b>
-            <span>Tente liberar mais meses, ampliar a janela, remover datas bloqueadas ou permitir mais períodos.</span>
-          </div>
-        ) : (
-          <>
-            <div className="board-head" aria-hidden="true">
-              <span>Plano</span><span>Fora</span><span>Per.</span><span>Maior bloco</span>
-            </div>
-            <div className="plans" role="radiogroup" aria-label="Opções de plano de férias">
-              {list.map((r, i) => {
-                const k = planKey(r), ch = changes[k], on = i === selIdx, best = tab === 'all' && i === 0;
-                const biggest = Math.max(...r.periods.map((p) => p.L));
-                const ranges = r.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ');
-                return (
-                  <label key={k} className={'plan' + (on ? ' on' : '')} ref={(el) => { if (el) rows.current.set(k, el); else rows.current.delete(k); }}>
-                    <input type="radio" className="plan-radio" name="plano" checked={on} onChange={() => onSelect(i)}
-                      aria-label={`${best ? 'Melhor opção: ' : ''}Opção ${i + 1}, ${r.off} dias fora do trabalho, ${tradeoff(r)}. Férias: ${ranges}.${ch ? ` Mudou: ${ch.kind === 'new' ? 'plano novo' : `${ch.kind === 'up' ? 'mais' : 'menos'} ${plural(ch.n, 'dia', 'dias')} fora`}.` : ''}`} />
-                    {ch && <span className={'plan-change ' + ch.kind} aria-hidden="true">{ch.kind !== 'new' && <Icon name={ch.kind} />}{changeText(ch)}</span>}
-                    <span className="plan-name">
-                      <b>Opção {i + 1}</b>
-                      {best && <span className="badge">Melhor opção</span>}
-                      {on && <span className="mark"><Icon name="check" />Selecionado</span>}
-                    </span>
-                    <b className="num">{r.off} d</b>
-                    <b className="num">{r.k}</b>
-                    <b className="num">{biggest} d</b>
-                  </label>
-                );
-              })}
-            </div>
-          </>
-        )}
-      </div>
-      {selected && <CopyButton text={summaryText(selected, year, result.N)} />}
+          {open && (
+            <label className="filter">Mostrar planos com
+              <select value={tab} onChange={(e) => onTab(e.target.value as GroupKey)}>
+                {FILTERS.map(([key, label]) => (
+                  <option key={key} value={key} disabled={!result.groups[key].length}>{label}{result.groups[key].length ? '' : ' (nenhum)'}</option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
+      )}
+      {selected && (
+        <div className="act">
+          <CopyButton text={summaryText(selected, year, result.N)} />
+          <p className="art136">Quem define a época das férias é o empregador (CLT, art. 136): leve isto como uma proposta para negociar.</p>
+        </div>
+      )}
     </section>
   );
 }

@@ -6,7 +6,7 @@ import type { KeyDate, PlanOption } from '../lib/types';
 export function summaryText(r: PlanOption, year: number, N: number) {
   const lines = [`Plano de férias ${year}: ${N} dias → ${r.off} dias fora do trabalho`];
   r.periods.forEach((p, i) => {
-    lines.push(`${i + 1}) ${fmt(p.s)} a ${fmt(p.e)} (${p.L} dias) — folga contínua de ${fmt(p.xs)} a ${fmt(p.xe)}`);
+    lines.push(`${i + 1}) ${fmt(p.s)} a ${fmt(p.e)} (${p.L} dias) — sem trabalhar de ${fmt(p.xs)} a ${fmt(p.xe)}`);
   });
   return lines.join('\n');
 }
@@ -15,7 +15,7 @@ export function summaryText(r: PlanOption, year: number, N: number) {
 export function tradeoff(r: PlanOption) {
   const biggest = Math.max(...r.periods.map((p) => p.L));
   if (r.k === 1) return `só 1 período de ${biggest} dias`;
-  return `${r.k} períodos, maior bloco: ${biggest} dias`;
+  return `${r.k} períodos, maior período: ${biggest} dias`;
 }
 
 export function KeyStatus({ r, custom }: { r: PlanOption; custom: KeyDate[] }) {
@@ -31,7 +31,7 @@ export function KeyStatus({ r, custom }: { r: PlanOption; custom: KeyDate[] }) {
         let n = 0, t = 0;
         for (let d = a; d <= b; d++) { t++; if (covered(d)) n++; }
         const name = c.label || 'Data-chave';
-        if (n === t) return <span key={c.id} className="ok"><Icon name="check" />{name} fica na folga</span>;
+        if (n === t) return <span key={c.id} className="ok"><Icon name="check" />{name} fica nos dias sem trabalhar</span>;
         if (n > 0) return <span key={c.id} className="part"><Icon name="half" />{name}: cobre {n} de {t} dias</span>;
         return <span key={c.id} className="no"><Icon name="cross" />{name} fica fora</span>;
       })}

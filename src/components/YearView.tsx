@@ -52,7 +52,7 @@ function monthSummary(first: number, dim: number, result: PlanResult, sets: Sets
   }
   const parts = [];
   if (vac.length) parts.push(`Férias nos dias ${ranges(vac)}.`);
-  if (ext.length) parts.push(`Folga emendada nos dias ${ranges(ext)}.`);
+  if (ext.length) parts.push(`Dias seguidos sem trabalhar: ${ranges(ext)}.`);
   if (hol.length) parts.push(`Feriados: ${hol.join('; ')}.`);
   return parts.join(' ') || 'Sem férias nem feriados neste mês.';
 }
@@ -64,14 +64,14 @@ export function Calendar({ year, selected, result }: Props) {
 
   return (
     <section className="cal-wrap" aria-labelledby="cal-t">
-      <h2 id="cal-t">{`Calendário de ${year}`}</h2>
+      <h3 id="cal-t">{`Mês a mês em ${year}`}</h3>
       <p className="legend" aria-hidden="true">
         <span><b className="v" />Férias</span>
-        <span><b className="x" />Folga emendada</span>
+        <span><b className="x" />Dias seguidos sem trabalhar</span>
         <span><b className="h" />Feriado</span>
         <span><b className="w" />Fim de semana</span>
-        <span><b className="k" />Data-chave coberta</span>
-        <span><b className="hh" />Feriado na folga</span>
+        <span><b className="k" />Data-chave incluída</span>
+        <span><b className="hh" />Feriado nos dias sem trabalhar</span>
         <span><b className="a" />Data bloqueada</span>
       </p>
       <div className="cal" role="group" aria-label={`Calendário de ${year}, mês a mês`}>

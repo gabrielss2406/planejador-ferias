@@ -26,16 +26,16 @@ export function MonthSheet({ period: p, number, result }: Props) {
 
   return (
     <section className="sheet" aria-labelledby="folha-t" key={`${p.s}-${p.e}`}>
-      <h2 id="folha-t" className="sheet-h">
+      <h3 id="folha-t" className="sheet-h">
         <span>Período {number} · {short(p.s)} a {short(p.e)}/{year}</span>
-        <em>{plural(p.L, 'dia', 'dias')} de férias · folga contínua {rest} dias</em>
-      </h2>
+        <em>{plural(p.L, 'dia', 'dias')} de férias · {rest} dias seguidos sem trabalhar</em>
+      </h3>
       <p className="sr">
-        Férias de {fmt(p.s)} a {fmt(p.e)}. Folga contínua de {fmt(p.xs)} a {fmt(p.xe)}.
+        Férias de {fmt(p.s)} a {fmt(p.e)}. Sem trabalhar de {fmt(p.xs)} a {fmt(p.xe)}.
         {hols.length > 0 && ` Feriados: ${hols.map((d) => `${fmt(d)}, ${result.hol.get(d)!.name}`).join('; ')}.`}
       </p>
       <div className="sheet-wk" aria-hidden="true">
-        {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((x) => <span key={x}>{x}</span>)}
+        {['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'].map((x) => <span key={x}>{x}</span>)}
       </div>
       <div className="sheet-days" aria-hidden="true">
         {Array.from({ length: lead }, (_, b) => <span key={'b' + b} className="e" />)}
@@ -53,7 +53,7 @@ export function MonthSheet({ period: p, number, result }: Props) {
       </div>
       <p className="sheet-leg">
         <span><i className="b" />Férias</span>
-        <span><i className="g" />Folga emendada</span>
+        <span><i className="g" />Dias seguidos sem trabalhar</span>
         {holOut.length > 0 && <span><i className="a" />Feriado: {list(holOut)}</span>}
         {holIn.length > 0 && <span><i className="hh" />Feriado dentro das férias: {list(holIn)}</span>}
         {keyIn && <span><i className="k" />Data-chave</span>}

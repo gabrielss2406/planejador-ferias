@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { fmt, parseISO } from '../lib/dates';
+import { Icon } from './Icon';
 import type { KeyDate, KeyDateType } from '../lib/types';
 
 const TYPE_LABEL: Record<KeyDateType, string> = {
-  incluir: 'quero folga', evitar: 'bloqueada', folga: 'folga extra',
+  incluir: 'quero ficar sem trabalhar', evitar: 'bloqueada', folga: 'folga extra',
 };
 
 interface Props {
@@ -30,7 +31,7 @@ export function KeyDatesForm({ custom, onChange }: Props) {
     <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary>{count > 0 ? `Datas-chave (${count})` : 'Datas-chave'}</summary>
       <div className="det-body">
-      <p className="hint lead-hint">Data-chave é um dia ou período que pesa na escolha: você quer estar de folga, não pode tirar férias ou tem uma folga extra (como feriado local).</p>
+      <p className="hint lead-hint">Data-chave é um dia ou período que pesa na escolha: você quer estar sem trabalhar, não pode tirar férias ou tem uma folga extra (como feriado local).</p>
       <div className="field">
         <label htmlFor="kLabel">O que é</label>
         <input type="text" id="kLabel" placeholder="Ex.: casamento da Ana" value={label} onChange={(e) => setLabel(e.target.value)} />
@@ -48,7 +49,7 @@ export function KeyDatesForm({ custom, onChange }: Props) {
       <div className="field">
         <label htmlFor="kType">Como tratar</label>
         <select id="kType" value={type} onChange={(e) => setType(e.target.value as KeyDateType)}>
-          <option value="incluir">Quero estar de folga</option>
+          <option value="incluir">Quero estar sem trabalhar</option>
           <option value="evitar">Não posso tirar férias</option>
           <option value="folga">Folga extra (feriado local, recesso)</option>
         </select>
@@ -61,7 +62,7 @@ export function KeyDatesForm({ custom, onChange }: Props) {
           return (
             <li key={c.id}>
               <span>{c.label || 'Sem nome'}<br /><span className="t">{d} · {TYPE_LABEL[c.type]}</span></span>
-              <button type="button" aria-label={`Remover data-chave: ${c.label || 'Sem nome'}`} onClick={() => onChange(custom.filter((x) => x.id !== c.id))}><span aria-hidden="true">×</span></button>
+              <button type="button" aria-label={`Remover data-chave: ${c.label || 'Sem nome'}`} onClick={() => onChange(custom.filter((x) => x.id !== c.id))}><Icon name="cross" /></button>
             </li>
           );
         })}
