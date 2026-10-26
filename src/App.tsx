@@ -12,6 +12,7 @@ import { QuickParams } from './components/SettingsPanel';
 import { Ticket } from './components/Ticket';
 import { Calendar } from './components/YearView';
 import { YearRuler } from './components/YearRuler';
+import { arrange, useDiscarded } from './hooks/useDiscarded';
 import { useSavedPlans } from './hooks/useSavedPlans';
 import { useSettings } from './hooks/useSettings';
 import { plan } from './lib/planner';
@@ -47,7 +48,9 @@ export default function App() {
 
   // filtro sem planos (ex.: depois de mudar um parâmetro) volta para "qualquer número"
   const eff: GroupKey = result.groups[tab].length ? tab : 'all';
-  const list = result.groups[eff] || [];
+  const { discarded, settled, fresh, toggle } = useDiscarded();
+  const base = result.groups[eff] || [];
+  const list = arrange(base, planKey, settled);
   const selected = list[selIdx] ?? list[0] ?? null;
   const selKey = selected ? planKey(selected) : '';
   const active = selected && perSel?.key === selKey ? Math.min(perSel.i, selected.periods.length - 1) : null;
@@ -82,6 +85,14 @@ export default function App() {
     setChanges((c) => (Object.keys(c).length ? {} : c));
   }, []);
 
+  // descartar/restaurar: a seleção acompanha o mesmo plano quando a lista reordena; ao descartar o
+  // plano aberto, passa para o primeiro que ainda vale
+  const discard = (key: string) => toggle(key, (next) => {
+    const order = arrange(base, planKey, next);
+    const target = next.has(key) && key === selKey ? order[0] : selected;
+    setSelIdx(Math.max(0, order.findIndex((o) => target && planKey(o) === planKey(target))));
+  });
+
   const pick = (i: number | null) => { if (selected) setPerSel(i === null ? null : { key: selKey, i }); };
 
   return (
@@ -94,9 +105,10 @@ export default function App() {
 
         <main className="page" id="plano">
           <QuickParams settings={settings} update={update} result={result} />
-          <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick} />
+          <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick}
+            discarded={discarded.has(selKey)} striking={fresh === selKey} onDiscard={() => discard(selKey)} />
           <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
-          <PlanBoard result={result} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
+          <PlanBoard result={result} list={list} discarded={discarded} fresh={fresh} onDiscard={discard} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
             selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen}
             saved={saved} onPrint={setPrintPlan} />
           <SavedPlans saved={saved} onPrint={setPrintPlan} />

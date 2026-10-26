@@ -9,10 +9,12 @@ interface Props {
   /** valor usado enquanto o campo está vazio ou inválido */
   fallback: number;
   onChange: (v: number) => void;
+  /** valores predefinidos: ao focar o campo com um deles, o texto é limpo para digitar outro */
+  clearOn?: number[];
 }
 
 /** Deixa digitar livremente (ex.: "2" a caminho de "20"); só o valor já limitado vai para o estado. */
-export function NumberField({ id, value, min, max, fallback, onChange }: Props) {
+export function NumberField({ id, value, min, max, fallback, onChange, clearOn }: Props) {
   const [text, setText] = useState(String(value));
   // Sincroniza só mudanças externas; não sobrescreve o que o usuário digita (ex.: "2" a caminho de "20").
   useEffect(() => {
@@ -25,6 +27,7 @@ export function NumberField({ id, value, min, max, fallback, onChange }: Props) 
         setText(e.target.value);
         onChange(clamp(parseInt(e.target.value, 10) || fallback, min, max));
       }}
+      onFocus={() => { if (clearOn?.includes(value)) setText(''); }}
       onBlur={() => setText(String(value))}
     />
   );

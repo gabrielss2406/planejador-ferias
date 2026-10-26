@@ -4,7 +4,8 @@ import { buildIcs, downloadFile, planId, toSaved } from '../lib/export';
 import type { SavedApi } from '../hooks/useSavedPlans';
 import type { GroupKey, PlanOption, PlanResult, SavedPlan } from '../lib/types';
 import { Icon } from './Icon';
-import { planKey, plural } from './format';
+import { Strike } from './Strike';
+import { planKey, plural, short } from './format';
 import { CopyButton, summaryText, tradeoff } from './planParts';
 
 const FILTERS: [GroupKey, string][] = [
@@ -16,6 +17,12 @@ export interface Change { kind: 'up' | 'down' | 'new'; n: number }
 
 interface Props {
   result: PlanResult;
+  /** lista da aba já ordenada: planos valendo primeiro, descartados no fim */
+  list: PlanOption[];
+  discarded: Set<string>;
+  /** plano que acabou de ser descartado: o risco é desenhado na hora */
+  fresh: string | null;
+  onDiscard: (key: string) => void;
   year: number;
   tab: GroupKey;
   onTab: (t: GroupKey) => void;
@@ -31,12 +38,15 @@ interface Props {
 const changeText = (c: Change) =>
   c.kind === 'new' ? 'novo' : `${c.kind === 'up' ? '+' : '−'}${plural(c.n, 'dia', 'dias')}`;
 
-export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract, saved, onPrint }: Props) {
-  const list = result.groups[tab] || [];
+export function PlanBoard({ result, list, discarded, fresh, onDiscard, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract, saved, onPrint }: Props) {
   const [more, setMore] = useState(false);
-  const canMore = result.groups.all.length > TOP || tab !== 'all';
+  const live = list.filter((r) => !discarded.has(planKey(r)));
+  const nOff = list.length - live.length;
+  // posição original na aba: "Plano 4" continua sendo o 4 mesmo depois de descartar o 2
+  const rank = new Map((result.groups[tab] || []).map((r, i) => [planKey(r), i + 1]));
+  const canMore = result.groups.all.length > TOP || tab !== 'all' || nOff > 0;
   const open = more && canMore;
-  const shown = open ? list : list.slice(0, TOP);
+  const shown = open ? list : live.slice(0, TOP);
   const rows = useRef(new Map<string, HTMLElement>());
   const tops = useRef(new Map<string, { x: number; y: number }>());
   const lastTab = useRef(tab);
@@ -63,7 +73,7 @@ export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected
   });
 
   const toggle = () => {
-    if (open && selIdx >= TOP) onSelect(0);
+    if (open && !live.slice(0, TOP).some((r) => selected && planKey(r) === planKey(selected))) onSelect(0);
     setMore(!open);
   };
 
@@ -73,20 +83,29 @@ export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected
       {shown.length > 0 && (
         <div className="chips" role="radiogroup" aria-labelledby="planos-t">
           {shown.map((r, i) => {
-            const k = planKey(r), ch = changes[k], on = i === selIdx, best = tab === 'all' && i === 0;
+            const k = planKey(r), ch = changes[k], on = i === selIdx, off = discarded.has(k);
+            const best = tab === 'all' && i === 0 && !off, n = rank.get(k) ?? i + 1;
             const ranges = r.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ');
             return (
-              <label key={k} className={'plan' + (on ? ' on' : '')} ref={(el) => { if (el) rows.current.set(k, el); else rows.current.delete(k); }}>
+              <label key={k} className={'plan' + (on ? ' on' : '') + (off ? ' off' : '')} ref={(el) => { if (el) rows.current.set(k, el); else rows.current.delete(k); }}>
                 <input type="radio" className="plan-radio" name="plano" checked={on} onChange={() => onSelect(i)}
-                  aria-label={`${best ? 'Melhor opção: ' : ''}Plano ${i + 1}, ${r.off} dias fora do trabalho, ${tradeoff(r)}. Férias: ${ranges}.${ch ? ` Mudou: ${ch.kind === 'new' ? 'plano novo' : `${ch.kind === 'up' ? 'mais' : 'menos'} ${plural(ch.n, 'dia', 'dias')} fora`}.` : ''}`} />
+                  aria-label={`${best ? 'Melhor opção: ' : ''}Plano ${n}${off ? ' (descartado)' : ''}, ${r.off} dias fora do trabalho, ${tradeoff(r)}. Férias: ${ranges}.${ch ? ` Mudou: ${ch.kind === 'new' ? 'plano novo' : `${ch.kind === 'up' ? 'mais' : 'menos'} ${plural(ch.n, 'dia', 'dias')} fora`}.` : ''}`} />
                 <span className="plan-top">
-                  <b>Plano {i + 1}</b>
+                  <b>Plano {n}</b>
                   {best && <span className="badge">Melhor opção</span>}
                   {ch && <span className={'plan-change ' + ch.kind} aria-hidden="true">{ch.kind !== 'new' && <Icon name={ch.kind} />}{changeText(ch)}</span>}
                   {on && <span className="plan-on" aria-hidden="true"><Icon name="check" /></span>}
                 </span>
                 <span className="plan-off"><b className="mono">{r.off}</b> dias fora</span>
-                <span className="plan-meta">{plural(r.k, 'período', 'períodos')}</span>
+                <span className="plan-dates mono" aria-hidden="true">
+                  {r.periods.map((p) => <span key={p.s}>{short(p.s)} a {short(p.e)}<small>{p.L}d</small></span>)}
+                </span>
+                <span className="plan-meta">{off ? 'Descartado' : plural(r.k, 'período', 'períodos')}</span>
+                {off && <Strike draw={fresh === k} />}
+                <button type="button" className="plan-x" aria-label={`${off ? 'Restaurar' : 'Descartar'} plano ${n}`} title={off ? 'Restaurar plano' : 'Descartar plano'}
+                  onClick={() => onDiscard(k)}>
+                  <Icon name={off ? 'undo' : 'cross'} />
+                </button>
               </label>
             );
           })}
@@ -97,6 +116,7 @@ export function PlanBoard({ result, year, tab, onTab, selIdx, onSelect, selected
           <button type="button" className="link-btn" aria-expanded={open} onClick={toggle}>
             {open ? 'Ver só os 3 melhores' : 'Ver mais planos'}
           </button>
+          {nOff > 0 && !open && <span className="hint">{plural(nOff, 'plano descartado', 'planos descartados')}: veja em Ver mais planos.</span>}
           {open && (
             <label className="filter">Mostrar planos com
               <select value={tab} onChange={(e) => onTab(e.target.value as GroupKey)}>

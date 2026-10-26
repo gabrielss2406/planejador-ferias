@@ -70,11 +70,18 @@ input[type=range]{width:100%;height:44px;margin:0;display:block;accent-color:var
 .seg button,.segopt span,.chip-btn{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1px solid var(--controle);
   border-radius:4px;background:var(--papel);font:600 17px var(--cond);color:var(--tinta);cursor:pointer}
 .seg button[aria-pressed=true],.segopt:has(input:checked) span,.chip-btn[aria-pressed=true]{background:var(--azul);border-color:var(--azul);color:var(--papel)}
+.seg-other{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 10px;border:1px solid var(--controle);border-radius:4px;background:var(--papel);font:600 17px var(--cond);color:var(--tinta)}
+.seg-other[data-active=true]{border-color:var(--azul);box-shadow:inset 0 0 0 1px var(--azul)}
+.seg-other input{width:4.5ch;min-height:32px;padding:0 4px;text-align:center;font:600 17px var(--mono)}
 .segopt{position:relative;display:block}
 .segopt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
 .segopt:has(input:focus-visible){outline:2px solid var(--azul);outline-offset:2px;border-radius:4px}
 .months{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .months .chip-btn{padding:0;text-transform:capitalize;font-size:16px}
+.months .chip-btn[aria-pressed=false]{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--tinta-2);background:var(--trilho)}
+.months-act{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.months-act .mini{font-size:16px}
+.mini:disabled{opacity:.45;cursor:not-allowed}
 .check{display:flex;gap:10px;align-items:center;min-height:44px;margin:0;cursor:pointer;font:500 16px var(--cond);color:var(--tinta)}
 .opts label.check{display:flex;font:500 16px var(--cond);color:var(--tinta);margin:0}
 .check input{accent-color:var(--azul);width:20px;height:20px;margin:0;flex:none}
@@ -158,9 +165,30 @@ body:has(.drawer[open]){overflow:hidden}
 .badge{background:var(--grafite);color:var(--papel);border-radius:3px;padding:0 6px;font:600 var(--t-rot)/1.4 var(--cond);letter-spacing:.06em;text-transform:uppercase}
 .plan-off{font:500 18px var(--cond)}
 .plan-off b{font-size:28px;font-weight:800}
+.plan-dates{display:flex;flex-direction:column;gap:1px;margin:4px 0 2px;font-size:15px;font-weight:600;color:var(--tinta)}
+.plan-dates small{margin-left:6px;font:500 var(--t-rot) var(--cond);color:var(--tinta-2)}
+.plan.off .plan-dates{color:var(--tinta-2)}
 .plan-meta{font:500 var(--t-rot) var(--cond);color:var(--tinta-2)}
 .plan-change{display:inline-flex;align-items:center;background:var(--ambar);color:var(--tinta);border-radius:3px;padding:0 6px;font:700 var(--t-rot)/1.4 var(--cond)}
 .plan-change .ic{margin-right:2px}
+.plan-x{position:absolute;right:2px;bottom:2px;z-index:2;display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;
+  background:none;border:0;border-radius:4px;color:var(--tinta-2);cursor:pointer}
+.plan-x .ic{margin:0;width:16px;height:16px}
+.plan.off{background:var(--trilho)}
+.plan.off .plan-off,.plan.off .plan-top b,.plan.off .plan-meta{color:var(--tinta-2)}
+.plan.off .plan-meta{font-weight:700}
+.ticket-foot{position:relative;z-index:2;display:flex;justify-content:flex-end;padding:0 calc(var(--pad) - 12px) 6px}
+.ticket-x{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;background:none;border:0;border-radius:4px;
+  color:var(--tinta-2);font:600 17px var(--cond);cursor:pointer}
+.ticket-x .ic{margin:0;width:15px;height:15px}
+.ticket.off .answer,.ticket.off .periods-wrap{opacity:.55}
+.ticket.off .ticket-x{color:var(--erro)}
+/* risco de caneta: vermelho, pontas redondas, espessura fixa mesmo esticado sobre o cartão */
+.strike{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+.strike path{fill:none;stroke:var(--erro);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.ticket .strike{inset:auto;left:50%;top:50%;width:min(100%,240px);height:min(100%,240px);transform:translate(-50%,-50%)}
+/* na passagem o traço escala com o desenho (sem non-scaling-stroke), para o dash do pathLength seguir o X */
+.ticket .strike path{vector-effect:none;stroke-width:4}
 .more-plans{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 20px;margin-top:6px}
 .link-btn{min-height:44px;padding:0 4px;background:none;border:0;color:var(--papel);font:600 17px var(--cond);text-decoration:underline;text-underline-offset:4px;
   text-decoration-color:var(--picote);cursor:pointer}
@@ -319,6 +347,7 @@ body:has(.drawer[open]){overflow:hidden}
   .drawer-close:hover,.mini:hover,.keys button:hover{background:var(--trilho)}
   .keys button:hover{color:var(--tinta)}
   .sec:not([aria-pressed=true]):not(:disabled):hover{background:var(--grafite-3)}
+  .plan-x:hover,.ticket-x:hover{color:var(--erro)}
   .plan:not(.on):hover,.period:not([aria-pressed=true]):hover{background:var(--trilho)}
   .link-btn:hover{text-decoration-color:var(--papel)}
   .seg button:not([aria-pressed=true]):hover,.chip-btn:not([aria-pressed=true]):hover,
@@ -344,6 +373,10 @@ body:has(.drawer[open]){overflow:hidden}
   @keyframes gaveta{from{transform:translateY(32px)}to{transform:none}}
   @keyframes gaveta-sai{from{transform:none}to{transform:translateY(32px)}}
   .plan-change{animation:acende .4s var(--ease-out)}
+  /* X de ícone: dois traços retos em sequência, sem pausa entre eles */
+  .strike.draw path{stroke-dasharray:1 2;stroke-dashoffset:1;animation:risca .28s cubic-bezier(.22,1,.36,1) forwards}
+  .strike.draw .s2{animation-delay:.28s}
+  @keyframes risca{to{stroke-dashoffset:0}}
   .plan-on{animation:marca var(--dur-state) var(--ease-out)}
   .saved-item.enter{animation:sobe var(--dur-enter) var(--ease-out)}
   .done-ic{animation:marca var(--dur-state) var(--ease-out)}

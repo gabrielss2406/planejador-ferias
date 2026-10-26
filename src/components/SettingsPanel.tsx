@@ -58,7 +58,11 @@ export function QuickParams({ settings: S, update, result }: Props & { result: P
         <div className="seg">
           <button type="button" aria-pressed={S.total === 30} onClick={() => update({ total: 30 })}>30</button>
           <button type="button" aria-pressed={S.total === 20} onClick={() => update({ total: 20 })}>20, vendendo 10</button>
-          {S.total !== 30 && S.total !== 20 && <button type="button" aria-pressed="true">{S.total} dias</button>}
+          <label className="seg-other" htmlFor="total" data-active={S.total !== 30 && S.total !== 20}>
+            <span>Outro</span>
+            <NumberField id="total" value={S.total} min={5} max={30} fallback={30} clearOn={[30, 20]} onChange={(total) => update({ total })} />
+            <span>dias</span>
+          </label>
         </div>
       </div>
 
@@ -82,7 +86,8 @@ export function QuickParams({ settings: S, update, result }: Props & { result: P
 
 /** Corpo da gaveta "Mais opções": tudo o que não é a pergunta principal. */
 export function OptionsBody({ settings: S, update }: Props) {
-  const toggleMonth = (i: number) => update({ months: S.months.map((m, j) => (j === i ? !m : m)) });
+  const monthsOn = S.months.filter(Boolean).length;
+  const toggleMonth =(i: number) => update({ months: S.months.map((m, j) => (j === i ? !m : m)) });
 
   return (
     <div className="opts">
@@ -92,10 +97,6 @@ export function OptionsBody({ settings: S, update }: Props) {
           <select id="year" value={S.year} onChange={(e) => update({ year: +e.target.value })}>
             {[2026, 2027, 2028].map((y) => <option key={y}>{y}</option>)}
           </select>
-        </div>
-        <div>
-          <label htmlFor="total">Outro número de dias de férias</label>
-          <NumberField id="total" value={S.total} min={5} max={30} fallback={30} onChange={(total) => update({ total })} />
         </div>
       </div>
       <p className="hint">&ldquo;Vendendo 10&rdquo; é o abono: você troca 10 dias por dinheiro e descansa 20. O app não calcula valores.</p>
@@ -135,14 +136,26 @@ export function OptionsBody({ settings: S, update }: Props) {
               <input type="date" id="wEnd" value={S.wEnd} onChange={(e) => update({ wEnd: e.target.value })} />
             </div>
           </div>
-          <span className="lbl" id="months-l">Meses permitidos</span>
+          <span className="lbl" id="months-l">Meses em que posso tirar férias</span>
+          <div className="months-act">
+            <button type="button" className="mini" disabled={monthsOn === 12} onClick={() => update({ months: Array(12).fill(true) })}>Selecionar todos</button>
+            <button type="button" className="mini" disabled={monthsOn === 0} onClick={() => update({ months: Array(12).fill(false) })}>Limpar seleção</button>
+          </div>
           <div className="months" role="group" aria-labelledby="months-l">
             {MN.map((m, i) => (
-              <button key={m} type="button" className="chip-btn" aria-pressed={S.months[i]} onClick={() => toggleMonth(i)}>
+              <button key={m} type="button" className="chip-btn" aria-pressed={S.months[i]}
+                aria-label={`${m}: ${S.months[i] ? 'liberado' : 'fora da busca'}`} onClick={() => toggleMonth(i)}>
                 {m.slice(0, 3)}
               </button>
             ))}
           </div>
+          <p className="hint" aria-live="polite">
+            {monthsOn === 12
+              ? 'Todos os meses já estão liberados. Toque num mês para tirá-lo, ou use Limpar seleção e escolha só os que quiser.'
+              : monthsOn === 0
+                ? 'Nenhum mês escolhido, então não há sugestões. Toque nos meses em que aceita tirar férias.'
+                : `${monthsOn} ${monthsOn === 1 ? 'mês liberado' : 'meses liberados'}. Os riscados ficam fora da busca.`}
+          </p>
         </div>
       </details>
 

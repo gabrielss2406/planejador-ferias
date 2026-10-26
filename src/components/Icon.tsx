@@ -4,6 +4,7 @@ const PATHS = {
   check: 'M3 8.5 6.5 12 13 4.5',
   half: 'M3 8h10',
   cross: 'M4 4l8 8M12 4l-8 8',
+  undo: 'M6 3.5 3 6.5l3 3M3 6.5h6.5a3.5 3.5 0 0 1 0 7H7',
   mark: 'M8 3v10M3 8h10',
   download: 'M8 2.5v7.5M4.5 6.5 8 10l3.5-3.5M3 13.5h10',
   calendar: 'M3 4.5h10v9H3zM3 7.5h10M5.5 2.5v3M10.5 2.5v3',

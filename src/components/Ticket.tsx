@@ -3,7 +3,9 @@ import { fmt } from '../lib/dates';
 import type { KeyDate, Period, PlanOption, PlanResult } from '../lib/types';
 import { planKey, plural, short } from './format';
 import { canAnimate, dur, ease, reduced } from './motion';
+import { Icon } from './Icon';
 import { KeyStatus } from './planParts';
+import { Strike } from './Strike';
 
 interface Props {
   selected: PlanOption | null;
@@ -13,6 +15,11 @@ interface Props {
   /** período destacado no ano (null = nenhum) */
   active: number | null;
   onPick: (i: number | null) => void;
+  /** plano descartado: a folha aparece riscada e o botão vira "Restaurar" */
+  discarded: boolean;
+  /** acabou de ser descartado: o risco é desenhado na hora */
+  striking: boolean;
+  onDiscard: () => void;
 }
 
 const holText = (list: { name: string }[]) => {
@@ -77,7 +84,7 @@ function Periods({ id, label, children }: { id: string; label: string; children:
 }
 
 /** A resposta: quanto de folga o plano rende, em uma frase, e as datas de cada período. */
-export function Ticket({ selected, result, year, custom, active, onPick }: Props) {
+export function Ticket({ selected, result, year, custom, active, onPick, discarded, striking, onDiscard }: Props) {
   if (!selected || result.error || selected.off <= 0) {
     return (
       <section className="empty" aria-label="Resumo do plano">
@@ -88,7 +95,7 @@ export function Ticket({ selected, result, year, custom, active, onPick }: Props
   }
   const { off, gain } = selected;
   return (
-    <section className="ticket" aria-label="Resumo do plano">
+    <section className={'ticket' + (discarded ? ' off' : '')} aria-label="Resumo do plano">
       <div className="answer">
         <p className="answer-top" aria-hidden="true">
           <AnswerNumber value={off} />
@@ -116,6 +123,12 @@ export function Ticket({ selected, result, year, custom, active, onPick }: Props
           </div>
         )}
       </div>
+      <div className="ticket-foot">
+        <button type="button" className="ticket-x" onClick={onDiscard}>
+          <Icon name={discarded ? 'undo' : 'cross'} />{discarded ? 'Restaurar plano' : 'Descartar plano'}
+        </button>
+      </div>
+      {discarded && <Strike draw={striking} />}
     </section>
   );
 }
