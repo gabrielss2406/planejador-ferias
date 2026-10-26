@@ -1,4 +1,6 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import logo from './assets/logo.png';
+import hero from './assets/hero.webp';
 import { HolidayList } from './components/HolidayList';
 import { PlanList } from './components/PlanList';
 import { SettingsPanel } from './components/SettingsPanel';
@@ -21,11 +23,16 @@ export default function App() {
   const selected = list[selIdx] ?? list[0] ?? null;
 
   return (
+    <>
+    <header className="topbar">
+      <span className="brand"><img src={logo} alt="Planejador de Férias — mais tempo para o que importa" /></span>
+    </header>
     <div className="wrap">
       <SettingsPanel settings={settings} update={update} result={result} />
       <main>
-        <section className="hero">
-          <h1>Férias que rendem mais dias de folga</h1>
+        <section className="hero" style={{ '--hero-img': `url(${hero})` } as React.CSSProperties}>
+          <p className="eyebrow">Mais tempo para o que importa</p>
+          <h1>Planeje suas férias de forma <em>simples e segura</em></h1>
           <p>Como as férias contam em dias corridos, o ganho está nas pontas: começar logo depois de um fim de semana ou feriado e terminar logo antes de outro. O planejador testa todas as divisões permitidas e mostra as que mais emendam.</p>
         </section>
         <Ribbon year={deferred.year} selected={selected} result={result} />
@@ -36,5 +43,6 @@ export default function App() {
         <p className="foot">Quem define a época das férias é o empregador (CLT, art. 136), então trate as sugestões como uma proposta para negociar. A base de feriados municipais deste protótipo é demonstrativa: confirme com a prefeitura e use as datas-chave para completar o que faltar.</p>
       </main>
     </div>
+    </>
   );
 }

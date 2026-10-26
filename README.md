@@ -10,7 +10,8 @@ respeitando as regras da CLT (até 3 períodos, menor com 5 dias ou mais, maior 
     src/lib/                 lógica pura: datas, feriados e motor de busca (testável)
     src/components/          painel de parâmetros, planos, faixa do ano, calendário
     src/hooks/useSettings.ts estado das configurações, salvo no localStorage
-    src/styles.css           estilos
+    src/styles.css           estilos e tokens da identidade visual
+    src/assets/              logo e imagem do hero (otimizadas a partir de logo.png e image.png)
     Dockerfile               build com Node, depois busybox httpd servindo o dist
     docker-compose.yml       sobe o container na porta 8080
 
