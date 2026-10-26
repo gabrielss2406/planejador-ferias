@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { idx } from './dates';
-import { joinNames, overlaps, type GroupMember } from './group';
+import { groupSummaryText, joinNames, overlaps, type GroupMember } from './group';
 
 const ov = (m: GroupMember[], y: number) => overlaps(m, y).map(({ s, e, names }) => ({ s, e, names }));
 const d = (m: number, day: number) => idx(2027, m, day);
@@ -41,4 +41,13 @@ test('joinNames', () => {
   expect(joinNames(['Ana'])).toBe('Ana');
   expect(joinNames(['Ana', 'Bia'])).toBe('Ana e Bia');
   expect(joinNames(['Ana', 'Bia', 'Caio'])).toBe('Ana, Bia e Caio');
+});
+
+test('resumo em texto: férias de cada um, quem falta escolher e os dias em comum', () => {
+  const ana = { ...member('Ana', [[d(6, 1), d(6, 15)]]), me: true };
+  const txt = groupSummaryText([ana, member('Bia', [[d(6, 10), d(6, 25)]]), member('Caio', [])], 2027).split('\n');
+  expect(txt[0]).toBe('Férias em grupo 2027');
+  expect(txt[1]).toBe('- Ana (eu): qui 01/07 a qui 15/07 (40 dias fora)');
+  expect(txt[3]).toBe('- Caio: ainda não escolheu');
+  expect(txt).toContain('- sáb 10/07 a qui 15/07: Ana e Bia (6 dias)');
 });

@@ -2,23 +2,23 @@ import logoUrl from '../assets/logo.png';
 import { fmt } from './dates';
 import type { SavedPlan } from './types';
 
-const W = 1200;
-const M = 48; // margem de grafite em volta da folha
-const PAD = 56;
-const MONO = '"JetBrains Mono","DejaVu Sans Mono",monospace';
-const COND = '"Barlow Condensed","Arial Narrow",sans-serif';
+export const W = 1200;
+export const M = 48; // margem de grafite em volta da folha
+export const PAD = 56;
+export const MONO = '"JetBrains Mono","DejaVu Sans Mono",monospace';
+export const COND = '"Barlow Condensed","Arial Narrow",sans-serif';
 
-const css = (name: string, fallback: string) =>
+export const css = (name: string, fallback: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 
-const loadImage = (src: string) => new Promise<HTMLImageElement>((ok, fail) => {
+export const loadImage = (src: string) => new Promise<HTMLImageElement>((ok, fail) => {
   const img = new Image();
   img.onload = () => ok(img);
   img.onerror = fail;
   img.src = src;
 });
 
-function wrap(ctx: CanvasRenderingContext2D, text: string, width: number) {
+export function wrap(ctx: CanvasRenderingContext2D, text: string, width: number) {
   const lines: string[] = [];
   let cur = '';
   for (const word of text.split(' ')) {
@@ -29,7 +29,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, width: number) {
   return lines;
 }
 
-const dias = (n: number) => `${n} ${n === 1 ? 'dia' : 'dias'}`;
+export const dias = (n: number) => `${n} ${n === 1 ? 'dia' : 'dias'}`;
 
 /** Desenha o "ticket de viagem" das férias (a folha branca com picote sobre grafite) e devolve o PNG. */
 export async function renderTicket(plan: SavedPlan): Promise<Blob> {
@@ -131,11 +131,14 @@ export async function renderTicket(plan: SavedPlan): Promise<Blob> {
   return new Promise((ok, fail) => canvas.toBlob((b) => (b ? ok(b) : fail(new Error('toBlob'))), 'image/png'));
 }
 
-export async function downloadTicket(plan: SavedPlan) {
-  const blob = await renderTicket(plan);
+export function saveBlob(blob: Blob, name: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `ticket-ferias-${plan.year}.png`;
+  a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export async function downloadTicket(plan: SavedPlan) {
+  saveBlob(await renderTicket(plan), `ticket-ferias-${plan.year}.png`);
 }

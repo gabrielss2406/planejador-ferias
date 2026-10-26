@@ -1,8 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { idx, MN } from '../lib/dates';
-import { joinNames, overlaps, type GroupMember } from '../lib/group';
+import { groupSummaryText, joinNames, overlaps, type GroupMember } from '../lib/group';
+import { downloadGroupTicket } from '../lib/groupImage';
 import type { SavedPlan } from '../lib/types';
 import { NAME_MAX, type GroupApi } from '../hooks/useGroup';
+import { Icon } from './Icon';
 import { plural, short } from './format';
 import { CopyButton } from './planParts';
 
@@ -145,7 +147,14 @@ export function GroupSection({ group, chosen, year }: Props) {
             {withPlan < 2 && members.length > 0 && <p className="hint">Quando mais de uma pessoa escolher um plano de {year}, os dias em comum aparecem aqui.</p>}
           </div>
 
-          <button type="button" className="mini g-leave" onClick={() => { group.leave(); setOpen(true); }}>Sair do grupo</button>
+          <div className="g-act">
+            {withPlan > 0 && <CopyButton className="mini" label="Copiar resumo do grupo" text={groupSummaryText(members, year)} context={`do grupo ${code}`} />}
+            <button type="button" className="mini" disabled={withPlan === 0} onClick={() => void downloadGroupTicket(members, year)}>
+              <Icon name="download" />Salvar ticket do grupo
+            </button>
+            <button type="button" className="mini" onClick={() => { group.leave(); setOpen(true); }}>Sair do grupo</button>
+          </div>
+          {withPlan === 0 && <p className="hint">O ticket do grupo fica disponível quando alguém escolher um plano de {year}.</p>}
         </div>
       )}
     </details>

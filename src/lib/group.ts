@@ -1,3 +1,4 @@
+import { fmt } from './dates';
 import type { SavedPlan } from './types';
 
 /** Quem está numa sala e o que publicou (plano escolhido, se houver). */
@@ -46,3 +47,24 @@ export function overlaps(members: GroupMember[], year: number): Overlap[] {
 /** "Ana e Bia" / "Ana, Bia e Caio" */
 export const joinNames = (names: string[]) =>
   names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`;
+
+/** Resumo em texto do grupo para colar numa conversa: férias de cada pessoa e os dias em comum. */
+export function groupSummaryText(members: GroupMember[], year: number): string {
+  const lines = [`Férias em grupo ${year}`];
+  for (const m of members) {
+    const who = m.name + (m.me ? ' (eu)' : '');
+    if (m.plan?.year === year) {
+      lines.push(`- ${who}: ${m.plan.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ')} (${m.plan.off} dias fora)`);
+    } else {
+      lines.push(`- ${who}: ${m.plan ? `plano de ${m.plan.year}` : 'ainda não escolheu'}`);
+    }
+  }
+  const ov = overlaps(members, year);
+  if (ov.length) {
+    lines.push('', 'Férias ao mesmo tempo:');
+    for (const o of ov) lines.push(`- ${fmt(o.s)} a ${fmt(o.e)}: ${joinNames(o.names)} (${o.e - o.s + 1} ${o.e === o.s ? 'dia' : 'dias'})`);
+  } else if (members.filter((m) => m.plan?.year === year).length >= 2) {
+    lines.push('', 'Ninguém tem férias ao mesmo tempo.');
+  }
+  return lines.join('\n');
+}

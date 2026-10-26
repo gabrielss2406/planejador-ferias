@@ -422,7 +422,7 @@ body:has(.drawer[open]){overflow:hidden}
 .g-name{max-width:320px}
 .g-note{font:500 var(--t-corpo)/1.35 var(--cond);color:var(--tinta);background:var(--ambar-claro);border-radius:4px;padding:8px 10px;text-wrap:pretty}
 .g-err{font:600 17px/1.3 var(--cond);color:var(--erro)}
-.g-leave{align-self:flex-start}
+.g-act{display:flex;flex-wrap:wrap;gap:8px}
 .gm-list{display:grid;gap:6px}
 .gm-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;font:500 var(--t-corpo)/1.3 var(--cond);color:var(--tinta-2)}
 .gm-list b{font:700 20px/1.2 var(--cond);color:var(--tinta)}
