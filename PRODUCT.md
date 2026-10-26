@@ -49,4 +49,4 @@ Regras da CLT e feriados nacionais/estaduais codificados em `src/lib`. Não há 
 
 ## Accessibility & Inclusion
 
-Rótulos explícitos e estados sempre acompanhados de texto, não só de cor (verde e laranja são códigos semânticos, nunca o único indicador). Contraste suficiente nos dois temas, claro e escuro.
+Rótulos explícitos e estados sempre acompanhados de texto, não só de cor (verde e laranja são códigos semânticos, nunca o único indicador). A interface usa uma única casca grafite nos dois esquemas de cor, decisão deliberada e fechada do redesign; não há tema claro planejado. Folha e cartões brancos mantêm contraste >= 4.5:1 sobre ela.

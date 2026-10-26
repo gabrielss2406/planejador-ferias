@@ -61,7 +61,7 @@ export function SettingsPanel({ settings: S, update, result }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <aside className="panel" aria-label="Configurações">
+    <aside className="rail" aria-label="Configurações">
       {/* Uma única árvore nos dois tamanhos (não perde o rascunho ao girar a tela). No desktop fica sempre aberto e sem summary visível. */}
       <details className="panel-shell" open={!mobile || mobileOpen}
         onToggle={(e) => { if (mobile) setMobileOpen(e.currentTarget.open); }}>
@@ -73,8 +73,7 @@ export function SettingsPanel({ settings: S, update, result }: Props) {
         </summary>
 
         <div className="panel-body">
-          <h2>Seus parâmetros</h2>
-          <p className="lead">Tudo recalcula na hora que você muda.</p>
+          <h2>Parâmetros</h2>
 
           <div className="row field">
             <div>
@@ -112,11 +111,11 @@ export function SettingsPanel({ settings: S, update, result }: Props) {
           </div>
 
           <fieldset className="periods">
-            <legend>Pode dividir em quantos períodos?</legend>
+            <legend>Até 3 períodos: quais pode usar?</legend>
             {([1, 2, 3] as const).map((k) => (
               <label key={k} className="check">
                 <input type="checkbox" checked={!!S.parts[k]} onChange={(e) => setPart(k, e.target.checked)} />
-                <span>{k} período{k > 1 ? 's' : ''}</span>
+                <span>{k}<span className="sr"> período{k > 1 ? 's' : ''}</span></span>
               </label>
             ))}
           </fieldset>
@@ -150,7 +149,7 @@ export function SettingsPanel({ settings: S, update, result }: Props) {
           <details>
             <summary>Janela e meses</summary>
             <div className="det-body">
-              <div className="row field">
+              <div className="row dates field">
                 <div>
                   <label htmlFor="wStart">Começar a partir de</label>
                   <input type="date" id="wStart" value={S.wStart} onChange={(e) => update({ wStart: e.target.value })} />
@@ -187,6 +186,7 @@ export function SettingsPanel({ settings: S, update, result }: Props) {
               <p className="hint">A lei exige que o menor período tenha 5 dias ou mais e que o maior tenha 14 dias ou mais, em até 3 períodos. Os campos só deixam você ser mais exigente.</p>
             </div>
           </details>
+          <p className="note">Os planos recalculam na hora e a lista reordena no lugar quando um parâmetro muda.</p>
         </div>
       </details>
     </aside>

@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T19:13:51.114673+00:00",
+  "title": "Design System: Planejador de Férias",
+  "extensions": {
+    "colorMeta": {
+      "grafite": {
+        "role": "neutral",
+        "displayName": "Grafite",
+        "canonical": "#101820",
+        "tonalRamp": [
+          "#060A0D",
+          "#0A0E13",
+          "#0D131A",
+          "#101820",
+          "#40464D",
+          "#707479",
+          "#9FA3A6",
+          "#CFD1D2"
+        ]
+      },
+      "grafite-2": {
+        "role": "neutral",
+        "displayName": "Grafite Elevado",
+        "canonical": "#1B2631",
+        "tonalRamp": [
+          "#0B0F14",
+          "#10171D",
+          "#161E27",
+          "#1B2631",
+          "#49515A",
+          "#767D83",
+          "#A4A8AD",
+          "#D1D4D6"
+        ]
+      },
+      "grafite-3": {
+        "role": "neutral",
+        "displayName": "Grafite Trilho",
+        "canonical": "#26323F",
+        "tonalRamp": [
+          "#0F1419",
+          "#171E26",
+          "#1E2832",
+          "#26323F",
+          "#515B65",
+          "#7D848C",
+          "#A8ADB2",
+          "#D4D6D9"
+        ]
+      },
+      "papel": {
+        "role": "neutral",
+        "displayName": "Papel",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#666666",
+          "#999999",
+          "#CCCCCC",
+          "#FFFFFF",
+          "#FFFFFF",
+          "#FFFFFF",
+          "#FFFFFF",
+          "#FFFFFF"
+        ]
+      },
+      "trilho": {
+        "role": "neutral",
+        "displayName": "Trilho Claro",
+        "canonical": "#E6E9ED",
+        "tonalRamp": [
+          "#5C5D5F",
+          "#8A8C8E",
+          "#B8BABE",
+          "#E6E9ED",
+          "#EBEDF1",
+          "#F0F2F4",
+          "#F5F6F8",
+          "#FAFBFB"
+        ]
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#101820",
+        "tonalRamp": [
+          "#060A0D",
+          "#0A0E13",
+          "#0D131A",
+          "#101820",
+          "#40464D",
+          "#707479",
+          "#9FA3A6",
+          "#CFD1D2"
+        ]
+      },
+      "tinta-2": {
+        "role": "neutral",
+        "displayName": "Tinta Secundária",
+        "canonical": "#4B5866",
+        "tonalRamp": [
+          "#1E2329",
+          "#2D353D",
+          "#3C4652",
+          "#4B5866",
+          "#6F7985",
+          "#939BA3",
+          "#B7BCC2",
+          "#DBDEE0"
+        ]
+      },
+      "sobre-grafite": {
+        "role": "neutral",
+        "displayName": "Névoa sobre Grafite",
+        "canonical": "#9FB0C0",
+        "tonalRamp": [
+          "#40464D",
+          "#5F6A73",
+          "#7F8D9A",
+          "#9FB0C0",
+          "#B2C0CD",
+          "#C5D0D9",
+          "#D9DFE6",
+          "#ECEFF2"
+        ]
+      },
+      "controle": {
+        "role": "neutral",
+        "displayName": "Contorno de Controle",
+        "canonical": "#6F7C89",
+        "tonalRamp": [
+          "#2C3237",
+          "#434A52",
+          "#59636E",
+          "#6F7C89",
+          "#8C96A1",
+          "#A9B0B8",
+          "#C5CBD0",
+          "#E2E5E7"
+        ]
+      },
+      "divisor": {
+        "role": "neutral",
+        "displayName": "Divisor",
+        "canonical": "#C5CBD3",
+        "tonalRamp": [
+          "#4F5154",
+          "#767A7F",
+          "#9EA2A9",
+          "#C5CBD3",
+          "#D1D5DC",
+          "#DCE0E5",
+          "#E8EAED",
+          "#F3F5F6"
+        ]
+      },
+      "divisor-escuro": {
+        "role": "neutral",
+        "displayName": "Divisor Escuro",
+        "canonical": "#3A4856",
+        "tonalRamp": [
+          "#171D22",
+          "#232B34",
+          "#2E3A45",
+          "#3A4856",
+          "#616D78",
+          "#89919A",
+          "#B0B6BB",
+          "#D8DADD"
+        ]
+      },
+      "picote": {
+        "role": "neutral",
+        "displayName": "Picote",
+        "canonical": "#7D8B99",
+        "tonalRamp": [
+          "#32383D",
+          "#4B535C",
+          "#646F7A",
+          "#7D8B99",
+          "#97A2AD",
+          "#B1B9C2",
+          "#CBD1D6",
+          "#E5E8EB"
+        ]
+      },
+      "folga": {
+        "role": "neutral",
+        "displayName": "Folga",
+        "canonical": "#AEB7C2",
+        "tonalRamp": [
+          "#46494E",
+          "#686E74",
+          "#8B929B",
+          "#AEB7C2",
+          "#BEC5CE",
+          "#CED4DA",
+          "#DFE2E7",
+          "#EFF1F3"
+        ]
+      },
+      "azul": {
+        "role": "primary",
+        "displayName": "Azul Embarque",
+        "canonical": "#2563EB",
+        "tonalRamp": [
+          "#0F285E",
+          "#163B8D",
+          "#1E4FBC",
+          "#2563EB",
+          "#5182EF",
+          "#7CA1F3",
+          "#A8C1F7",
+          "#D3E0FB"
+        ]
+      },
+      "azul-claro": {
+        "role": "primary",
+        "displayName": "Azul Névoa",
+        "canonical": "#EFF4FF",
+        "tonalRamp": [
+          "#606266",
+          "#8F9299",
+          "#BFC3CC",
+          "#EFF4FF",
+          "#F2F6FF",
+          "#F5F8FF",
+          "#F9FBFF",
+          "#FCFDFF"
+        ]
+      },
+      "ambar": {
+        "role": "secondary",
+        "displayName": "Âmbar de Aviso",
+        "canonical": "#FFB000",
+        "tonalRamp": [
+          "#664600",
+          "#996A00",
+          "#CC8D00",
+          "#FFB000",
+          "#FFC033",
+          "#FFD066",
+          "#FFDF99",
+          "#FFEFCC"
+        ]
+      },
+      "ambar-claro": {
+        "role": "secondary",
+        "displayName": "Âmbar Pálido",
+        "canonical": "#FFF3D1",
+        "tonalRamp": [
+          "#666154",
+          "#99927D",
+          "#CCC2A7",
+          "#FFF3D1",
+          "#FFF5DA",
+          "#FFF8E3",
+          "#FFFAED",
+          "#FFFDF6"
+        ]
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "Verde Regra",
+        "canonical": "#047857",
+        "tonalRamp": [
+          "#023023",
+          "#024834",
+          "#036046",
+          "#047857",
+          "#369379",
+          "#68AE9A",
+          "#9BC9BC",
+          "#CDE4DD"
+        ]
+      },
+      "erro": {
+        "role": "status",
+        "displayName": "Vermelho Regra",
+        "canonical": "#B42318",
+        "tonalRamp": [
+          "#480E0A",
+          "#6C150E",
+          "#901C13",
+          "#B42318",
+          "#C34F46",
+          "#D27B74",
+          "#E1A7A3",
+          "#F0D3D1"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "hero-number": {
+        "displayName": "Hero number",
+        "purpose": "Total de dias fora do trabalho."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Títulos abaixo da dobra."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Cabeçalho da folha e do mês."
+      },
+      "value": {
+        "displayName": "Value",
+        "purpose": "Números da tabela de planos."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido e dicas."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Rótulos, segmentos de cartão, cabeçalhos de tabela."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sheet-lift",
+        "value": "0 8px 14px -8px rgb(0 0 0 / .55), 0 1px 0 rgb(255 255 255 / .06)",
+        "purpose": "Única sombra: descola a folha do mês da casca."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-sheet",
+        "value": "cubic-bezier(.19,1,.22,1)",
+        "purpose": "Entrada da folha, 220ms."
+      },
+      {
+        "name": "ease-state",
+        "value": "cubic-bezier(.22,1,.36,1)",
+        "purpose": "Hover de cartão, plano, aba e botão, 150ms."
+      },
+      {
+        "name": "ease-change",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Faixa âmbar de mudança, 400ms."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "980px"
+      },
+      {
+        "name": "tablet",
+        "value": "981px a 1199px"
+      },
+      {
+        "name": "desktop-narrow",
+        "value": "1200px a 1360px"
+      },
+      {
+        "name": "cards-carousel",
+        "value": "560px (container)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação primária em azul.",
+      "html": "<button class=\"ds-btn\">Copiar resumo</button>",
+      "css": ".ds-btn{min-height:44px;border:0;border-radius:4px;background:var(--azul,#2563EB);color:#fff;font:700 17px 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:0 14px;cursor:pointer}.ds-btn:hover{background:#101820}.ds-btn:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+    },
+    {
+      "name": "Segment Button",
+      "kind": "chip",
+      "refersTo": "button-segment",
+      "description": "Opção de segmento; pressionado fica azul.",
+      "html": "<span class=\"ds-seg\"><button>30 dias</button><button aria-pressed=\"true\">20 dias</button></span>",
+      "css": ".ds-seg{display:flex;gap:8px}.ds-seg button{min-height:44px;padding:0 12px;border:1px solid #6F7C89;border-radius:4px;background:#fff;color:#101820;font:600 17px 'Barlow Condensed',sans-serif;cursor:pointer}.ds-seg button[aria-pressed=true]{background:#2563EB;border-color:#2563EB;color:#fff}.ds-seg button:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Campo com valor em mono.",
+      "html": "<input class=\"ds-field\" value=\"2026\">",
+      "css": ".ds-field{width:160px;min-height:44px;background:#fff;border:1px solid #6F7C89;border-radius:4px;padding:0 10px;font:500 16px 'JetBrains Mono',monospace;color:#101820}.ds-field:focus-visible{outline:2px solid #2563EB;outline-offset:2px}"
+    },
+    {
+      "name": "Boarding Card",
+      "kind": "card",
+      "refersTo": "boarding-card",
+      "description": "Período de férias como cartão destacável com canhoto.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-top\"><span>Período 1</span><span>Selecionado</span></div><div class=\"ds-grid\"><div><small>Saída</small><b>seg 05/10</b></div><div><small>Retorno</small><b>sex 16/10</b></div></div><div class=\"ds-stub\"><i class=\"ds-code\"></i></div></div>",
+      "css": ".ds-card{position:relative;overflow:hidden;width:260px;background:#fff;color:#101820;border-radius:6px;padding-top:5px;outline:3px solid #2563EB}.ds-card::before{content:'';position:absolute;inset:0 0 auto;height:5px;background:#2563EB}.ds-top{display:flex;justify-content:space-between;padding:3px 10px;border-bottom:1px solid #E6E9ED;font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#2563EB}.ds-grid{display:grid;grid-template-columns:1fr 1fr}.ds-grid div{padding:4px 10px 5px}.ds-grid small{display:block;font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.12em;color:#4B5866;text-transform:uppercase}.ds-grid b{font:700 16px 'JetBrains Mono',monospace}.ds-stub{position:relative;border-top:2px dashed #7D8B99;padding:7px 10px 6px}.ds-stub::before,.ds-stub::after{content:'';position:absolute;top:-8px;width:14px;height:14px;border-radius:50%;background:#101820}.ds-stub::before{left:-7px}.ds-stub::after{right:-7px}.ds-code{display:block;height:16px;background:repeating-linear-gradient(90deg,#101820 0 2px,#fff 2px 4px,#101820 4px 5px,#fff 5px 8px,#101820 8px 11px,#fff 11px 12px)}"
+    },
+    {
+      "name": "Month Sheet",
+      "kind": "custom",
+      "refersTo": "sheet",
+      "description": "Folha do mês com faixa de encadernação e dias coloridos.",
+      "html": "<div class=\"ds-sheet\"><h3>Outubro <em>2026</em></h3><div class=\"ds-days\"><span class=\"b\">5</span><span class=\"b\">6</span><span class=\"g\">10</span><span class=\"a\">12</span></div></div>",
+      "css": ".ds-sheet{width:240px;position:relative;overflow:hidden;background:#fff;color:#101820;border-radius:8px 8px 0 0;padding:10px 18px 12px;box-shadow:0 8px 14px -8px rgb(0 0 0/.55)}.ds-sheet::before{content:'';display:block;height:8px;margin:-10px -18px 8px;background:radial-gradient(circle at 50% 50%,#101820 0 2.5px,transparent 3px) 0 0/22px 8px repeat-x,#2563EB}.ds-sheet h3{margin:0 0 6px;font:700 22px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em}.ds-sheet em{font:500 16px 'Barlow Condensed',sans-serif;font-style:normal;color:#4B5866}.ds-days{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}.ds-days span{height:36px;border-radius:3px;text-align:center;font:700 20px/36px 'JetBrains Mono',monospace}.ds-days .b{background:#2563EB;color:#fff}.ds-days .g{background:#E6E9ED}.ds-days .a{background:#FFB000}"
+    },
+    {
+      "name": "Plan Row",
+      "kind": "custom",
+      "refersTo": "plan-row",
+      "description": "Linha da tabela de planos; selecionada e alterada.",
+      "html": "<div class=\"ds-plan on\"><div class=\"ds-change\">Mudou</div><div class=\"ds-name\"><b>#1</b></div><span class=\"ds-n\">45</span></div>",
+      "css": ".ds-plan{display:grid;grid-template-columns:1fr 62px;align-items:center;width:300px;min-height:60px;padding:6px;background:#fff;color:#101820;border-bottom:1px solid #E6E9ED}.ds-plan:hover{background:#E6E9ED}.ds-plan.on{background:#EFF4FF;outline:2px solid #2563EB;outline-offset:-2px}.ds-change{grid-column:1/-1;margin:-6px -6px 6px;padding:3px 10px;background:#FFB000;font:700 17px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}.ds-name b,.ds-n{font:700 18px 'JetBrains Mono',monospace}.ds-n{text-align:right}"
+    },
+    {
+      "name": "Year Ruler",
+      "kind": "nav",
+      "refersTo": "year-ruler",
+      "description": "Régua do ano em grafite com férias e feriados.",
+      "html": "<div class=\"ds-ruler\"><div class=\"ds-m\"><span>jan</span><span>fev</span><span>mar</span></div><div class=\"ds-track\"><i class=\"v\"></i><i class=\"h\"></i></div></div>",
+      "css": ".ds-ruler{width:300px;background:#1B2631;padding:10px 24px 12px}.ds-m{display:flex;font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#9FB0C0}.ds-m span{flex:1;border-left:1px solid #3A4856;padding-left:4px}.ds-track{position:relative;height:22px;margin-top:6px;background:#26323F;border-radius:3px}.ds-track i{position:absolute;display:block}.ds-track .v{left:20%;width:25%;top:5px;height:12px;background:#2563EB}.ds-track .h{left:60%;width:3px;top:0;height:100%;background:#FFB000;border-radius:1px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Folhinha de Embarque",
+    "overview": "Uma folha de calendário de parede, branca e de grade grande, pendurada sobre uma casca grafite; os períodos de férias viram cartões de embarque destacáveis por picote. O sistema é de tema único grafite, decisão deliberada. Cor tem função: azul para férias, ação e seleção; âmbar só para feriado e mudança. Estado nunca é só cor.",
+    "keyCharacteristics": [
+      "Tema único grafite; papel branco para tudo que se lê e compara.",
+      "Números gigantes em mono (78px) como voz principal; rótulos em Barlow Condensed uppercase.",
+      "Picote tracejado com recortes semicirculares como assinatura estrutural.",
+      "Plano, sem profundidade além de uma sombra de folha e de bordas de 1px.",
+      "Alvos de toque de 44px em todo controle."
+    ],
+    "rules": [
+      {
+        "name": "The Amber Is Change Rule",
+        "body": "Âmbar significa feriado ou mudança, nada mais. Não decora, não marca seleção.",
+        "section": "colors"
+      },
+      {
+        "name": "The Blue Is Vacation Rule",
+        "body": "Azul marca o que o usuário tira, aciona ou escolheu; não vira cor de fundo de seção.",
+        "section": "colors"
+      },
+      {
+        "name": "The Not-By-Color Rule",
+        "body": "Todo estado tem segundo canal: texto, ícone de traço, ponto-chave, risco no dia indisponível, barra inferior no feriado.",
+        "section": "colors"
+      },
+      {
+        "name": "The Figures Are Mono Rule",
+        "body": "Datas, dias e contagens usam JetBrains Mono tabular; palavras usam Barlow Condensed.",
+        "section": "typography"
+      },
+      {
+        "name": "The Floor Is 14px Rule",
+        "body": "O menor texto é o rótulo de 14px (exceção construída: 13px nas siglas de feriado dentro do dia da folha).",
+        "section": "typography"
+      },
+      {
+        "name": "The One Lift Rule",
+        "body": "Só a folha do mês projeta sombra. Cartões e linhas se distinguem por borda, faixa e fundo.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** manter tema único grafite; folha, cartões e tabela em papel branco.",
+      "**Do** usar azul só para férias, ação e seleção; âmbar só para feriado e mudança.",
+      "**Do** compor números em JetBrains Mono tabular e rótulos em Barlow Condensed uppercase com tracking.",
+      "**Do** dar a todo estado um segundo canal (texto, ícone, ponto, risco, barra).",
+      "**Do** manter alvos de 44px e foco visível de 2px azul.",
+      "**Do** separar com picote quando a unidade é destacável (cartão, centro/cartões); usar bordas de 1px nos demais casos."
+    ],
+    "donts": [
+      "**Don't** criar tema claro ou variante de casca; a decisão de tema único é do usuário.",
+      "**Don't** usar âmbar como decoração ou seleção, nem azul como fundo de seção.",
+      "**Don't** adicionar sombras além da folha, nem cartões brancos idênticos em grade sem segmentos rotulados.",
+      "**Don't** usar outras famílias tipográficas nem texto abaixo de 14px em rótulos novos.",
+      "**Don't** reintroduzir a imagem de praia do hero (hero.webp não é mais usada)."
+    ]
+  }
+}

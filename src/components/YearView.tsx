@@ -29,46 +29,6 @@ const title = (i: number, result: PlanResult) => {
   return fmt(i) + (h ? ' · ' + h.name : '');
 };
 
-interface Props {
-  year: number;
-  selected: PlanOption | null;
-  result: PlanResult;
-}
-
-export function Ribbon({ year, selected, result }: Props) {
-  const j1 = idx(year, 0, 1), total = idx(year, 11, 31) - j1 + 1;
-  const sets = setsFor(selected, result);
-
-  return (
-      <section className="card ribbon-card">
-        <div className="ribbon-head">
-          <h2>{`Seu ${year}${selected ? ' com a opção selecionada' : ''}`}</h2>
-          {!selected && <span>Sem sugestão para mostrar</span>}
-        </div>
-        <div className="ribbon" role="img" aria-label={selected ? `Faixa do ano ${year}. Férias: ${selected.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ')}. ${selected.off} dias fora do trabalho.` : `Faixa do ano ${year} sem sugestão`} style={{ '--n': total } as React.CSSProperties}>
-          {Array.from({ length: total }, (_, k) => {
-            const i = j1 + k;
-            return <i key={i} className={dayCls(i, result, sets)} title={title(i, result)} />;
-          })}
-        </div>
-        <div className="ribbon-months">
-          {MN.map((m, k) => (
-            <span key={m} style={{ left: ((idx(year, k, 1) - j1) / total * 100).toFixed(2) + '%' }}>{m.slice(0, 3)}</span>
-          ))}
-        </div>
-        <div className="legend">
-          <span><b className="v" />Férias</span>
-          <span><b className="x" />Folga emendada</span>
-          <span><b className="h" />Feriado</span>
-          <span><b />Fim de semana</span>
-          <span><b className="k" />Data-chave coberta</span>
-          <span><b className="hh" />Feriado na folga</span>
-          <span><b className="a" />Data bloqueada</span>
-        </div>
-      </section>
-  );
-}
-
 /** "1 a 3 e 9" a partir de dias do mês (1-based), agrupando sequências. */
 function ranges(days: number[]) {
   const out: string[] = [];
@@ -97,13 +57,24 @@ function monthSummary(first: number, dim: number, result: PlanResult, sets: Sets
   return parts.join(' ') || 'Sem férias nem feriados neste mês.';
 }
 
+interface Props { year: number; selected: PlanOption | null; result: PlanResult }
+
 export function Calendar({ year, selected, result }: Props) {
   const sets = setsFor(selected, result);
 
   return (
-    <>
-      <div className="cal-head"><h2>{`Calendário de ${year}`}</h2><span className="hint" /></div>
-      <section className="cal" aria-label={`Calendário de ${year}, mês a mês`}>
+    <section className="cal-wrap" aria-labelledby="cal-t">
+      <h2 id="cal-t">{`Calendário de ${year}`}</h2>
+      <p className="legend" aria-hidden="true">
+        <span><b className="v" />Férias</span>
+        <span><b className="x" />Folga emendada</span>
+        <span><b className="h" />Feriado</span>
+        <span><b className="w" />Fim de semana</span>
+        <span><b className="k" />Data-chave coberta</span>
+        <span><b className="hh" />Feriado na folga</span>
+        <span><b className="a" />Data bloqueada</span>
+      </p>
+      <div className="cal" role="group" aria-label={`Calendário de ${year}, mês a mês`}>
         {MN.map((m, k) => {
           const first = idx(year, k, 1), dim = idx(year, k + 1, 1) - first, lead = wd(first);
           return (
@@ -120,7 +91,7 @@ export function Calendar({ year, selected, result }: Props) {
             </div>
           );
         })}
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

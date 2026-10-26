@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { fmt, parseISO } from '../lib/dates';
-import type { KeyDate, Period, PlanOption } from '../lib/types';
+import { Icon } from './Icon';
+import type { KeyDate, PlanOption } from '../lib/types';
 
 export function summaryText(r: PlanOption, year: number, N: number) {
   const lines = [`Plano de férias ${year}: ${N} dias → ${r.off} dias fora do trabalho`];
@@ -17,17 +18,6 @@ export function tradeoff(r: PlanOption) {
   return `${r.k} períodos, maior bloco: ${biggest} dias`;
 }
 
-export function Chips({ p }: { p: Period }) {
-  const wg = p.weekendGain ?? 0;
-  return (
-    <div className="chips">
-      {wg > 0 && <span className="chip">+{wg} dia{wg > 1 ? 's' : ''} de fim de semana</span>}
-      {p.holGain?.map((x) => <span key={x.d} className="chip h">{x.name} · {fmt(x.d)}</span>)}
-      {p.holInside?.map((x) => <span key={x.d} className="chip warn">feriado dentro das férias: {x.name}</span>)}
-    </div>
-  );
-}
-
 export function KeyStatus({ r, custom }: { r: PlanOption; custom: KeyDate[] }) {
   const items = custom.filter((c) => c.type === 'incluir');
   if (!items.length) return null;
@@ -41,9 +31,9 @@ export function KeyStatus({ r, custom }: { r: PlanOption; custom: KeyDate[] }) {
         let n = 0, t = 0;
         for (let d = a; d <= b; d++) { t++; if (covered(d)) n++; }
         const name = c.label || 'Data-chave';
-        if (n === t) return <span key={c.id} className="ok">✓ {name} fica na folga</span>;
-        if (n > 0) return <span key={c.id} className="part">◐ {name}: cobre {n} de {t} dias</span>;
-        return <span key={c.id} className="no">✗ {name} fica fora</span>;
+        if (n === t) return <span key={c.id} className="ok"><Icon name="check" />{name} fica na folga</span>;
+        if (n > 0) return <span key={c.id} className="part"><Icon name="half" />{name}: cobre {n} de {t} dias</span>;
+        return <span key={c.id} className="no"><Icon name="cross" />{name} fica fora</span>;
       })}
     </div>
   );
@@ -56,7 +46,7 @@ export function CopyButton({ text }: { text: string }) {
     setTimeout(() => setLabel('Copiar resumo'), 1800);
   };
   return (
-    <button type="button" className="btn ghost" onClick={() => {
+    <button type="button" className="copy" onClick={() => {
       try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch { done(false); }
     }}>{label}</button>
   );

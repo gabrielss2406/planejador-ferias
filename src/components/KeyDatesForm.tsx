@@ -35,7 +35,7 @@ export function KeyDatesForm({ custom, onChange }: Props) {
         <label htmlFor="kLabel">O que é</label>
         <input type="text" id="kLabel" placeholder="Ex.: casamento da Ana" value={label} onChange={(e) => setLabel(e.target.value)} />
       </div>
-      <div className="row field">
+      <div className="row dates field">
         <div>
           <label htmlFor="kStart">De</label>
           <input type="date" id="kStart" value={start} onChange={(e) => setStart(e.target.value)} />
