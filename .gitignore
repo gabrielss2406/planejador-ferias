@@ -2,3 +2,5 @@ node_modules/
 dist/
 .impeccable/mocks/
 .impeccable/review/
+
+data/

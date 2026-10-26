@@ -24,12 +24,13 @@ Férias contam em dias corridos, então o ganho está nas pontas: começar logo 
 
 ## Capabilities and Constraints
 
-- Hoje: aplicação estática em React + TypeScript (Vite), sem backend e sem login. Configurações ficam no `localStorage`.
+- Hoje: React + TypeScript (Vite). O cálculo roda no navegador; configurações, planos salvos e o plano escolhido ficam no `localStorage`. Não há login.
+- Férias em grupo: servidor próprio (Node + SQLite) com salas de 5 dígitos. Cada pessoa escolhe um plano e o grupo vê apelidos e datas dos planos escolhidos, com os dias em comum. Identidade anônima por navegador; quem tem o código vê os dados; até 20 pessoas; salas expiram após 90 dias sem uso.
 - Parâmetros: ano, estado, cidade, dias de férias (30, ou 20 vendendo 10), número de períodos, preferência por blocos grandes, Carnaval e Corpus Christi como pontos facultativos, datas-chave (quero folga, não posso tirar férias, folga extra), janela e meses permitidos, mínimos da CLT.
 - Feriados municipais são demonstrativos (base de protótipo). Não afirmar precisão; o usuário confirma com a prefeitura e completa com datas-chave.
-- Planejado, ainda não existe: backend com API de feriados e tabela própria de feriados municipais por código IBGE.
+- Planejado, ainda não existe: consulta a uma API de feriados e tabela própria de feriados municipais por código IBGE.
 - Planejado, ainda não existe: simulação financeira (valores a receber, 1/3, abono). Hoje o app não calcula valores.
-- Deploy via Dockerfile (build com Node, servido por busybox httpd), sem nginx.
+- Deploy via Dockerfile (build com Node; o servidor Node serve o app e a API dos grupos, com volume para o SQLite), sem nginx.
 
 ## Brand Commitments
 

@@ -404,23 +404,44 @@ body:has(.drawer[open]){overflow:hidden}
   }
 }
 
-/* ---- PDF: só a folha de impressão ---- */
-.print-sheet{display:none}
-@page{size:A4;margin:18mm}
-@media print{
-  html,body{background:var(--papel);color:var(--tinta)}
-  .app,.fab,.drawer{display:none!important}
-  .print-sheet{display:block;color:var(--tinta);print-color-adjust:exact;-webkit-print-color-adjust:exact}
-  .ps-logo{display:block;height:48px;width:auto;margin-bottom:24px}
-  .ps-year{font:700 var(--t-tit)/1.15 var(--cond);color:var(--tinta-2)}
-  .ps-off{font:700 32px/1.1 var(--cond);margin-top:4px}
-  .ps-off b{font:800 var(--t-num)/.95 var(--mono);letter-spacing:-.02em;margin-right:12px}
-  .ps-sub{font:500 19px/1.35 var(--cond);color:var(--tinta-2);margin-top:4px}
-  .ps-list{margin-top:24px;border-top:3px dashed var(--picote)}
-  .ps-list li{display:flex;flex-direction:column;gap:3px;padding:12px 0;border-bottom:1px solid var(--divisor);break-inside:avoid}
-  .ps-list b{font:700 22px/1.2 var(--cond)}
-  .ps-list .mono{font-weight:700;font-size:var(--t-val)}
-  .ps-list li span:last-child{font:500 var(--t-corpo)/1.3 var(--cond);color:var(--tinta-2)}
-  .ps-note{margin-top:24px;font:500 var(--t-corpo)/1.35 var(--cond);max-width:70ch}
-  .ps-date{margin-top:12px;font:500 var(--t-rot) var(--cond);color:var(--tinta-2)}
-}
+/* ---- férias em grupo ---- */
+.group>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px;cursor:pointer;list-style:none;color:var(--papel);
+  border-top:1px solid var(--divisor-escuro);padding-top:12px}
+.group>summary::-webkit-details-marker{display:none}
+.group>summary::after{content:"";flex:none;width:8px;height:8px;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-4px}
+.group[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+.group h2{font:700 var(--t-tit)/1.15 var(--cond)}
+.gcard{display:flex;flex-direction:column;gap:12px;margin-top:12px;padding:14px var(--pad);background:var(--papel);color:var(--tinta);border-radius:8px}
+.gcard label,.gcard .lbl{display:block;font:600 var(--t-rot) var(--cond);color:var(--tinta-2);margin:0 0 4px}
+.gcard .field{margin:0}
+.g-join{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px}
+.g-join .field{flex:1 1 140px}
+.g-join input{letter-spacing:.2em;font-weight:700}
+.g-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px}
+.g-code{font:800 var(--t-num)/.95 var(--mono);letter-spacing:.08em}
+.g-name{max-width:320px}
+.g-note{font:500 var(--t-corpo)/1.35 var(--cond);color:var(--tinta);background:var(--ambar-claro);border-radius:4px;padding:8px 10px;text-wrap:pretty}
+.g-err{font:600 17px/1.3 var(--cond);color:var(--erro)}
+.g-leave{align-self:flex-start}
+.gm-list{display:grid;gap:6px}
+.gm-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;font:500 var(--t-corpo)/1.3 var(--cond);color:var(--tinta-2)}
+.gm-list b{font:700 20px/1.2 var(--cond);color:var(--tinta)}
+.gm-list .mono{font-weight:700;font-size:var(--t-rot);color:var(--tinta)}
+.gm-list small,.g-ov small{margin-left:6px;font:500 var(--t-rot) var(--cond);color:var(--tinta-2)}
+.gr{display:flex;flex-direction:column;gap:6px}
+.gr-row{display:grid;grid-template-columns:minmax(64px,110px) 1fr;align-items:center;gap:8px}
+.gr-name{font:700 17px/1.1 var(--cond);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gr-name small{font-weight:500;color:var(--tinta-2)}
+.gr .ruler-months{color:var(--tinta-2)}
+.gr .ruler-months span{border-left-color:var(--divisor)}
+.gr-track{position:relative;height:22px;background:var(--trilho);border-radius:3px}
+.gr-track i{position:absolute;top:4px;height:14px;display:block}
+.gr-track .v{background:var(--azul)}
+.gr-track .o{background:var(--ambar);top:4px;height:14px;background-image:repeating-linear-gradient(135deg,transparent 0 3px,rgb(16 24 32 / .45) 3px 5px)}
+.gr .ruler-leg{color:var(--tinta-2)}
+.gr .ruler-leg .o{background:var(--ambar)}
+.g-ov h3{font:700 20px var(--cond);margin-bottom:4px}
+.g-ov ul{display:grid;gap:3px;font:500 var(--t-corpo)/1.3 var(--cond)}
+.g-ov .mono{font-weight:700;font-size:var(--t-rot)}
+.badge.mine{background:var(--azul);color:var(--papel)}
+.answer-sentence .badge{vertical-align:2px}

@@ -20,6 +20,8 @@ interface Props {
   /** acabou de ser descartado: o risco é desenhado na hora */
   striking: boolean;
   onDiscard: () => void;
+  /** é o plano que a pessoa escolheu */
+  isChosen: boolean;
 }
 
 const holText = (list: { name: string }[]) => {
@@ -84,7 +86,7 @@ function Periods({ id, label, children }: { id: string; label: string; children:
 }
 
 /** A resposta: quanto de folga o plano rende, em uma frase, e as datas de cada período. */
-export function Ticket({ selected, result, year, custom, active, onPick, discarded, striking, onDiscard }: Props) {
+export function Ticket({ selected, result, year, custom, active, onPick, discarded, striking, onDiscard, isChosen }: Props) {
   if (!selected || result.error || selected.off <= 0) {
     return (
       <section className="empty" aria-label="Resumo do plano">
@@ -103,6 +105,7 @@ export function Ticket({ selected, result, year, custom, active, onPick, discard
         </p>
         <p className="answer-sentence" aria-live="polite">
           <span className="sr">{off} dias fora do trabalho. </span>
+          {isChosen && <span className="badge mine">Plano escolhido</span>}{' '}
           {gain > 0
             ? `Você usa ${plural(result.N, 'dia', 'dias')} de férias e ganha +${gain} emendando fins de semana e feriados.`
             : `Você usa ${plural(result.N, 'dia', 'dias')} de férias, sem dias extras neste plano.`}

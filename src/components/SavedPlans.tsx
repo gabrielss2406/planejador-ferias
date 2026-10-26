@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { fmt } from '../lib/dates';
 import { buildIcs, downloadFile } from '../lib/export';
-import type { SavedPlan } from '../lib/types';
+import { downloadTicket } from '../lib/ticketImage';
+import type { ChosenApi } from '../hooks/useChosen';
 import type { SavedApi } from '../hooks/useSavedPlans';
 import { Icon } from './Icon';
 import { plural } from './format';
@@ -10,11 +11,11 @@ import { CopyButton, summaryText } from './planParts';
 
 interface Props {
   saved: SavedApi;
-  onPrint: (p: SavedPlan) => void;
+  chosen: ChosenApi;
 }
 
 /** Planos favoritos: fotos de datas e dias, para comparar depois mesmo mudando os parâmetros. */
-export function SavedPlans({ saved, onPrint }: Props) {
+export function SavedPlans({ saved, chosen }: Props) {
   const { plans, remove } = saved;
   const [open, setOpen] = useState(() => !!window.matchMedia?.('(min-width: 641px)').matches);
   const head = useRef<HTMLElement>(null);
@@ -57,8 +58,11 @@ export function SavedPlans({ saved, onPrint }: Props) {
               </ul>
               <div className="saved-act">
                 <CopyButton className="mini" label="Copiar" context={nome} text={summaryText(p, p.year, p.N)} />
-                <button type="button" className="mini" onClick={() => onPrint(p)}>
-                  <Icon name="download" />PDF<span className="sr"> do {nome}</span>
+                <button type="button" className="mini" aria-pressed={chosen.chosen?.id === p.id} onClick={() => chosen.toggle(p)}>
+                  {chosen.chosen?.id === p.id ? 'Escolhido' : 'Escolher'}<span className="sr"> {nome}</span>
+                </button>
+                <button type="button" className="mini" onClick={() => void downloadTicket(p)}>
+                  <Icon name="download" />Ticket<span className="sr"> do {nome}</span>
                 </button>
                 <button type="button" className="mini" onClick={() => downloadFile(`ferias-${p.year}.ics`, buildIcs(p), 'text/calendar')}>
                   <Icon name="calendar" />Calendário<span className="sr"> do {nome}</span>

@@ -1,0 +1,48 @@
+import type { SavedPlan } from './types';
+
+/** Quem está numa sala e o que publicou (plano escolhido, se houver). */
+export interface GroupMember {
+  pid: string;
+  name: string;
+  /** é a própria pessoa que está olhando */
+  me: boolean;
+  updatedAt: number;
+  plan: SavedPlan | null;
+}
+
+export interface Overlap {
+  s: number;
+  e: number;
+  pids: string[];
+  names: string[];
+}
+
+/**
+ * Trechos de férias em que 2 ou mais pessoas estão fora ao mesmo tempo (só dias de férias,
+ * não o fim de semana emendado). Só entram planos do ano pedido. Trechos vizinhos com as mesmas pessoas se unem.
+ */
+export function overlaps(members: GroupMember[], year: number): Overlap[] {
+  const spans: { s: number; e: number; pid: string; name: string }[] = [];
+  for (const m of members) {
+    if (m.plan?.year !== year) continue;
+    for (const p of m.plan.periods) spans.push({ s: p.s, e: p.e, pid: m.pid, name: m.name });
+  }
+  const cuts = [...new Set(spans.flatMap((p) => [p.s, p.e + 1]))].sort((a, b) => a - b);
+  const out: Overlap[] = [];
+  for (let i = 0; i < cuts.length - 1; i++) {
+    const s = cuts[i], e = cuts[i + 1] - 1;
+    const on = new Map<string, string>();
+    for (const p of spans) if (p.s <= s && p.e >= e) on.set(p.pid, p.name);
+    if (on.size < 2) continue;
+    const pids = [...on.keys()].sort();
+    const names = pids.map((k) => on.get(k)!);
+    const last = out[out.length - 1];
+    if (last && last.e + 1 === s && last.pids.join('|') === pids.join('|')) last.e = e;
+    else out.push({ s, e, pids, names });
+  }
+  return out;
+}
+
+/** "Ana e Bia" / "Ana, Bia e Caio" */
+export const joinNames = (names: string[]) =>
+  names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`;

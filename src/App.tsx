@@ -4,19 +4,22 @@ import { defaultPeriod, planKey } from './components/format';
 import { HolidayList } from './components/HolidayList';
 import { HowItWorks } from './components/HowItWorks';
 import { MonthSheet } from './components/MonthSheet';
+import { GroupSection } from './components/GroupSection';
 import { PlanBoard, type Change } from './components/PlanBoard';
 import { FloatingOptions } from './components/FloatingOptions';
-import { PrintSheet } from './components/PrintSheet';
 import { SavedPlans } from './components/SavedPlans';
 import { QuickParams } from './components/SettingsPanel';
 import { Ticket } from './components/Ticket';
 import { Calendar } from './components/YearView';
 import { YearRuler } from './components/YearRuler';
 import { arrange, useDiscarded } from './hooks/useDiscarded';
+import { useChosen } from './hooks/useChosen';
+import { useGroup } from './hooks/useGroup';
 import { useSavedPlans } from './hooks/useSavedPlans';
 import { useSettings } from './hooks/useSettings';
+import { planId } from './lib/export';
 import { plan } from './lib/planner';
-import type { GroupKey, PlanResult, SavedPlan } from './lib/types';
+import type { GroupKey, PlanResult } from './lib/types';
 
 /** plano (identidade) -> dias fora, de todas as abas */
 const snapshot = (r: PlanResult) => {
@@ -28,15 +31,8 @@ const snapshot = (r: PlanResult) => {
 export default function App() {
   const { settings, update } = useSettings();
   const saved = useSavedPlans();
-  // PDF: monta a folha de impressão, chama o diálogo do navegador e desmonta ao terminar
-  const [printPlan, setPrintPlan] = useState<SavedPlan | null>(null);
-  useEffect(() => {
-    if (!printPlan) return;
-    const clear = () => setPrintPlan(null);
-    window.addEventListener('afterprint', clear, { once: true });
-    const raf = requestAnimationFrame(() => window.print());
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('afterprint', clear); };
-  }, [printPlan]);
+  const chosen = useChosen();
+  const group = useGroup(chosen.chosen);
   const deferred = useDeferredValue(settings);
   const result = useMemo(() => plan(deferred), [deferred]);
   const [tab, setTab] = useState<GroupKey>('all');
@@ -87,7 +83,13 @@ export default function App() {
 
   // descartar/restaurar: a seleção acompanha o mesmo plano quando a lista reordena; ao descartar o
   // plano aberto, passa para o primeiro que ainda vale
-  const discard = (key: string) => toggle(key, (next) => {
+  const discard = (key: string) => {
+    // descartar o plano que era o escolhido tira a escolha
+    const opt = base.find((o) => planKey(o) === key);
+    if (opt && !discarded.has(key) && chosen.chosen?.id === planId(deferred.year, opt)) chosen.clear();
+    toggleDiscard(key);
+  };
+  const toggleDiscard = (key: string) => toggle(key, (next) => {
     const order = arrange(base, planKey, next);
     const target = next.has(key) && key === selKey ? order[0] : selected;
     setSelIdx(Math.max(0, order.findIndex((o) => target && planKey(o) === planKey(target))));
@@ -106,12 +108,13 @@ export default function App() {
         <main className="page" id="plano">
           <QuickParams settings={settings} update={update} result={result} />
           <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick}
-            discarded={discarded.has(selKey)} striking={fresh === selKey} onDiscard={() => discard(selKey)} />
+            discarded={discarded.has(selKey)} isChosen={!!selected && chosen.chosen?.id === planId(deferred.year, selected)} striking={fresh === selKey} onDiscard={() => discard(selKey)} />
           <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
           <PlanBoard result={result} list={list} discarded={discarded} fresh={fresh} onDiscard={discard} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
             selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen}
-            saved={saved} onPrint={setPrintPlan} />
-          <SavedPlans saved={saved} onPrint={setPrintPlan} />
+            saved={saved} chosen={chosen} />
+          <SavedPlans saved={saved} chosen={chosen} />
+          <GroupSection group={group} chosen={chosen.chosen} year={deferred.year} />
 
           <details className="cal-block" open={calOpen} onToggle={(e) => setCalOpen(e.currentTarget.open)}>
             <summary>Ver calendário do ano</summary>
@@ -126,7 +129,6 @@ export default function App() {
         </main>
         <FloatingOptions settings={settings} update={update} />
       </div>
-    {printPlan && <PrintSheet plan={printPlan} />}
     </>
   );
 }

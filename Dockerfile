@@ -5,7 +5,13 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM busybox:1.36
-COPY --from=build /app/dist/ /www/
+# servidor próprio: serve o app e a API de grupos (SQLite embutido no Node, sem dependências extras)
+FROM node:22-alpine
+WORKDIR /app
+ENV NODE_ENV=production PORT=80 DB_FILE=/data/ferias.db DIST_DIR=/app/dist
+COPY --from=build /app/dist ./dist
+COPY server ./server
+COPY shared ./shared
+VOLUME /data
 EXPOSE 80
-CMD ["httpd", "-f", "-p", "80", "-h", "/www"]
+CMD ["node", "--disable-warning=ExperimentalWarning", "server/index.mjs"]

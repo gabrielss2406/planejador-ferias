@@ -1,8 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { fmt } from '../lib/dates';
 import { buildIcs, downloadFile, planId, toSaved } from '../lib/export';
+import { downloadTicket } from '../lib/ticketImage';
+import type { ChosenApi } from '../hooks/useChosen';
 import type { SavedApi } from '../hooks/useSavedPlans';
-import type { GroupKey, PlanOption, PlanResult, SavedPlan } from '../lib/types';
+import type { GroupKey, PlanOption, PlanResult } from '../lib/types';
 import { Icon } from './Icon';
 import { Strike } from './Strike';
 import { planKey, plural, short } from './format';
@@ -32,13 +34,13 @@ interface Props {
   changes: Record<string, Change>;
   onInteract: () => void;
   saved: SavedApi;
-  onPrint: (p: SavedPlan) => void;
+  chosen: ChosenApi;
 }
 
 const changeText = (c: Change) =>
   c.kind === 'new' ? 'novo' : `${c.kind === 'up' ? '+' : '−'}${plural(c.n, 'dia', 'dias')}`;
 
-export function PlanBoard({ result, list, discarded, fresh, onDiscard, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract, saved, onPrint }: Props) {
+export function PlanBoard({ result, list, discarded, fresh, onDiscard, year, tab, onTab, selIdx, onSelect, selected, changes, onInteract, saved, chosen }: Props) {
   const [more, setMore] = useState(false);
   const live = list.filter((r) => !discarded.has(planKey(r)));
   const nOff = list.length - live.length;
@@ -85,14 +87,16 @@ export function PlanBoard({ result, list, discarded, fresh, onDiscard, year, tab
           {shown.map((r, i) => {
             const k = planKey(r), ch = changes[k], on = i === selIdx, off = discarded.has(k);
             const best = tab === 'all' && i === 0 && !off, n = rank.get(k) ?? i + 1;
+            const mine = chosen.chosen?.id === planId(year, r);
             const ranges = r.periods.map((p) => `${fmt(p.s)} a ${fmt(p.e)}`).join('; ');
             return (
               <label key={k} className={'plan' + (on ? ' on' : '') + (off ? ' off' : '')} ref={(el) => { if (el) rows.current.set(k, el); else rows.current.delete(k); }}>
                 <input type="radio" className="plan-radio" name="plano" checked={on} onChange={() => onSelect(i)}
-                  aria-label={`${best ? 'Melhor opção: ' : ''}Plano ${n}${off ? ' (descartado)' : ''}, ${r.off} dias fora do trabalho, ${tradeoff(r)}. Férias: ${ranges}.${ch ? ` Mudou: ${ch.kind === 'new' ? 'plano novo' : `${ch.kind === 'up' ? 'mais' : 'menos'} ${plural(ch.n, 'dia', 'dias')} fora`}.` : ''}`} />
+                  aria-label={`${best ? 'Melhor opção: ' : ''}Plano ${n}${off ? ' (descartado)' : ''}${mine ? ' (escolhido)' : ''}, ${r.off} dias fora do trabalho, ${tradeoff(r)}. Férias: ${ranges}.${ch ? ` Mudou: ${ch.kind === 'new' ? 'plano novo' : `${ch.kind === 'up' ? 'mais' : 'menos'} ${plural(ch.n, 'dia', 'dias')} fora`}.` : ''}`} />
                 <span className="plan-top">
                   <b>Plano {n}</b>
                   {best && <span className="badge">Melhor opção</span>}
+                  {mine && <span className="badge mine">Escolhido</span>}
                   {ch && <span className={'plan-change ' + ch.kind} aria-hidden="true">{ch.kind !== 'new' && <Icon name={ch.kind} />}{changeText(ch)}</span>}
                   {on && <span className="plan-on" aria-hidden="true"><Icon name="check" /></span>}
                 </span>
@@ -128,23 +132,27 @@ export function PlanBoard({ result, list, discarded, fresh, onDiscard, year, tab
           )}
         </div>
       )}
-      {selected && <Actions selected={selected} year={year} N={result.N} saved={saved} onPrint={onPrint} />}
+      {selected && <Actions selected={selected} year={year} N={result.N} saved={saved} chosen={chosen} />}
     </section>
   );
 }
 
-function Actions({ selected, year, N, saved, onPrint }: { selected: PlanOption; year: number; N: number; saved: SavedApi; onPrint: (p: SavedPlan) => void }) {
+function Actions({ selected, year, N, saved, chosen }: { selected: PlanOption; year: number; N: number; saved: SavedApi; chosen: ChosenApi }) {
   const id = planId(year, selected);
   const on = saved.has(id);
   const blocked = saved.full && !on;
   const snap = () => toSaved(selected, year, N);
+  const mine = chosen.chosen?.id === id;
   return (
     <div className="act">
       <div className="act-btns">
         <CopyButton text={summaryText(selected, year, N)} />
-        <button type="button" className="sec" onClick={() => onPrint(snap())}><Icon name="download" />Salvar PDF</button>
+        <button type="button" className="sec" onClick={() => void downloadTicket(snap())}><Icon name="download" />Salvar ticket</button>
         <button type="button" className="sec" onClick={() => downloadFile(`ferias-${year}.ics`, buildIcs(snap()), 'text/calendar')}>
           <Icon name="calendar" />Adicionar ao calendário (.ics)
+        </button>
+        <button type="button" className="sec keep" aria-pressed={mine} onClick={() => chosen.toggle(snap())}>
+          <Icon name="check" />{mine ? 'Plano escolhido' : 'Escolher este plano'}
         </button>
         <button type="button" className="sec keep" aria-pressed={on} disabled={blocked} aria-describedby={blocked ? 'saved-full' : undefined}
           onClick={() => saved.toggle(snap())}>

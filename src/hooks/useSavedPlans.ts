@@ -1,20 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
+import { validPlan } from '../../shared/planShape.mjs';
 import type { SavedPlan } from '../lib/types';
 
 const KEY = 'planejador-ferias-saved-v1';
 export const MAX_SAVED = 12;
 
-const num = (v: unknown) => typeof v === 'number' && Number.isFinite(v);
-const valid = (p: any): p is SavedPlan =>
-  p && typeof p.id === 'string' && num(p.year) && num(p.N) && num(p.off) && num(p.k) && num(p.savedAt)
-  && Array.isArray(p.periods) && p.periods.length > 0
-  && p.periods.every((q: any) => q && num(q.s) && num(q.e) && num(q.L) && num(q.xs) && num(q.xe));
-
 function load(): SavedPlan[] {
   try {
     const raw = localStorage.getItem(KEY);
     const arr = raw ? JSON.parse(raw) : [];
-    if (Array.isArray(arr)) return arr.filter(valid).slice(0, MAX_SAVED);
+    if (Array.isArray(arr)) return arr.filter(validPlan).slice(0, MAX_SAVED);
   } catch { /* localStorage indisponível ou JSON inválido: começa vazio */ }
   return [];
 }
