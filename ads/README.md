@@ -7,7 +7,7 @@ um `busybox httpd` que serve `www/` (o `ads.txt`, o `robots.txt` e uma página i
 ## Subir
 
 1. **DNS:** crie um registro `A` do domínio raiz `hubproject.space` apontando para o IP do servidor (o do subdomínio já existe).
-2. **Container:** na raiz do repositório,
+2. **Container:** o contexto de build é a **raiz do repositório** (`docker build -f ads/Dockerfile .`). Na raiz do repositório,
 
        docker compose up -d --build ads
 
@@ -33,3 +33,8 @@ um `busybox httpd` que serve `www/` (o `ads.txt`, o `robots.txt` e uma página i
 
 Edite `ads/www/ads.txt` e `adsenseClient` em `../site.config.json` com o mesmo ID. Um teste (`npm test`) falha se os dois
 divergirem. Reconstrua com `docker compose up -d --build ads`.
+
+## Easypanel
+
+Crie um serviço de app apontando para este repositório, com **caminho do Dockerfile** `ads/Dockerfile` e contexto na raiz
+(o padrão). Porta do container: 80. Adicione o domínio `hubproject.space` ao serviço (o Easypanel emite o HTTPS).

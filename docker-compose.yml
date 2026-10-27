@@ -10,7 +10,9 @@ services:
 
   # domínio raiz (hubproject.space): ads.txt do AdSense e página inicial; ver ads/README.md
   ads:
-    build: ./ads
+    build:
+      context: .
+      dockerfile: ads/Dockerfile
     container_name: planejador-ads
     restart: unless-stopped
     ports:
