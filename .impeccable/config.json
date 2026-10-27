@@ -4,6 +4,12 @@
     "ignoreFiles": [
       ".impeccable/mocks/**"
     ],
-    "ignoreValues": []
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "condensed,arial narrow,liberation sans narrow,sans-serif --reason falso positivo: mesma pilha de fontes do app (barlow condensed com fallbacks), pagina da raiz sem webfont proprio; decisao minha, nao confirmada pelo usuario",
+        "createdAt": "2026-10-27T11:58:23.185Z"
+      }
+    ]
   }
 }
