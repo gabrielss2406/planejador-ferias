@@ -8,6 +8,7 @@ import { GroupSection } from './components/GroupSection';
 import { PlanBoard, type Change } from './components/PlanBoard';
 import { FloatingOptions } from './components/FloatingOptions';
 import { SavedPlans } from './components/SavedPlans';
+import { SiteLinks } from './components/SiteLinks';
 import { QuickParams } from './components/SettingsPanel';
 import { Ticket } from './components/Ticket';
 import { Calendar } from './components/YearView';
@@ -128,6 +129,7 @@ export default function App() {
 
           <HowItWorks />
           <HolidayList result={result} year={deferred.year} />
+          <SiteLinks year={deferred.year} />
         </main>
         <FloatingOptions settings={settings} update={update} />
       </div>
