@@ -8,5 +8,13 @@ services:
     volumes:
       - ferias-data:/data
 
+  # domínio raiz (hubproject.space): ads.txt do AdSense e página inicial; ver ads/README.md
+  ads:
+    build: ./ads
+    container_name: planejador-ads
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+
 volumes:
   ferias-data:
