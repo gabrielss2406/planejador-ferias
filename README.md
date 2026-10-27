@@ -14,6 +14,9 @@ respeitando as regras da CLT (até 3 períodos, menor com 5 dias ou mais, maior 
     src/styles.css           estilos e tokens da identidade visual
     src/assets/              logo e imagem do hero (otimizadas a partir de logo.png e image.png)
     server/                  servidor Node: serve o dist e a API dos grupos (SQLite embutido, sem dependências)
+    site.config.json         endereço, contato e AdSense (anúncios desligados se vazio)
+    src/seo/                 conteúdo das páginas estáticas; scripts/build-seo.ts as grava em dist/
+    public/site.js           consentimento e espaços de anúncio
     shared/                  código usado pelo navegador e pelo servidor: validação do plano, feriados nacionais/estaduais e Páscoa
     server/holidays.mjs      busca de municípios e feriados por cidade (dados em server/data/)
     scripts/import-holidays.mjs importa a base aberta de feriados municipais
@@ -58,6 +61,25 @@ aparecem como "sem registro". Não é fonte oficial: o app sempre pede para conf
 `npm run import:holidays` (precisa de rede) e revise o diff. Feriados municipais fixos e os ligados à Páscoa (Carnaval, Corpus Christi,
 Sexta Santa) são projetados para outros anos; os que só existem com data de 2026 não são inventados. Sem servidor, o app cai para a
 lista curta de cidades embutida.
+
+## Páginas de conteúdo e anúncios
+
+`npm run build` roda o `vite build` e depois `scripts/build-seo.ts`, que gera páginas estáticas em `dist/` para buscadores:
+guia de férias pela CLT, feriados e melhores datas de 2026 a 2028, feriados por estado (27 UFs x 3 anos), política de privacidade,
+`sitemap.xml`, `robots.txt` e a página 404. O texto vem do mesmo código do app (feriados e motor de busca), em `src/seo/`.
+Estados ainda sem feriados estaduais conferidos (ES, GO, MG, MT) saem com `noindex` e fora do sitemap. As páginas de melhores
+datas só mostram planos que começam de segunda a quinta e não nos 2 dias antes de feriado (CLT, art. 134, §3º).
+
+Configuração em `site.config.json`: `siteUrl`, `contactEmail` (exigido pela política de privacidade, LGPD) e os dados do AdSense.
+Os anúncios ficam **desligados** enquanto `adsenseClient` estiver vazio. Para ligar depois da aprovação:
+
+1. Preencha `adsenseClient` (`ca-pub-...`) e os IDs de `slots` (`content`, `footer`; `app` só se quiser anúncio no fim do app).
+2. Rode `npm run build`: ele gera `ads.txt` e os espaços "Publicidade". O Google também procura `ads.txt` na raiz do domínio
+   (`hubproject.space/ads.txt`), que este app não serve: publique o arquivo lá também.
+3. `public/site.js` pede consentimento antes de carregar qualquer anúncio. Aceitar liga o AdSense normal; recusar liga o modo não
+   personalizado. Link "Preferências de anúncios" no rodapé.
+
+No AdSense, cadastre o domínio raiz (`hubproject.space`); subdomínio sozinho foi recusado.
 
 ## Desenvolvimento
 

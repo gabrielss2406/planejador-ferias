@@ -30,6 +30,7 @@ Férias contam em dias corridos, então o ganho está nas pontas: começar logo 
 - Feriados municipais vêm de base aberta, sem garantia de precisão (sem servidor, de uma lista curta demonstrativa). Não afirmar precisão; o usuário confirma com a prefeitura e completa com datas-chave.
 - Feriados por cidade: API própria (`/api/municipios`, `/api/feriados`) sobre uma base aberta de feriados municipais por código IBGE, importada e versionada (cobre cerca de 3.800 dos 5.570 municípios; não é fonte oficial). O app avisa a cobertura de cada cidade e pede confirmação com a prefeitura. Estaduais ainda incompletos (GO, MG, MT sem registro).
 - Planejado, ainda não existe: simulação financeira (valores a receber, 1/3, abono). Hoje o app não calcula valores.
+- Conteúdo público: páginas estáticas geradas no build (guia CLT, feriados, melhores datas, estados, privacidade) para busca orgânica. Anúncios (AdSense) são opcionais, desligados por padrão, com consentimento prévio, nunca dentro do fluxo de escolha do plano; sem anúncios no início do app.
 - Deploy via Dockerfile (build com Node; o servidor Node serve o app e a API dos grupos, com volume para o SQLite), sem nginx.
 
 ## Brand Commitments
