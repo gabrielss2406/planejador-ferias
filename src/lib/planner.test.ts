@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { DEFAULTS } from '../hooks/useSettings';
-import { easter, idx } from './dates';
+import { easter, idx, wd } from './dates';
 import { compositions, plan } from './planner';
 
 test('Páscoa de 2027 é 28/03', () => {
@@ -20,6 +20,23 @@ test('plano de 30 dias respeita as regras da CLT', () => {
     expect(Math.min(...lens)).toBeGreaterThanOrEqual(5);
     expect(Math.max(...lens)).toBeGreaterThanOrEqual(14);
     expect(o.off).toBeGreaterThanOrEqual(30);
+  }
+});
+
+test('nenhum plano começa de sexta a domingo nem a 1 ou 2 dias de um feriado (CLT, art. 134, §3º)', () => {
+  for (const year of [2026, 2027, 2028]) {
+    for (const uf of ['', 'SP', 'RJ']) {
+      const r = plan({ ...DEFAULTS, year, uf });
+      const isHoliday = (d: number) => { const h = r.hol.get(d); return !!h && ['nacional', 'estadual', 'municipal'].includes(h.kind); };
+      const all = Object.values(r.groups).flat();
+      expect(all.length).toBeGreaterThan(0);
+      for (const o of all) {
+        for (const p of o.periods) {
+          expect([1, 2, 3, 4], `início ${p.s}`).toContain(wd(p.s));
+          expect(isHoliday(p.s + 1) || isHoliday(p.s + 2), `véspera de feriado ${p.s}`).toBe(false);
+        }
+      }
+    }
   }
 });
 

@@ -1,4 +1,4 @@
-import { dateOf, idx, isWeekend, parseISO } from './dates';
+import { dateOf, idx, isWeekend, parseISO, wd } from './dates';
 import { buildHolidays } from './holidays';
 import type { GroupKey, Period, PlanOption, PlanResult, Settings } from './types';
 
@@ -34,12 +34,18 @@ export function plan(S: Settings): PlanResult {
   const emptyGroups = (): Record<GroupKey, PlanOption[]> => ({ all: [], 1: [], 2: [], 3: [] });
   if (wE < wS) return { ...ctx, groups: emptyGroups(), error: 'A data final da janela é anterior à inicial.' };
 
+  // CLT, art. 134, §3º: as férias não podem começar nos 2 dias antes de feriado ou do descanso semanal (domingo).
+  // Na prática: nada de começar de sexta a domingo, nem a 1 ou 2 dias de um feriado.
+  const isRealHoliday = (d: number) => { const h = hol.get(d); return !!h && (h.kind === 'nacional' || h.kind === 'estadual' || h.kind === 'municipal'); };
+  const startsOk = (s: number) => { const w = wd(s); return w >= 1 && w <= 4 && !isRealHoliday(s + 1) && !isRealHoliday(s + 2); };
+
   const cache: Record<number, Period[]> = {};
   const cands = (L: number): Period[] => {
     if (cache[L]) return cache[L];
     const out: Period[] = [];
     for (let s = wS; s + L - 1 <= wE; s++) {
       const e = s + L - 1;
+      if (!startsOk(s)) continue;
       if (!S.months[dateOf(s).getUTCMonth()] || !S.months[dateOf(e).getUTCMonth()]) continue;
       let bad = false, waste = 0;
       for (let d = s; d <= e; d++) {

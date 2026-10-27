@@ -88,14 +88,11 @@ export function bridges(year: number, uf = ''): Bridge[] {
 }
 
 /**
- * Os melhores planos do motor para o ano (e UF), com 30 dias ou 20 (vendendo 10). Nas páginas públicas só
- * entram planos que começam de segunda a quinta e não nos 2 dias antes de feriado (CLT, art. 134, §3º).
+ * Os melhores planos do motor para o ano (e UF), com 30 dias ou 20 (vendendo 10). O próprio motor já só
+ * propõe inícios de segunda a quinta e fora dos 2 dias antes de feriado (CLT, art. 134, §3º).
  */
 export function bestPlans(year: number, N: number, uf = '', top = 3): PlanOption[] {
-  const r = plan({ ...DEFAULTS, year, uf, total: N });
-  const isHoliday = (i: number) => { const h = r.hol.get(i); return !!h && h.kind !== 'facultativo'; };
-  const okStart = (s: number) => wd(s) >= 1 && wd(s) <= 4 && !isHoliday(s + 1) && !isHoliday(s + 2);
-  return r.groups.all.filter((p) => p.periods.every((q) => okStart(q.s))).slice(0, top);
+  return plan({ ...DEFAULTS, year, uf, total: N }).groups.all.slice(0, top);
 }
 
 export const yearBounds = (year: number) => ({ start: idx(year, 0, 1), end: idx(year, 11, 31) });
