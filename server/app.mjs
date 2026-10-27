@@ -6,7 +6,7 @@ import { validCode, validId } from './store.mjs';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.woff': 'font/woff',
-  '.json': 'application/json', '.ico': 'image/x-icon', '.txt': 'text/plain; charset=utf-8',
+  '.json': 'application/json', '.xml': 'application/xml; charset=utf-8', '.ico': 'image/x-icon', '.txt': 'text/plain; charset=utf-8',
 };
 const MAX_BODY = 4096;
 
@@ -109,7 +109,21 @@ export function createApp(store, { distDir = null, holidays = null, now = () => 
     try { clean = normalize(decodeURIComponent(path)).replace(/^([/\\])+/, ''); } catch { res.writeHead(400); return res.end(); }
     let file = join(distDir, clean);
     if (file !== distDir && !file.startsWith(distDir + sep)) { res.writeHead(403); return res.end(); }
-    if (!existsSync(file) || statSync(file).isDirectory()) file = join(distDir, 'index.html');
+    if (existsSync(file) && statSync(file).isDirectory()) {
+      // pasta de página (ex.: /guia-ferias-clt): sempre com barra final, servindo o index.html dela
+      if (!path.endsWith('/') && file !== distDir) { res.writeHead(301, { location: path + '/' }); return res.end(); }
+      file = join(file, 'index.html');
+    }
+    if (!existsSync(file) || !statSync(file).isFile()) {
+      // o app só tem a rota "/": o resto é 404 de verdade (não devolver o app com 200 evita "soft 404" no Google)
+      const page = join(distDir, '404.html');
+      if (existsSync(page)) {
+        res.writeHead(404, { 'content-type': MIME['.html'], 'cache-control': 'no-cache' });
+        return createReadStream(page).pipe(res);
+      }
+      res.writeHead(404, { 'content-type': MIME['.txt'] });
+      return res.end('Página não encontrada');
+    }
     const long = file.replaceAll('\\', '/').includes('/assets/');
     res.writeHead(200, {
       'content-type': MIME[extname(file)] ?? 'application/octet-stream',
