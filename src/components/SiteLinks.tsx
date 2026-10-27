@@ -12,6 +12,8 @@ export function SiteLinks({ year }: { year: number }) {
         <a href="/guia-ferias-clt/">Guia de férias pela CLT</a>
         <a href={`/feriados-${y}/`}>Feriados {y}</a>
         <a href={`/melhores-datas-ferias-${y}/`}>Melhores datas em {y}</a>
+        <a href="/sobre/">Sobre</a>
+        <a href="/contato/">Contato</a>
         <a href="/privacidade/">Privacidade</a>
         {adsOn && <button type="button" data-consent-open>Preferências de anúncios</button>}
       </nav>

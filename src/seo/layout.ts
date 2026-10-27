@@ -135,7 +135,7 @@ ${spec.body}
 ${related}
 </main>
 <footer class="c-foot">
-<nav aria-label="Links do site"><a href="/">Planejador</a><a href="/guia-ferias-clt/">Guia de férias pela CLT</a><a href="/privacidade/">Privacidade</a>${adsOn(cfg) ? '<button type="button" data-consent-open>Preferências de anúncios</button>' : ''}</nav>
+<nav aria-label="Links do site"><a href="/">Planejador</a><a href="/guia-ferias-clt/">Guia de férias pela CLT</a><a href="/sobre/">Sobre</a><a href="/contato/">Contato</a><a href="/privacidade/">Privacidade</a>${adsOn(cfg) ? '<button type="button" data-consent-open>Preferências de anúncios</button>' : ''}</nav>
 <p>${esc(cfg.siteName)}: mais tempo para o que importa.</p>
 </footer>
 <script type="module" src="/site.js"></script>

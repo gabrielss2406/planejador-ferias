@@ -40,7 +40,7 @@ test('melhores planos públicos começam de segunda a quinta (art. 134, §3º)',
 
 test('todas as páginas: título e caminho únicos, só as UFs não conferidas ficam fora do índice', () => {
   const pages = allPages(cfg, UPDATED);
-  expect(pages).toHaveLength(2 + 3 * (2 + 27));
+  expect(pages).toHaveLength(4 + 3 * (2 + 27));
   expect(new Set(pages.map((p) => p.title)).size).toBe(pages.length);
   expect(new Set(pages.map((p) => p.path)).size).toBe(pages.length);
   const hidden = pages.filter((p) => p.noindex).map((p) => p.path);

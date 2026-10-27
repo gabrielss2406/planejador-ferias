@@ -9,6 +9,8 @@ const CLT_URL = 'https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm';
 export const paths = {
   guia: '/guia-ferias-clt/',
   privacidade: '/privacidade/',
+  sobre: '/sobre/',
+  contato: '/contato/',
   feriados: (y: number) => `/feriados-${y}/`,
   melhores: (y: number) => `/melhores-datas-ferias-${y}/`,
   estado: (y: number, uf: string) => `/feriados-${y}/${uf.toLowerCase()}/`,
@@ -52,7 +54,7 @@ ${table(['Faltas injustificadas no período', 'Dias de férias'], [['até 5', '3
 
 <h2 id="dividir">Posso dividir as férias?</h2>
 <p>Pode, <strong>com a sua concordância</strong>, em até 3 períodos. Um deles não pode ter menos de 14 dias corridos, e os outros não podem ter menos de 5 dias corridos cada (art. 134, §1º). Com 30 dias, alguns exemplos que cabem nas regras: 30; 15 + 15; 20 + 10; 14 + 8 + 8; 14 + 11 + 5.</p>
-<p>O art. 134, §3º veda o início das férias nos 2 dias que antecedem feriado ou dia de repouso semanal remunerado. Confira com o RH como a sua empresa aplica essa regra antes de fechar as datas.</p>
+<p>O art. 134, §3º veda o início das férias nos 2 dias que antecedem feriado ou dia de repouso semanal remunerado. Por isso o <a href="/">planejador</a> não sugere começar de sexta a domingo nem a 1 ou 2 dias de um feriado. Confira com o RH como a sua empresa aplica essa regra antes de fechar as datas.</p>
 <p>O <a href="/">planejador</a> testa todas as divisões permitidas e mostra as que deixam mais dias seguidos sem trabalhar.</p>
 
 <h2 id="abono">Posso vender parte das férias?</h2>
@@ -236,6 +238,60 @@ ${ads}
   };
 }
 
+export function sobrePage(updated: string): PageSpec {
+  const body = `
+<p class="lede">O Planejador de Férias é uma ferramenta gratuita que ajuda quem trabalha com carteira assinada a escolher as datas das férias, antes de conversar com o empregador.</p>
+<h2>O que ele faz</h2>
+<p>Ele testa todas as divisões de férias que a CLT permite (até 3 períodos, o menor com 5 dias ou mais e o maior com 14 dias ou mais) e mostra as que deixam mais dias seguidos sem trabalhar, emendando fins de semana e feriados. Você vê o resultado em dias fora do trabalho, compara os planos, escolhe um e leva a proposta para negociar.</p>
+<h2>De onde vêm os dados</h2>
+<ul>
+<li><strong>Regras de férias:</strong> a CLT, no site do <a href="${CLT_URL}" rel="noopener">Planalto</a> (arts. 129 a 153).</li>
+<li><strong>Feriados nacionais:</strong> calculados no próprio site, inclusive os móveis, como Sexta-feira Santa.</li>
+<li><strong>Feriados estaduais:</strong> cadastrados a partir das leis estaduais. Alguns estados ainda estão sendo conferidos e ficam marcados como tal.</li>
+<li><strong>Feriados municipais:</strong> vêm de uma base aberta (<a href="https://github.com/joaopbini/feriados-brasil" rel="noopener">feriados-brasil</a>, licença MIT) que cobre cerca de 3.800 municípios. Não é fonte oficial e pode estar incompleta ou desatualizada. Confirme com a prefeitura.</li>
+</ul>
+<h2>O que o site não é</h2>
+<p>Não é aconselhamento jurídico nem financeiro e não calcula valores a receber. Quem define a época das férias é o empregador (CLT, art. 136): as sugestões são uma proposta para negociar.</p>
+<h2>Privacidade</h2>
+<p>Suas escolhas ficam no seu navegador. Só o recurso opcional de grupo envia um apelido e as datas do plano escolhido ao nosso servidor. Os detalhes estão na <a href="${paths.privacidade}">política de privacidade</a>.</p>
+<h2>Quem mantém e como é financiado</h2>
+<p>É um projeto independente, mantido por uma pessoa. O site é gratuito. Para cobrir os custos, ele pode exibir anúncios, sempre fora da ferramenta de planejamento e com a sua escolha de consentimento antes de qualquer anúncio.</p>
+<p>Encontrou uma data errada ou tem uma sugestão? Veja como falar com a gente em <a href="${paths.contato}">Contato</a>.</p>
+${cta('Montar minhas férias')}`;
+  return {
+    path: paths.sobre, updated,
+    title: 'Sobre o Planejador de Férias: como funciona e de onde vêm os dados',
+    description: 'O que é o Planejador de Férias, como ele escolhe as melhores datas pela CLT, de onde vêm os feriados e o que o site não faz.',
+    h1: 'Sobre o Planejador de Férias', body,
+    related: [{ href: paths.guia, label: 'Guia de férias pela CLT' }, { href: paths.privacidade, label: 'Política de privacidade' }],
+  };
+}
+
+export function contatoPage(cfg: SiteConfig, updated: string): PageSpec {
+  const mail = cfg.contactEmail
+    ? `<a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>`
+    : 'o e-mail de contato informado no site';
+  const body = `
+<p class="lede">Fale com a gente por e-mail: ${mail}.</p>
+<h2>Quando escrever</h2>
+<ul>
+<li><strong>Feriado errado ou faltando:</strong> diga a cidade (ou o estado), a data e, se tiver, o link da lei ou do decreto. Os feriados municipais vêm de uma base aberta e podem ter falhas.</li>
+<li><strong>Erro em algum texto ou cálculo:</strong> conte onde viu e o que esperava ver.</li>
+<li><strong>Sugestão de melhoria:</strong> toda ideia é bem-vinda.</li>
+<li><strong>Dados do recurso de grupo:</strong> para remover um apelido ou um grupo, informe o código de 5 números. Você também pode sair do grupo direto no planejador, o que apaga seus dados da sala.</li>
+<li><strong>Direitos da LGPD:</strong> pedidos de acesso, correção ou exclusão de dados (veja a <a href="${paths.privacidade}">política de privacidade</a>).</li>
+</ul>
+<h2>O que não respondemos</h2>
+<p>Não damos orientação jurídica sobre o seu caso. Para dúvidas sobre direitos e acordos de férias, procure o RH, o sindicato da sua categoria ou um advogado trabalhista.</p>`;
+  return {
+    path: paths.contato, updated,
+    title: 'Contato | Planejador de Férias',
+    description: 'Como falar com o Planejador de Férias: feriado errado, sugestões, remoção de dados do grupo e pedidos da LGPD.',
+    h1: 'Contato', body,
+    related: [{ href: paths.sobre, label: 'Sobre o Planejador de Férias' }, { href: paths.privacidade, label: 'Política de privacidade' }],
+  };
+}
+
 export function notFoundPage(updated: string): PageSpec {
   return {
     path: '/404.html', updated, noindex: true,
@@ -246,7 +302,7 @@ export function notFoundPage(updated: string): PageSpec {
 }
 
 export function allPages(cfg: SiteConfig, updated: string): PageSpec[] {
-  const out: PageSpec[] = [guiaPage(cfg, updated), privacidadePage(cfg, updated)];
+  const out: PageSpec[] = [guiaPage(cfg, updated), sobrePage(updated), contatoPage(cfg, updated), privacidadePage(cfg, updated)];
   for (const y of YEARS) {
     out.push(feriadosPage(cfg, y, updated), melhoresPage(cfg, y, updated));
     for (const uf of ALL_UFS) out.push(estadoPage(cfg, y, uf, updated));
