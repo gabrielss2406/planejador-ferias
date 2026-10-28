@@ -15,6 +15,7 @@ export function SiteLinks({ year }: { year: number }) {
         <a href="/sobre/">Sobre</a>
         <a href="/contato/">Contato</a>
         <a href="/privacidade/">Privacidade</a>
+        <a href="/termos/">Termos</a>
         {adsOn && <button type="button" data-consent-open>Preferências de anúncios</button>}
       </nav>
     </>

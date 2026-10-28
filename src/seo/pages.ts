@@ -1,20 +1,14 @@
 import type { PlanOption } from '../lib/types';
 import {
-  ALL_UFS, UF_NAMES, YEARS, bestPlans, bridges, days, dm, dmWeek, isConfirmed, weekday, yearHolidays,
+  ALL_UFS, UF_NAMES, YEARS, bestPlans, bridges, days, dm, dmWeek, isConfirmed, monthName, weekday, yearHolidays,
 } from './calc';
-import { abs, adSlot, adsOn, esc, type PageSpec, type SiteConfig } from './layout';
+import { abonoPage, avisoPage, dividirPage } from './guides';
+import { abs, adSlot, esc, type PageSpec, type SiteConfig } from './layout';
+import { paths } from './paths';
 
 const CLT_URL = 'https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm';
 
-export const paths = {
-  guia: '/guia-ferias-clt/',
-  privacidade: '/privacidade/',
-  sobre: '/sobre/',
-  contato: '/contato/',
-  feriados: (y: number) => `/feriados-${y}/`,
-  melhores: (y: number) => `/melhores-datas-ferias-${y}/`,
-  estado: (y: number, uf: string) => `/feriados-${y}/${uf.toLowerCase()}/`,
-};
+export { paths };
 
 const table = (head: string[], rows: string[][]) =>
   `<div class="c-wrap"><table class="c-table"><thead><tr>${head.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${
@@ -50,15 +44,15 @@ ${table(['Faltas injustificadas no período', 'Dias de férias'], [['até 5', '3
 
 <h2 id="quando">Quando posso tirar as férias?</h2>
 <p>As férias são concedidas nos 12 meses seguintes ao período aquisitivo, o <strong>período concessivo</strong> (art. 134). A época é a que melhor atender ao interesse do empregador (art. 136). Se a empresa deixar o prazo passar, ela paga as férias em dobro (art. 137).</p>
-<p>A empresa deve avisar por escrito com pelo menos 30 dias de antecedência (art. 135). Na prática, é o seu momento de negociar: quanto antes você levar uma proposta, mais fácil ela entrar no planejamento da equipe.</p>
+<p>A empresa deve avisar por escrito com pelo menos 30 dias de antecedência (art. 135); veja <a href="${paths.aviso}">aviso, pagamento e férias coletivas</a>. Na prática, é o seu momento de negociar: quanto antes você levar uma proposta, mais fácil ela entrar no planejamento da equipe.</p>
 
 <h2 id="dividir">Posso dividir as férias?</h2>
 <p>Pode, <strong>com a sua concordância</strong>, em até 3 períodos. Um deles não pode ter menos de 14 dias corridos, e os outros não podem ter menos de 5 dias corridos cada (art. 134, §1º). Com 30 dias, alguns exemplos que cabem nas regras: 30; 15 + 15; 20 + 10; 14 + 8 + 8; 14 + 11 + 5.</p>
 <p>O art. 134, §3º veda o início das férias nos 2 dias que antecedem feriado ou dia de repouso semanal remunerado. Por isso o <a href="/">planejador</a> não sugere começar de sexta a domingo nem a 1 ou 2 dias de um feriado. Confira com o RH como a sua empresa aplica essa regra antes de fechar as datas.</p>
-<p>O <a href="/">planejador</a> testa todas as divisões permitidas e mostra as que deixam mais dias seguidos sem trabalhar.</p>
+<p>O <a href="/">planejador</a> testa todas as divisões permitidas e mostra as que deixam mais dias seguidos sem trabalhar. Veja os detalhes em <a href="${paths.dividir}">como dividir as férias em até 3 períodos</a>.</p>
 
 <h2 id="abono">Posso vender parte das férias?</h2>
-<p>Pode converter até 1/3 das férias em dinheiro, o <strong>abono pecuniário</strong> (art. 143): com 30 dias, você vende 10 e descansa 20. É uma opção do empregado e deve ser pedida até 15 dias antes do fim do período aquisitivo (art. 143, §1º).</p>
+<p>Pode converter até 1/3 das férias em dinheiro, o <strong>abono pecuniário</strong> (art. 143): com 30 dias, você vende 10 e descansa 20. É uma opção do empregado e deve ser pedida até 15 dias antes do fim do período aquisitivo (art. 143, §1º). Detalhes em <a href="${paths.abono}">abono pecuniário: vender 10 dias</a>.</p>
 
 <h2 id="pagamento">Quanto eu recebo?</h2>
 <p>Você recebe a remuneração do período de férias com o acréscimo de 1/3 (Constituição, art. 7º, XVII). O pagamento deve sair até 2 dias antes do início das férias (art. 145). Este site não calcula valores: use o holerite ou o RH da sua empresa.</p>
@@ -74,7 +68,11 @@ ${cta('Montar minhas férias')}`;
     description: 'Guia direto sobre férias pela CLT: 30 dias, divisão em até 3 períodos, abono de 10 dias, aviso, pagamento e quem escolhe a data. Com os artigos da lei.',
     h1: 'Férias pela CLT: o guia simples',
     body,
-    related: [{ href: paths.melhores(YEARS[1]), label: `Melhores datas de férias em ${YEARS[1]}` }, { href: paths.feriados(YEARS[1]), label: `Feriados de ${YEARS[1]}` }],
+    related: [
+      { href: paths.dividir, label: 'Como dividir as férias em até 3 períodos' }, { href: paths.abono, label: 'Abono pecuniário: vender 10 dias' },
+      { href: paths.aviso, label: 'Aviso, pagamento e férias coletivas' },
+      { href: paths.melhores(YEARS[1]), label: `Melhores datas de férias em ${YEARS[1]}` }, { href: paths.feriados(YEARS[1]), label: `Feriados de ${YEARS[1]}` },
+    ],
     jsonLd: [{
       '@context': 'https://schema.org', '@type': 'Article', headline: 'Férias pela CLT: o guia simples', inLanguage: 'pt-BR',
       dateModified: updated, mainEntityOfPage: abs(cfg, paths.guia), publisher: { '@type': 'Organization', name: cfg.siteName, url: cfg.siteUrl },
@@ -136,12 +134,36 @@ ${cta()}`;
   };
 }
 
+/** Leitura do ano numa UF, só com números dos dados: dias úteis de folga, meses sem feriado, a melhor ponte. */
+function estadoInsights(year: number, uf: string, nome: string, ok: boolean) {
+  const t = holidayTables(year, uf);
+  const est = t.real.filter((h) => h.kind === 'estadual');
+  const estUtil = est.filter((h) => weekday(h.i) !== 'sábado' && weekday(h.i) !== 'domingo');
+  const bs = bridges(year, uf);
+  const longest = [...bs].sort((a, b) => b.off - a.off || a.vacation - b.vacation)[0];
+  const free = bs.filter((b) => b.vacation === 0);
+  const months = new Set(t.weekdays.map((h) => monthName(h.i)));
+  const noHol = Array.from({ length: 12 }, (_, m) => monthName(Math.round(Date.UTC(year, m, 15) / 864e5))).filter((m) => !months.has(m));
+  const parts: string[] = [];
+  parts.push(`Em ${year}, ${nome} tem ${t.real.length} feriados no calendário (${t.weekdays.length} de segunda a sexta e ${t.real.length - t.weekdays.length} em fim de semana).`
+    + (ok ? (est.length ? ` ${est.length === 1 ? 'O feriado estadual' : `Os ${est.length} feriados estaduais`} ${est.length === 1 ? 'cai' : 'caem'} em ${estUtil.length === est.length ? 'dia útil' : estUtil.length ? `${estUtil.length} em dia útil` : 'fim de semana'}${estUtil.length ? ', então ' + (estUtil.length === 1 ? 'dá' : 'dão') + ' folga de verdade' : ', então não tiram dia útil do calendário'}.` : ` ${nome} não tem feriado estadual cadastrado neste ano.`) : ''));
+  if (longest) parts.push(`A maior folga emendada do ano em ${nome} é a de ${esc(longest.hol.name)}: ${longest.off} dias seguidos, de ${dmWeek(longest.from)} a ${dmWeek(longest.to)}${longest.vacation ? `, gastando ${days(longest.vacation)} de férias` : ', sem gastar nenhum dia de férias'}.`);
+  parts.push(free.length
+    ? `${free.length === 1 ? 'Um feriado já forma' : `${free.length} feriados já formam`} fim de semana prolongado sem gastar férias: ${free.map((b) => esc(b.hol.name)).join(', ')}.`
+    : `Nenhum feriado de ${year} em ${nome} cai na segunda ou na sexta, então todo feriadão pede pelo menos 1 dia de férias.`);
+  parts.push(noHol.length
+    ? `${noHol.length === 1 ? 'O único mês' : `Os ${noHol.length} meses`} sem feriado em dia útil ${noHol.length === 1 ? 'é' : 'são'} ${noHol.join(', ')}: ${noHol.length === 1 ? 'nele' : 'neles'} as férias não aproveitam feriado.`
+    : `Todos os meses de ${year} têm ao menos um feriado em dia útil em ${nome}.`);
+  return parts.map((x) => `<p>${x}</p>`).join('');
+}
+
 export function estadoPage(cfg: SiteConfig, year: number, uf: string, updated: string): PageSpec {
   const nome = UF_NAMES[uf];
   const ok = isConfirmed(uf);
   const t = holidayTables(year, uf);
   const est = t.real.filter((h) => h.kind === 'estadual');
-  const top = bestPlans(year, 30, uf, 1)[0];
+  const top3 = bestPlans(year, 30, uf, 3);
+  const top20 = bestPlans(year, 20, uf, 1)[0];
   const body = `
 <p class="lede">${ok
     ? `${nome} tem ${est.length} ${est.length === 1 ? 'feriado estadual' : 'feriados estaduais'} em ${year}, além dos ${t.real.length - est.length} nacionais. Veja as datas e os feriadões para planejar as férias.`
@@ -154,7 +176,10 @@ ${t.main}
 ${t.opt}
 <h2>Feriadões e pontes em ${esc(nome)} em ${year}</h2>
 ${bridgeTable(year, uf)}
-${top ? `<h2>Melhor plano de 30 dias em ${esc(nome)} em ${year}</h2><p>Combinando férias, fins de semana e os feriados acima, esta é a melhor divisão que o planejador encontra para ${esc(nome)}:</p>${planBlock(top, 1, 30)}` : ''}
+<h2>O ano de ${year} em ${esc(nome)} em números</h2>
+${estadoInsights(year, uf, nome, ok)}
+${top3.length ? `<h2>Melhores planos de 30 dias em ${esc(nome)} em ${year}</h2><p>Combinando férias, fins de semana e os feriados acima, estes são os ${top3.length === 1 ? 'melhor plano' : `${top3.length} melhores planos`} que o planejador encontra para ${esc(nome)}:</p>${top3.map((p, i) => planBlock(p, i + 1, 30)).join('')}` : ''}
+${top20 ? `<h2>Com 20 dias de férias (vendendo 10)</h2><p>Quem vende 10 dias descansa 20. O melhor plano para ${esc(nome)} nesse caso é:</p>${planBlock(top20, 1, 20)}` : ''}
 ${adSlot(cfg, 'footer')}
 <h2>E o feriado da minha cidade?</h2>
 <p>Cada município tem feriados próprios, como o aniversário da cidade e o dia do padroeiro. No <a href="/">planejador</a> você escolhe a cidade e os feriados municipais entram no cálculo (a base é aberta e pode estar incompleta: confirme com a prefeitura).</p>
@@ -215,26 +240,70 @@ export function privacidadePage(cfg: SiteConfig, updated: string): PageSpec {
   const contact = cfg.contactEmail
     ? `Para pedir informações ou a remoção de dados, escreva para <a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>.`
     : 'Para pedir informações ou a remoção de dados, use o contato informado no site.';
-  const ads = adsOn(cfg)
-    ? `<h2>Anúncios e cookies</h2>
-<p>Este site exibe anúncios do Google AdSense. Antes de carregar qualquer anúncio, pedimos a sua escolha. Se você aceitar, o Google pode usar cookies e identificadores para mostrar anúncios com base nos seus interesses. Se recusar, mostramos apenas anúncios não personalizados, que não usam o seu histórico de navegação. Você pode mudar a escolha a qualquer momento em "Preferências de anúncios", no rodapé. Veja como o Google usa dados em <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a>.</p>`
-    : '<h2>Anúncios</h2><p>Hoje este site não exibe anúncios. Se isso mudar, esta página será atualizada e pediremos o seu consentimento antes de carregar qualquer anúncio.</p>';
   const body = `
-<p class="lede">Resumo: o planejador guarda suas escolhas no seu navegador. Só o recurso de grupo envia dados ao nosso servidor.</p>
+<p class="lede">Resumo: o planejador guarda suas escolhas no seu navegador. Só o recurso de grupo envia dados ao nosso servidor. O site é financiado por anúncios do Google AdSense, que só carregam depois da sua escolha.</p>
+<h2>Quem somos</h2>
+<p>O Planejador de Férias é um projeto independente, mantido por uma pessoa, e é o responsável pelo tratamento dos dados descritos aqui. O contato está no fim desta página e na página <a href="${paths.contato}">Contato</a>.</p>
 <h2>O que fica no seu navegador</h2>
-<p>As configurações, os planos salvos, o plano escolhido e o identificador anônimo do navegador ficam no armazenamento local (localStorage). Eles não saem do seu aparelho, exceto no recurso de grupo.</p>
+<p>As configurações, os planos salvos, o plano escolhido, a sua escolha sobre anúncios e o identificador anônimo do navegador ficam no armazenamento local (localStorage). Eles não saem do seu aparelho, exceto no recurso de grupo, e ficam até você limpar os dados do site no navegador.</p>
 <h2>Férias em grupo</h2>
 <p>Se você criar ou entrar num grupo, enviamos ao servidor o apelido que você escolheu, as datas do plano que você escolheu e um identificador anônimo do seu navegador. Quem tem o código de 5 números do grupo vê o apelido e as datas. Grupos sem uso por 90 dias são apagados. Você pode sair do grupo a qualquer momento, o que remove seus dados da sala.</p>
 <h2>Cidade e feriados</h2>
 <p>Ao buscar uma cidade, o nome digitado é enviado ao nosso servidor para listar municípios e feriados. Não guardamos essa busca ligada a você.</p>
-${ads}
+<h2>Anúncios, cookies e terceiros</h2>
+<p>Este site é financiado por anúncios do Google AdSense, exibidos nas páginas de conteúdo e no rodapé do planejador, nunca sobre os botões ou resultados. Antes de carregar qualquer anúncio, pedimos a sua escolha.</p>
+<ul>
+<li><strong>Se você aceitar:</strong> o Google e parceiros de publicidade podem usar cookies e identificadores para mostrar anúncios com base nos seus interesses e para medir o desempenho dos anúncios.</li>
+<li><strong>Se você recusar:</strong> mostramos apenas anúncios não personalizados, que não usam o seu histórico de navegação. Mesmo assim, o Google pode usar cookies para limitar a frequência dos anúncios e prevenir fraudes.</li>
+<li><strong>Para mudar de ideia:</strong> use "Preferências de anúncios" no rodapé, quando houver anúncios no site, ou limpe os dados do site no navegador.</li>
+</ul>
+<p>O uso de cookies de publicidade por terceiros é regido pelas políticas deles. Veja como o Google usa dados em <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a>. Para desativar a personalização de anúncios, acesse as <a href="https://adssettings.google.com" rel="noopener">Configurações de anúncios do Google</a> ou o site <a href="https://www.aboutads.info" rel="noopener">aboutads.info</a>.</p>
+<p>Não vendemos dados pessoais e não usamos outras ferramentas de análise ou de redes sociais.</p>
 <h2>Seus direitos (LGPD)</h2>
-<p>Você pode pedir acesso, correção ou exclusão dos dados que tratamos (Lei 13.709/2018). ${contact}</p>`;
+<p>Você pode pedir confirmação do tratamento, acesso, correção, anonimização ou exclusão dos dados que tratamos e a revogação do consentimento (Lei 13.709/2018). ${contact}</p>
+<h2>Mudanças nesta política</h2>
+<p>Se algo mudar, atualizamos esta página e a data de atualização no fim do texto.</p>`;
   return {
-    path: paths.privacidade, updated,
+    path: paths.privacidade, updated, og: 'website',
     title: 'Política de privacidade | Planejador de Férias',
-    description: 'Que dados o Planejador de Férias guarda, o que vai ao servidor no recurso de grupo, como funcionam os anúncios e como exercer seus direitos pela LGPD.',
+    description: 'Que dados o Planejador de Férias guarda, o que vai ao servidor no recurso de grupo, como funcionam os anúncios do Google AdSense e como exercer seus direitos pela LGPD.',
     h1: 'Política de privacidade', body,
+    related: [{ href: paths.termos, label: 'Termos de uso' }, { href: paths.contato, label: 'Contato' }],
+  };
+}
+
+export function termosPage(cfg: SiteConfig, updated: string): PageSpec {
+  const mail = cfg.contactEmail ? `<a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>` : 'o contato informado no site';
+  const body = `
+<p class="lede">Ao usar o Planejador de Férias, você concorda com estes termos. Eles são curtos: o site é uma ferramenta de apoio, e as decisões sobre as suas férias continuam sendo suas e do seu empregador.</p>
+<h2>O que o site oferece</h2>
+<p>Uma ferramenta gratuita que sugere datas de férias a partir das regras da CLT e de calendários de feriados, além de guias e consultas com informações gerais sobre férias. O uso não exige cadastro.</p>
+<h2>Uso informativo, sem garantia</h2>
+<p>As sugestões e os textos são informativos e não substituem orientação jurídica, contábil ou do RH da sua empresa. Quem define a época das férias é o empregador (CLT, art. 136): leve as datas como proposta para negociar. Convenções coletivas, acordos e normas internas da empresa podem mudar o que vale no seu caso.</p>
+<h2>Feriados e dados de terceiros</h2>
+<p>Os feriados nacionais são calculados no site e os estaduais são cadastrados a partir das leis estaduais. Os municipais vêm de uma base aberta e podem estar incompletos ou desatualizados. Confirme com a prefeitura ou o governo do estado antes de fechar datas.</p>
+<h2>Limitação de responsabilidade</h2>
+<p>Fazemos o possível para manter as informações corretas, mas não garantimos que estejam livres de erros ou atualizadas a todo momento. Não nos responsabilizamos por decisões tomadas apenas com base no site, nem por perdas decorrentes do uso da ferramenta.</p>
+<h2>Seu uso do site</h2>
+<ul>
+<li>Use o recurso de grupo só para combinar férias com pessoas que concordaram em compartilhar as datas, e escolha um apelido que não identifique outra pessoa sem a autorização dela.</li>
+<li>Não tente sobrecarregar, copiar em massa nem atacar o site ou o servidor de grupos.</li>
+<li>Não use o site para fins ilegais.</li>
+</ul>
+<h2>Conteúdo e propriedade</h2>
+<p>Os textos, o design e o código do site são do projeto. Você pode citar trechos curtos com link para a página de origem. As leis citadas são de domínio público e a base de feriados municipais segue a licença própria dela, indicada na página <a href="${paths.sobre}">Sobre</a>.</p>
+<h2>Anúncios e links externos</h2>
+<p>O site pode exibir anúncios do Google AdSense, identificados como "Publicidade". Os anúncios e os sites para onde eles levam não são de nossa responsabilidade. Veja como tratamos cookies na <a href="${paths.privacidade}">política de privacidade</a>. Os links para o site do Planalto e para outras páginas externas são oferecidos como referência.</p>
+<h2>Mudanças e lei aplicável</h2>
+<p>Podemos atualizar estes termos; a versão em vigor é a desta página. Eles seguem a lei brasileira.</p>
+<h2>Contato</h2>
+<p>Dúvidas sobre estes termos: ${mail}.</p>`;
+  return {
+    path: paths.termos, updated, og: 'website',
+    title: 'Termos de uso | Planejador de Férias',
+    description: 'Termos de uso do Planejador de Férias: uso informativo, limites de responsabilidade, dados de feriados de terceiros, anúncios e lei aplicável.',
+    h1: 'Termos de uso', body,
+    related: [{ href: paths.privacidade, label: 'Política de privacidade' }, { href: paths.sobre, label: 'Sobre o Planejador de Férias' }],
   };
 }
 
@@ -253,13 +322,13 @@ export function sobrePage(updated: string): PageSpec {
 <h2>O que o site não é</h2>
 <p>Não é aconselhamento jurídico nem financeiro e não calcula valores a receber. Quem define a época das férias é o empregador (CLT, art. 136): as sugestões são uma proposta para negociar.</p>
 <h2>Privacidade</h2>
-<p>Suas escolhas ficam no seu navegador. Só o recurso opcional de grupo envia um apelido e as datas do plano escolhido ao nosso servidor. Os detalhes estão na <a href="${paths.privacidade}">política de privacidade</a>.</p>
+<p>Suas escolhas ficam no seu navegador. Só o recurso opcional de grupo envia um apelido e as datas do plano escolhido ao nosso servidor. Os detalhes estão na <a href="${paths.privacidade}">política de privacidade</a> e nos <a href="${paths.termos}">termos de uso</a>.</p>
 <h2>Quem mantém e como é financiado</h2>
 <p>É um projeto independente, mantido por uma pessoa. O site é gratuito. Para cobrir os custos, ele pode exibir anúncios, sempre fora da ferramenta de planejamento e com a sua escolha de consentimento antes de qualquer anúncio.</p>
 <p>Encontrou uma data errada ou tem uma sugestão? Veja como falar com a gente em <a href="${paths.contato}">Contato</a>.</p>
 ${cta('Montar minhas férias')}`;
   return {
-    path: paths.sobre, updated,
+    path: paths.sobre, updated, og: 'website',
     title: 'Sobre o Planejador de Férias: como funciona e de onde vêm os dados',
     description: 'O que é o Planejador de Férias, como ele escolhe as melhores datas pela CLT, de onde vêm os feriados e o que o site não faz.',
     h1: 'Sobre o Planejador de Férias', body,
@@ -281,10 +350,12 @@ export function contatoPage(cfg: SiteConfig, updated: string): PageSpec {
 <li><strong>Dados do recurso de grupo:</strong> para remover um apelido ou um grupo, informe o código de 5 números. Você também pode sair do grupo direto no planejador, o que apaga seus dados da sala.</li>
 <li><strong>Direitos da LGPD:</strong> pedidos de acesso, correção ou exclusão de dados (veja a <a href="${paths.privacidade}">política de privacidade</a>).</li>
 </ul>
+<h2>Como escrever e o que esperar</h2>
+<p>Escreva no assunto o tema (por exemplo, "Feriado errado: Cidade/UF") e conte o que viu e o que esperava ver. Respondemos assim que possível, em geral em poucos dias. Por ser um projeto mantido por uma pessoa, não há atendimento por telefone nem por chat.</p>
 <h2>O que não respondemos</h2>
 <p>Não damos orientação jurídica sobre o seu caso. Para dúvidas sobre direitos e acordos de férias, procure o RH, o sindicato da sua categoria ou um advogado trabalhista.</p>`;
   return {
-    path: paths.contato, updated,
+    path: paths.contato, updated, og: 'website',
     title: 'Contato | Planejador de Férias',
     description: 'Como falar com o Planejador de Férias: feriado errado, sugestões, remoção de dados do grupo e pedidos da LGPD.',
     h1: 'Contato', body,
@@ -302,7 +373,10 @@ export function notFoundPage(updated: string): PageSpec {
 }
 
 export function allPages(cfg: SiteConfig, updated: string): PageSpec[] {
-  const out: PageSpec[] = [guiaPage(cfg, updated), sobrePage(updated), contatoPage(cfg, updated), privacidadePage(cfg, updated)];
+  const out: PageSpec[] = [
+    guiaPage(cfg, updated), dividirPage(cfg, updated), abonoPage(cfg, updated), avisoPage(cfg, updated),
+    sobrePage(updated), contatoPage(cfg, updated), privacidadePage(cfg, updated), termosPage(cfg, updated),
+  ];
   for (const y of YEARS) {
     out.push(feriadosPage(cfg, y, updated), melhoresPage(cfg, y, updated));
     for (const uf of ALL_UFS) out.push(estadoPage(cfg, y, uf, updated));

@@ -1,11 +1,12 @@
 // @ts-nocheck - script de build rodado pelo vite-node, fora do tsconfig do app
-// Gera as páginas de conteúdo (guia, feriados, melhores datas, estados, privacidade), sitemap, robots e ads.txt em dist/.
+// Gera as páginas de conteúdo (guias, feriados, melhores datas, estados, privacidade, termos), sitemap, robots e ads.txt em dist/.
 // Roda depois do `vite build`: npm run build.
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cfg from '../site.config.json';
 import { renderPage, type Assets } from '../src/seo/layout';
+import { homeHtml } from '../src/seo/home';
 import { adsTxt, allPages, notFoundPage, robotsTxt, sitemapXml } from '../src/seo/pages';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -17,6 +18,10 @@ const css = html.match(/href="(\/assets\/[^"]+\.css)"/)?.[1];
 const logoFile = readdirSync(resolve(dist, 'assets')).find((f) => /^logo-negativo-.*\.png$/.test(f));
 if (!css || !logoFile) throw new Error('não achei o CSS ou o logo no build do app.');
 const assets: Assets = { css, logo: `/assets/${logoFile}`, favicon: '/favicon.png' };
+
+// texto da página inicial dentro do #root (o React troca ao montar)
+if (!html.includes('<div id="root"></div>')) throw new Error('index.html sem <div id="root"></div> para o texto da página inicial.');
+writeFileSync(resolve(dist, 'index.html'), html.replace('<div id="root"></div>', `<div id="root">${homeHtml(new Date().getFullYear())}</div>`));
 
 const updated = new Date().toISOString().slice(0, 10);
 const pages = allPages(cfg, updated);

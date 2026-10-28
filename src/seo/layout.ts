@@ -23,6 +23,8 @@ export interface PageSpec {
   related?: { href: string; label: string }[];
   /** objetos extras de JSON-LD (o BreadcrumbList sai das migalhas) */
   jsonLd?: object[];
+  /** og:type; o padrão é article (guias e consultas) */
+  og?: 'website';
   /** fica fora do índice do Google e do sitemap */
   noindex?: boolean;
   /** ISO AAAA-MM-DD */
@@ -95,7 +97,7 @@ export function renderPage(spec: PageSpec, cfg: SiteConfig, assets: Assets): str
     `<meta name="description" content="${esc(spec.description)}">`,
     `<link rel="canonical" href="${esc(url)}">`,
     spec.noindex ? '<meta name="robots" content="noindex">' : '<meta name="robots" content="index,follow,max-image-preview:large">',
-    '<meta property="og:type" content="article">',
+    `<meta property="og:type" content="${spec.og ?? 'article'}">`,
     `<meta property="og:title" content="${esc(spec.title)}">`,
     `<meta property="og:description" content="${esc(spec.description)}">`,
     `<meta property="og:url" content="${esc(url)}">`,
@@ -135,7 +137,7 @@ ${spec.body}
 ${related}
 </main>
 <footer class="c-foot">
-<nav aria-label="Links do site"><a href="/">Planejador</a><a href="/guia-ferias-clt/">Guia de férias pela CLT</a><a href="/sobre/">Sobre</a><a href="/contato/">Contato</a><a href="/privacidade/">Privacidade</a>${adsOn(cfg) ? '<button type="button" data-consent-open>Preferências de anúncios</button>' : ''}</nav>
+<nav aria-label="Links do site"><a href="/">Planejador</a><a href="/guia-ferias-clt/">Guia de férias pela CLT</a><a href="/sobre/">Sobre</a><a href="/contato/">Contato</a><a href="/privacidade/">Privacidade</a><a href="/termos/">Termos</a>${adsOn(cfg) ? '<button type="button" data-consent-open>Preferências de anúncios</button>' : ''}</nav>
 <p>${esc(cfg.siteName)}: mais tempo para o que importa.</p>
 </footer>
 <script type="module" src="/site.js"></script>
