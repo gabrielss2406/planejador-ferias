@@ -3,7 +3,7 @@ import { fmt } from './dates';
 import type { SavedPlan } from './types';
 
 export const W = 1200;
-export const M = 48; // margem de grafite em volta da folha
+export const M = 48; // margem em volta da folha (grafite na imagem do grupo, transparente no ticket)
 export const PAD = 56;
 export const MONO = '"JetBrains Mono","DejaVu Sans Mono",monospace';
 export const COND = '"Barlow Condensed","Arial Narrow",sans-serif';
@@ -33,15 +33,16 @@ export const dias = (n: number) => `${n} ${n === 1 ? 'dia' : 'dias'}`;
 
 /** Desenha o "ticket de viagem" das férias (a folha branca com picote sobre grafite) e devolve o PNG. */
 export async function renderTicket(plan: SavedPlan): Promise<Blob> {
+  const MG = M; // margem transparente em volta da folha, com a sombra
   const ink = css('--tinta', '#101820'), ink2 = css('--tinta-2', '#4B5866'), paper = css('--papel', '#FFFFFF');
-  const shell = css('--grafite', '#101820'), perf = css('--picote', '#B8C0C9'), line = css('--trilho', '#E6E9ED'), blue = css('--azul', '#2563EB');
+  const perf = css('--picote', '#B8C0C9'), line = css('--trilho', '#E6E9ED'), blue = css('--azul', '#2563EB');
 
   await Promise.all([
     document.fonts.load(`800 100px ${MONO}`), document.fonts.load(`700 40px ${COND}`), document.fonts.load(`500 24px ${COND}`),
   ].map((p) => p.catch(() => null)));
   const logo = await loadImage(logoUrl).catch(() => null);
 
-  const inner = W - 2 * M - 2 * PAD;
+  const inner = W - 2 * MG - 2 * PAD;
   const gain = Math.max(0, plan.off - plan.N);
   const sentence = gain > 0
     ? `Você usa ${dias(plan.N)} de férias e ganha +${gain} emendando fins de semana e feriados.`
@@ -60,7 +61,7 @@ export async function renderTicket(plan: SavedPlan): Promise<Blob> {
   const periodsH = 92 + plan.periods.length * rowH;
   const footH = 40 + noteLines.length * 38 + 50;
   const sheetH = headH + answerH + periodsH + footH;
-  const H = sheetH + 2 * M;
+  const H = sheetH + 2 * MG;
   const S = 2; // nitidez em telas de alta densidade
 
   const canvas = document.createElement('canvas');
@@ -69,8 +70,7 @@ export async function renderTicket(plan: SavedPlan): Promise<Blob> {
   ctx.scale(S, S);
   ctx.textBaseline = 'alphabetic';
 
-  ctx.fillStyle = shell; ctx.fillRect(0, 0, W, H);
-  const x0 = M, y0 = M, sw = W - 2 * M;
+  const x0 = MG, y0 = MG, sw = W - 2 * MG;
   ctx.save();
   ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = 28; ctx.shadowOffsetY = 12;
   ctx.fillStyle = paper;
@@ -98,9 +98,11 @@ export async function renderTicket(plan: SavedPlan): Promise<Blob> {
   const py = y0 + headH + answerH;
   ctx.strokeStyle = perf; ctx.lineWidth = 3; ctx.setLineDash([12, 9]);
   ctx.beginPath(); ctx.moveTo(x0 + 22, py); ctx.lineTo(x0 + sw - 22, py); ctx.stroke();
-  ctx.setLineDash([]); ctx.fillStyle = shell;
+  ctx.setLineDash([]);
+  ctx.save(); ctx.globalCompositeOperation = 'destination-out'; // recortes vazados, não pintados
   ctx.beginPath(); ctx.arc(x0, py, 22, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.arc(x0 + sw, py, 22, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
 
   // períodos
   y = py + 72;

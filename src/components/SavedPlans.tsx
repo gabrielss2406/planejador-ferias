@@ -45,7 +45,7 @@ export function SavedPlans({ saved, chosen }: Props) {
   };
 
   return (
-    <details className="saved" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+    <details className="saved" id="salvos" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary ref={head}><h2>Planos salvos ({plans.length})</h2></summary>
       <ul className="saved-list">
         {plans.map((p) => {

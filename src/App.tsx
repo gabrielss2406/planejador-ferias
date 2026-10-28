@@ -8,6 +8,7 @@ import { GroupSection } from './components/GroupSection';
 import { PlanBoard, type Change } from './components/PlanBoard';
 import { FloatingOptions } from './components/FloatingOptions';
 import { SavedPlans } from './components/SavedPlans';
+import { SiteNav } from './components/SiteNav';
 import { SiteLinks } from './components/SiteLinks';
 import { QuickParams } from './components/SettingsPanel';
 import { Ticket } from './components/Ticket';
@@ -19,7 +20,7 @@ import { useCityHolidays } from './hooks/useCityHolidays';
 import { useGroup } from './hooks/useGroup';
 import { useSavedPlans } from './hooks/useSavedPlans';
 import { useSettings } from './hooks/useSettings';
-import { planId } from './lib/export';
+import { planId, toSaved } from './lib/export';
 import { plan } from './lib/planner';
 import type { GroupKey, PlanResult } from './lib/types';
 
@@ -106,12 +107,13 @@ export default function App() {
         <header className="top">
           <h1 className="brand"><img src={logo} alt="Planejador de Férias" /></h1>
           <p className="slogan">Mais tempo para o que importa</p>
+          <SiteNav hasSaved={saved.plans.length > 0} />
         </header>
 
         <main className="page" id="plano">
           <QuickParams settings={settings} update={update} result={result} cityStatus={cityStatus} />
           <Ticket selected={selected} result={result} year={deferred.year} custom={deferred.custom} active={active} onPick={pick}
-            discarded={discarded.has(selKey)} isChosen={!!selected && chosen.chosen?.id === planId(deferred.year, selected)} striking={fresh === selKey} onDiscard={() => discard(selKey)} />
+            discarded={discarded.has(selKey)} isChosen={!!selected && chosen.chosen?.id === planId(deferred.year, selected)} striking={fresh === selKey} onChoose={() => selected && chosen.toggle(toSaved(selected, deferred.year, result.N))} onDiscard={() => discard(selKey)} />
           <YearRuler year={deferred.year} selected={selected} result={result} active={active} />
           <PlanBoard result={result} list={list} discarded={discarded} fresh={fresh} onDiscard={discard} year={deferred.year} tab={eff} onTab={(t) => { setTab(t); setSelIdx(0); }}
             selIdx={selIdx} onSelect={setSelIdx} selected={selected} changes={changes} onInteract={seen}

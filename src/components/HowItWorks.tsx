@@ -1,6 +1,6 @@
 export function HowItWorks() {
   return (
-    <section className="how paper" aria-labelledby="como-t">
+    <section className="how paper" id="como-funciona" aria-labelledby="como-t">
       <h2 id="como-t">Como funciona</h2>
       <div className="how-cols">
         <p>As férias contam em dias corridos, fins de semana e feriados incluídos. O ganho está nas pontas: começar logo depois de um fim de semana ou feriado e terminar logo antes de outro. Assim você fica mais dias sem trabalhar usando os mesmos dias de férias.</p>

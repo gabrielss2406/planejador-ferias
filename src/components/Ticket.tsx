@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { fmt } from '../lib/dates';
 import type { KeyDate, Period, PlanOption, PlanResult } from '../lib/types';
 import { planKey, plural, short } from './format';
@@ -22,6 +22,7 @@ interface Props {
   onDiscard: () => void;
   /** é o plano que a pessoa escolheu */
   isChosen: boolean;
+  onChoose: () => void;
 }
 
 const holText = (list: { name: string }[]) => {
@@ -86,7 +87,9 @@ function Periods({ id, label, children }: { id: string; label: string; children:
 }
 
 /** A resposta: quanto de folga o plano rende, em uma frase, e as datas de cada período. */
-export function Ticket({ selected, result, year, custom, active, onPick, discarded, striking, onDiscard, isChosen }: Props) {
+export function Ticket({ selected, result, year, custom, active, onPick, discarded, striking, onDiscard, isChosen, onChoose }: Props) {
+  // confirmação: o pulso só roda ao escolher, não ao trocar de plano já escolhido
+  const [just, setJust] = useState(false);
   if (!selected || result.error || selected.off <= 0) {
     return (
       <section className="empty" aria-label="Resumo do plano">
@@ -97,7 +100,8 @@ export function Ticket({ selected, result, year, custom, active, onPick, discard
   }
   const { off, gain } = selected;
   return (
-    <section className={'ticket' + (discarded ? ' off' : '')} aria-label="Resumo do plano">
+    <section className={'ticket' + (discarded ? ' off' : '') + (isChosen ? ' chosen' : '') + (just && isChosen ? ' just' : '')} onAnimationEnd={(e) => { if (e.target === e.currentTarget) setJust(false); }} aria-label="Resumo do plano">
+      {isChosen && <span className="badge mine ticket-flag">Plano escolhido</span>}
       <div className="answer">
         <p className="answer-top" aria-hidden="true">
           <AnswerNumber value={off} />
@@ -105,7 +109,6 @@ export function Ticket({ selected, result, year, custom, active, onPick, discard
         </p>
         <p className="answer-sentence" aria-live="polite">
           <span className="sr">{off} dias fora do trabalho. </span>
-          {isChosen && <span className="badge mine">Plano escolhido</span>}{' '}
           {gain > 0
             ? `Você usa ${plural(result.N, 'dia', 'dias')} de férias e ganha +${gain} emendando fins de semana e feriados.`
             : `Você usa ${plural(result.N, 'dia', 'dias')} de férias, sem dias extras neste plano.`}
@@ -127,6 +130,9 @@ export function Ticket({ selected, result, year, custom, active, onPick, discard
         )}
       </div>
       <div className="ticket-foot">
+        <button type="button" className="ticket-x ticket-ok" aria-pressed={isChosen} onClick={() => { setJust(!isChosen); onChoose(); }}>
+          <span key={String(isChosen)} className="ok-ic"><Icon name="check" /></span>{isChosen ? 'Plano escolhido' : 'Escolher este plano'}
+        </button>
         <button type="button" className="ticket-x" onClick={onDiscard}>
           <Icon name={discarded ? 'undo' : 'cross'} />{discarded ? 'Restaurar plano' : 'Descartar plano'}
         </button>

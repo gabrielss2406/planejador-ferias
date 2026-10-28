@@ -146,13 +146,13 @@ function Actions({ selected, year, N, saved, chosen }: { selected: PlanOption; y
   return (
     <div className="act">
       <div className="act-btns">
-        <CopyButton text={summaryText(selected, year, N)} />
+        <button type="button" className="choose" aria-pressed={mine} onClick={() => chosen.toggle(snap())}>
+          <Icon name="check" />{mine ? 'Plano escolhido' : 'Escolher este plano'}
+        </button>
+        <CopyButton className="sec" text={summaryText(selected, year, N)} />
         <button type="button" className="sec" onClick={() => void downloadTicket(snap())}><Icon name="download" />Salvar ticket</button>
         <button type="button" className="sec" onClick={() => downloadFile(`ferias-${year}.ics`, buildIcs(snap()), 'text/calendar')}>
           <Icon name="calendar" />Adicionar ao calendário (.ics)
-        </button>
-        <button type="button" className="sec keep" aria-pressed={mine} onClick={() => chosen.toggle(snap())}>
-          <Icon name="check" />{mine ? 'Plano escolhido' : 'Escolher este plano'}
         </button>
         <button type="button" className="sec keep" aria-pressed={on} disabled={blocked} aria-describedby={blocked ? 'saved-full' : undefined}
           onClick={() => saved.toggle(snap())}>

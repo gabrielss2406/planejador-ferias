@@ -87,7 +87,7 @@ export function GroupSection({ group, chosen, year }: Props) {
   const withPlan = members.filter((m) => m.plan?.year === year).length;
 
   return (
-    <details className="group" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+    <details className="group" id="grupo" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary><h2>Férias em grupo{code ? ` (${plural(members.length || 1, 'pessoa', 'pessoas')})` : ''}</h2></summary>
 
       {!code ? (

@@ -9,6 +9,7 @@ const PATHS = {
   download: 'M8 2.5v7.5M4.5 6.5 8 10l3.5-3.5M3 13.5h10',
   calendar: 'M3 4.5h10v9H3zM3 7.5h10M5.5 2.5v3M10.5 2.5v3',
   bookmark: 'M4 2.5h8v11L8 10.5 4 13.5z',
+  menu: 'M2.5 4.5h11M2.5 8h11M2.5 11.5h11',
   settings: 'M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6M10 3v4M6 9v4',
 } as const;
 

@@ -23,7 +23,7 @@
 
 /* ---- base ---- */
 *,*::before,*::after{box-sizing:border-box}
-html{scroll-padding-top:8px}
+html{scroll-padding-top:76px}
 body{margin:0;background:var(--grafite);color:var(--papel);font:500 var(--t-corpo)/1.35 var(--cond);overflow-x:clip;
   -webkit-text-size-adjust:100%;caret-color:var(--azul)}
 h1,h2,h3,p,ul,ol{margin:0}
@@ -36,10 +36,24 @@ button,input,select{font:inherit;color:inherit}
 .mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
 /* ---- cabeçalho e coluna ---- */
-.top{display:flex;align-items:center;gap:22px;height:64px;padding:0 var(--pad);border-bottom:2px solid var(--azul)}
+.top{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:22px;height:64px;padding:0 var(--pad);background:var(--grafite);border-bottom:2px solid var(--azul)}
 .brand{margin:0;display:flex}
 .brand img{display:block;height:46px;width:auto}
 .slogan{font:600 18px var(--cond);color:var(--sobre-grafite);letter-spacing:.02em}
+.nav{margin-left:auto}
+.nav-list{display:flex;gap:4px}
+.nav-list a,.side-list a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:4px;color:var(--papel);font:700 18px var(--cond);text-decoration:none}
+.nav-list a:hover,.side-list a:hover{background:var(--grafite-3)}
+.nav-btn{display:none;align-items:center;gap:8px;margin-left:auto;min-height:44px;padding:0 14px;border:1px solid var(--sobre-grafite);border-radius:4px;background:none;color:var(--papel);font:700 18px var(--cond);cursor:pointer}
+.nav-btn .ic{width:16px;height:16px;margin:0}
+.sidebar{position:fixed;inset:0 auto 0 0;margin:0;width:min(86vw,320px);height:100%;max-height:none;padding:0;border:0;background:var(--grafite-2);color:var(--papel);overflow:auto;overscroll-behavior:contain}
+.sidebar:not([open]){display:none}
+.sidebar::backdrop{background:color-mix(in srgb,var(--grafite) 72%,transparent)}
+body:has(.sidebar[open]){overflow:hidden}
+.sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--divisor-escuro)}
+.sidebar-head h2{font:700 var(--t-tit)/1.15 var(--cond)}
+.side-list{display:flex;flex-direction:column;gap:6px;padding:12px}
+.side-list a{min-height:52px;font-size:21px}
 .page{width:min(100%,840px);margin:0 auto;padding:20px var(--pad) calc(96px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:22px;min-width:0}
 .page h2{font:700 var(--t-tit)/1.15 var(--cond);letter-spacing:.01em}
 .page>section>h2{margin-bottom:12px}
@@ -178,12 +192,17 @@ body:has(.drawer[open]){overflow:hidden}
 .plan.off{background:var(--trilho)}
 .plan.off .plan-off,.plan.off .plan-top b,.plan.off .plan-meta{color:var(--tinta-2)}
 .plan.off .plan-meta{font-weight:700}
-.ticket-foot{position:relative;z-index:2;display:flex;justify-content:flex-end;padding:0 calc(var(--pad) - 12px) 6px}
+.ticket-foot{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;padding:0 calc(var(--pad) - 12px) 6px calc(var(--pad))}
 .ticket-x{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;background:none;border:0;border-radius:4px;
   color:var(--tinta-2);font:600 17px var(--cond);cursor:pointer}
 .ticket-x .ic{margin:0;width:15px;height:15px}
 .ticket.off .answer,.ticket.off .periods-wrap{opacity:.55}
-.ticket.off .ticket-x{color:var(--erro)}
+.ticket.off .ticket-x:not(.ticket-ok){color:var(--erro)}
+.ticket-ok .ic path{fill:transparent}
+.ticket-flag{position:absolute;top:10px;right:10px;z-index:2;background:var(--ok);font-size:12px;padding:0 5px}
+.ticket.chosen .ticket-ok,.ticket-ok[aria-pressed=true]{color:var(--ok)}
+.ticket-ok[aria-pressed=true] .ic path{fill:currentColor}
+.ok-ic{display:inline-flex}
 /* risco de caneta: vermelho, pontas redondas, espessura fixa mesmo esticado sobre o cartão */
 .strike{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
 .strike path{fill:none;stroke:var(--erro);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
@@ -206,6 +225,10 @@ body:has(.drawer[open]){overflow:hidden}
 .sec:disabled{opacity:.6;cursor:not-allowed}
 .done-ic{display:inline-block}
 .copy[data-done=true]{background:var(--ok)}
+.choose{display:inline-flex;align-items:center;justify-content:center;gap:10px;flex:1 0 100%;min-height:52px;padding:0 32px;border:0;border-radius:4px;background:var(--azul);color:var(--papel);cursor:pointer;font:700 21px var(--cond)}
+.choose .ic path{fill:transparent}
+.choose[aria-pressed=true]{background:var(--ok)}
+.choose[aria-pressed=true] .ic path{fill:currentColor}
 .mini[data-done=true]{color:var(--ok);border-color:var(--ok)}
 .art136{flex:1 0 100%;max-width:70ch;color:var(--sobre-grafite);font:500 var(--t-corpo)/1.35 var(--cond);text-wrap:pretty}
 
@@ -310,6 +333,8 @@ body:has(.drawer[open]){overflow:hidden}
 @media (max-width:640px){
   :root{--pad:16px;--t-num:68px;--t-tit:22px}
   .top{gap:14px}
+  .nav{display:none}
+  .nav-btn{display:inline-flex}
   .slogan{font-size:15px;line-height:1.15}
   .brand img{height:40px}
   .page{gap:24px;padding-top:16px}
@@ -325,6 +350,9 @@ body:has(.drawer[open]){overflow:hidden}
   .month{padding:8px}
   .day{height:30px;line-height:30px}
 }
+@media (max-width:480px){
+  .slogan{display:none}
+}
 @media (max-width:420px){
   .p-days .seg button{flex:1 1 auto}
 }
@@ -332,23 +360,24 @@ body:has(.drawer[open]){overflow:hidden}
 /* ---- movimento ----
    Cor e opacidade de estado valem sempre (durações encolhem em prefers-reduced-motion).
    Deslocamento, escala, escalonamento e altura só em no-preference. Foco: sem transição. */
-.plan,.period,.btn,.copy,.sec,.mini,.fab,.drawer-close,.keys button,.seg button,.chip-btn,.segopt span{
+.plan,.period,.btn,.copy,.choose,.sec,.mini,.fab,.drawer-close,.keys button,.seg button,.chip-btn,.segopt span{
   transition:background-color var(--dur-state) var(--ease-std),border-color var(--dur-state) var(--ease-std),color var(--dur-state) var(--ease-std)}
 .link-btn{transition:text-decoration-color var(--dur-state) var(--ease-std)}
 .ruler-track .v{transition:outline-color var(--dur-state) var(--ease-std)}
 .saved-item{transition:opacity var(--dur-exit) var(--ease-std)}
-.btn:active,.copy:active,.fab:active{background:var(--azul-escuro)}
+.btn:active,.copy:active,.choose[aria-pressed=false]:active,.fab:active{background:var(--azul-escuro)}
 .sec:active,.mini:active,.drawer-close:active,.seg button:not([aria-pressed=true]):active,.chip-btn:not([aria-pressed=true]):active{background:var(--trilho)}
 .sec:active{background:var(--grafite-3)}
 .sec[aria-pressed=true]:active{background:var(--papel)}
 
 /* hover só com mouse: sem efeito grudado no toque */
 @media (hover:hover) and (pointer:fine){
-  .btn:hover,.copy:not([data-done=true]):hover,.fab:hover{background:var(--azul-escuro)}
+  .btn:hover,.copy:not([data-done=true]):hover,.choose[aria-pressed=false]:hover,.fab:hover{background:var(--azul-escuro)}
   .drawer-close:hover,.mini:hover,.keys button:hover{background:var(--trilho)}
   .keys button:hover{color:var(--tinta)}
   .sec:not([aria-pressed=true]):not(:disabled):hover{background:var(--grafite-3)}
-  .plan-x:hover,.ticket-x:hover{color:var(--erro)}
+  .plan-x:hover,.ticket-x:not(.ticket-ok):hover{color:var(--erro)}
+  .ticket-ok:hover{color:var(--ok)}
   .plan:not(.on):hover,.period:not([aria-pressed=true]):hover{background:var(--trilho)}
   .link-btn:hover{text-decoration-color:var(--papel)}
   .seg button:not([aria-pressed=true]):hover,.chip-btn:not([aria-pressed=true]):hover,
@@ -357,10 +386,10 @@ body:has(.drawer[open]){overflow:hidden}
 
 @media (prefers-reduced-motion:no-preference){
   /* pressionar: 1px para baixo, sem sombra */
-  .btn,.copy,.sec,.mini,.drawer-close,.keys button,.seg button,.chip-btn,.segopt span{
+  .btn,.copy,.choose,.sec,.mini,.drawer-close,.keys button,.seg button,.chip-btn,.segopt span{
     transition:background-color var(--dur-state) var(--ease-std),border-color var(--dur-state) var(--ease-std),color var(--dur-state) var(--ease-std),transform var(--dur-press) var(--ease-std)}
   .fab{transition:background-color var(--dur-state) var(--ease-std),border-color var(--dur-state) var(--ease-std),transform var(--dur-press) var(--ease-std)}
-  .btn:active,.copy:active,.sec:active,.mini:active,.drawer-close:active,.keys button:active,.seg button:active,.chip-btn:active,.segopt:active span{transform:translateY(1px)}
+  .btn:active,.copy:active,.choose:active,.sec:active,.mini:active,.drawer-close:active,.keys button:active,.seg button:active,.chip-btn:active,.segopt:active span{transform:translateY(1px)}
   .fab:active{transform:translateX(-50%) translateY(1px)}
   .opts summary::after,.cal-block>summary::after,.saved>summary::after,.hol-list summary::after{transition:transform var(--dur-state) var(--ease-std),margin var(--dur-state) var(--ease-std)}
   /* a folha: já entra ao montar; número, régua e linhas animam a troca de plano (ver Ticket e YearRuler) */
@@ -371,6 +400,12 @@ body:has(.drawer[open]){overflow:hidden}
   .drawer[open]::backdrop{animation:veu var(--dur-drawer) var(--ease-out)}
   .drawer.closing{animation:gaveta-sai var(--dur-drawer-out) var(--ease-std) forwards}
   .drawer.closing::backdrop{animation:veu-sai var(--dur-drawer-out) var(--ease-std) forwards}
+  .sidebar[open]{animation:lateral var(--dur-drawer) var(--ease-out)}
+  .sidebar[open]::backdrop{animation:veu var(--dur-drawer) var(--ease-out)}
+  .sidebar.closing{animation:lateral-sai var(--dur-drawer-out) var(--ease-std) forwards}
+  .sidebar.closing::backdrop{animation:veu-sai var(--dur-drawer-out) var(--ease-std) forwards}
+  @keyframes lateral{from{transform:translateX(-32px);opacity:.4}to{transform:none;opacity:1}}
+  @keyframes lateral-sai{from{transform:none}to{transform:translateX(-32px);opacity:0}}
   @keyframes gaveta{from{transform:translateY(32px)}to{transform:none}}
   @keyframes gaveta-sai{from{transform:none}to{transform:translateY(32px)}}
   .plan-change{animation:acende .4s var(--ease-out)}
@@ -378,6 +413,10 @@ body:has(.drawer[open]){overflow:hidden}
   .strike.draw path{stroke-dasharray:1 2;stroke-dashoffset:1;animation:risca .28s cubic-bezier(.22,1,.36,1) forwards}
   .strike.draw .s2{animation-delay:.28s}
   @keyframes risca{to{stroke-dashoffset:0}}
+  .ticket{transition:background-color 1s var(--ease-out)}
+  .ticket.just{animation:folha var(--dur-enter) cubic-bezier(.19,1,.22,1),verde 3.5s var(--ease-out)}
+  .ticket-ok[aria-pressed=true] .ok-ic{animation:marca var(--dur-state) var(--ease-out)}
+  @keyframes verde{0%{background-color:#CFEBDB}100%{background-color:var(--papel)}}
   .plan-on{animation:marca var(--dur-state) var(--ease-out)}
   .saved-item.enter{animation:sobe var(--dur-enter) var(--ease-out)}
   .done-ic{animation:marca var(--dur-state) var(--ease-out)}
@@ -385,9 +424,9 @@ body:has(.drawer[open]){overflow:hidden}
   @keyframes marca{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 }
 @media (prefers-reduced-motion:reduce){
-  .drawer[open]::backdrop{animation:veu var(--dur-fb) linear}
-  .drawer.closing::backdrop{animation:veu-sai var(--dur-fb) linear forwards}
-  .plan-on,.done-ic,.saved-item.enter{animation:acende var(--dur-fb) linear}
+  .drawer[open]::backdrop,.sidebar[open]::backdrop{animation:veu var(--dur-fb) linear}
+  .drawer.closing::backdrop,.sidebar.closing::backdrop{animation:veu-sai var(--dur-fb) linear forwards}
+  .plan-on,.done-ic,.saved-item.enter,.ticket.just{animation:acende var(--dur-fb) linear}
 }
 @keyframes veu{from{opacity:0}to{opacity:1}}
 @keyframes veu-sai{from{opacity:1}to{opacity:0}}
