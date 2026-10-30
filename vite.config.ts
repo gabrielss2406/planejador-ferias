@@ -6,10 +6,9 @@ import site from './site.config.json';
 const siteConfig = (): Plugin => ({
   name: 'site-config',
   transformIndexHtml(html) {
-    const on = !!site.adsenseClient && Object.values(site.slots).some(Boolean);
     const meta = [
       site.adsenseClient ? `<meta name="google-adsense-account" content="${site.adsenseClient}">` : '',
-      on ? `<meta name="adsense-client" content="${site.adsenseClient}">` : '',
+      site.adsenseClient ? `<meta name="adsense-client" content="${site.adsenseClient}">` : '',
     ].filter(Boolean).join('\n');
     return html.replaceAll('__SITE_URL__', site.siteUrl.replace(/\/$/, '')).replace('</head>', `${meta}\n</head>`);
   },

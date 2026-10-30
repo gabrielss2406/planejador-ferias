@@ -47,11 +47,13 @@ test('sem ID de AdSense na página: não faz nada (nem banner)', () => {
   expect(t.scripts()).toHaveLength(0);
 });
 
-test('ID configurado mas nenhum espaço de anúncio na página: não faz nada (nem banner)', () => {
+test('ID configurado e nenhum espaço na página: pede consentimento e só carrega depois da escolha (anúncios automáticos)', () => {
   const t = setup({ slots: [] });
   ads.init(t.win, t.doc);
-  expect(t.banner()).toBeUndefined();
+  expect(t.banner()).toBeTruthy();
   expect(t.scripts()).toHaveLength(0);
+  t.banner().children[1].children[0].click(); // Aceitar
+  expect(t.scripts()).toHaveLength(1);
 });
 
 test('antes da escolha: mostra o banner e não carrega anúncio nenhum', () => {

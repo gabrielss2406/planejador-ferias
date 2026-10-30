@@ -1,4 +1,5 @@
 import type { PlanOption } from '../lib/types';
+import { UF_INFO } from './ufInfo';
 import {
   ALL_UFS, UF_NAMES, YEARS, bestPlans, bridges, days, dm, dmWeek, isConfirmed, monthName, weekday, yearHolidays,
 } from './calc';
@@ -157,6 +158,26 @@ function estadoInsights(year: number, uf: string, nome: string, ok: boolean) {
   return parts.map((x) => `<p>${x}</p>`).join('');
 }
 
+/** Parágrafos próprios de cada UF e ano: contexto da capital e comparação com os outros anos, só com números dos dados. */
+function estadoContexto(year: number, uf: string, nome: string, ok: boolean) {
+  const info = UF_INFO[uf];
+  const rows = YEARS.map((y) => {
+    const t = holidayTables(y, uf);
+    const est = t.real.filter((h) => h.kind === 'estadual');
+    return { y, util: t.weekdays.length, total: t.real.length, est: est.length, pontes: bridges(y, uf).filter((b) => b.vacation === 0).length };
+  });
+  const me = rows.find((r) => r.y === year)!;
+  const others = rows.filter((r) => r.y !== year);
+  const best = [...rows].sort((a, b) => b.util - a.util || a.y - b.y)[0];
+  const intro = info
+    ? `<p>${esc(nome)} fica na região ${info.regiao} e tem ${esc(info.capital)} como capital. Os feriados municipais, como o aniversário de ${esc(info.capital)}, variam de cidade para cidade e não entram nesta tabela.</p>`
+    : '';
+  const cmp = `<p>Em ${year}, ${esc(nome)} tem ${me.util} ${me.util === 1 ? 'feriado' : 'feriados'} em dia útil${ok ? '' : ' (só nacionais, até conferirmos os estaduais)'} e ${me.pontes} ${me.pontes === 1 ? 'feriadão que não gasta' : 'feriadões que não gastam'} dia de férias. `
+    + others.map((r) => `Em ${r.y} são ${r.util} em dia útil e ${r.pontes} ${r.pontes === 1 ? 'feriadão sem gastar' : 'feriadões sem gastar'} férias`).join('; ')
+    + `. ${best.y === year ? `${year} é o ano com mais feriados em dia útil entre ${YEARS[0]} e ${YEARS[YEARS.length - 1]}.` : `O ano com mais feriados em dia útil é ${best.y}.`}</p>`;
+  return `${intro}${cmp}`;
+}
+
 export function estadoPage(cfg: SiteConfig, year: number, uf: string, updated: string): PageSpec {
   const nome = UF_NAMES[uf];
   const ok = isConfirmed(uf);
@@ -170,6 +191,8 @@ export function estadoPage(cfg: SiteConfig, year: number, uf: string, updated: s
     : `Esta página mostra os feriados nacionais de ${year} em ${nome}. Ainda estamos conferindo os feriados estaduais de ${nome} na lei estadual, então eles não aparecem aqui.`}</p>
 ${ok ? '' : `<p class="note">Os feriados estaduais de ${esc(nome)} ainda não foram conferidos. Confirme com o governo do estado ou com o RH.</p>`}
 ${adSlot(cfg, 'content')}
+<h2>${esc(nome)}: contexto e comparação entre anos</h2>
+${estadoContexto(year, uf, nome, ok)}
 <h2>Feriados de ${year} em ${esc(nome)}</h2>
 ${t.main}
 <h2>Pontos facultativos</h2>
@@ -252,6 +275,7 @@ export function privacidadePage(cfg: SiteConfig, updated: string): PageSpec {
 <p>Ao buscar uma cidade, o nome digitado é enviado ao nosso servidor para listar municípios e feriados. Não guardamos essa busca ligada a você.</p>
 <h2>Anúncios, cookies e terceiros</h2>
 <p>Este site é financiado por anúncios do Google AdSense, exibidos nas páginas de conteúdo e no rodapé do planejador, nunca sobre os botões ou resultados. Antes de carregar qualquer anúncio, pedimos a sua escolha.</p>
+<p>Fornecedores terceiros, incluindo o Google, usam cookies para veicular anúncios com base em visitas anteriores do usuário a este e a outros sites. O uso de cookies de publicidade, como o cookie DoubleClick, permite que o Google e seus parceiros exibam anúncios para você com base nas suas visitas a este e a outros sites na internet.</p>
 <ul>
 <li><strong>Se você aceitar:</strong> o Google e parceiros de publicidade podem usar cookies e identificadores para mostrar anúncios com base nos seus interesses e para medir o desempenho dos anúncios.</li>
 <li><strong>Se você recusar:</strong> mostramos apenas anúncios não personalizados, que não usam o seu histórico de navegação. Mesmo assim, o Google pode usar cookies para limitar a frequência dos anúncios e prevenir fraudes.</li>
@@ -259,6 +283,13 @@ export function privacidadePage(cfg: SiteConfig, updated: string): PageSpec {
 </ul>
 <p>O uso de cookies de publicidade por terceiros é regido pelas políticas deles. Veja como o Google usa dados em <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a>. Para desativar a personalização de anúncios, acesse as <a href="https://adssettings.google.com" rel="noopener">Configurações de anúncios do Google</a> ou o site <a href="https://www.aboutads.info" rel="noopener">aboutads.info</a>.</p>
 <p>Não vendemos dados pessoais e não usamos outras ferramentas de análise ou de redes sociais.</p>
+<h2>Cookies e armazenamento usados</h2>
+<ul>
+<li><strong>Essenciais (localStorage, nossos):</strong> guardam suas configurações, planos salvos, o identificador anônimo do navegador e a sua escolha sobre anúncios. Ficam até você limpar os dados do site.</li>
+<li><strong>Publicidade (Google AdSense, terceiros):</strong> só são criados depois que você aceita. Servem para personalizar anúncios, limitar a frequência e medir resultados. A duração é definida pelo Google.</li>
+<li><strong>Como revogar:</strong> use "Preferências de anúncios" no rodapé, quando houver anúncios no site, apague os cookies e os dados do site nas configurações do navegador ou desative a personalização nas Configurações de anúncios do Google.</li>
+<li><strong>Registros do servidor:</strong> como em qualquer site, o servidor recebe o endereço IP e dados técnicos do navegador para entregar as páginas. Não os usamos para identificar você.</li>
+</ul>
 <h2>Seus direitos (LGPD)</h2>
 <p>Você pode pedir confirmação do tratamento, acesso, correção, anonimização ou exclusão dos dados que tratamos e a revogação do consentimento (Lei 13.709/2018). ${contact}</p>
 <h2>Mudanças nesta política</h2>

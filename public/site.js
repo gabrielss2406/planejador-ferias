@@ -53,7 +53,7 @@ export function showBanner(doc, onChoose) {
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-label', 'Anúncios e privacidade');
   const p = doc.createElement('p');
-  p.textContent = 'Este site é gratuito e mostra anúncios. Se você aceitar, o Google pode usar cookies para personalizá-los. Se recusar, mostramos anúncios não personalizados. ';
+  p.textContent = 'Este site é gratuito e mostra anúncios do Google. Se você aceitar, o Google pode usar cookies para personalizá-los. Se recusar, mostramos anúncios não personalizados. ';
   const a = doc.createElement('a');
   a.href = '/privacidade/';
   a.textContent = 'Política de privacidade';
@@ -73,8 +73,7 @@ export function showBanner(doc, onChoose) {
 
 export function init(win, doc) {
   const client = doc.querySelector('meta[name="adsense-client"]')?.getAttribute('content');
-  // sem espaço de anúncio na página não há o que consentir: nem banner
-  if (!client || !doc.querySelectorAll('[data-ad-slot]').length) return;
+  if (!client) return;
   const apply = (choice) => {
     loadAds(win, doc, client, choice === 'aceito');
     fillSlots(win, doc, client);

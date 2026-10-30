@@ -1,7 +1,7 @@
 import site from '../../site.config.json';
 
 /** Rodapé do app: leva para as páginas de conteúdo (e reabre as preferências de anúncios, se houver anúncios). */
-const adsOn = !!site.adsenseClient && Object.values(site.slots).some(Boolean);
+const adsOn = !!site.adsenseClient;
 
 export function SiteLinks({ year }: { year: number }) {
   const y = [2026, 2027, 2028].includes(year) ? year : 2027;

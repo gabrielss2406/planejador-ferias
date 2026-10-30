@@ -73,13 +73,13 @@ test('página: um h1, canonical absoluto, JSON-LD válido, sem anúncio quando d
   expect(html).not.toContain('data-consent-open');
 });
 
-test('só o ID, sem slots: meta de verificação sim, anúncio e banner não', () => {
+test('só o ID, sem slots: metas e botão de preferências sim, espaço fixo de anúncio não', () => {
   const idOnly: SiteConfig = { ...cfg, adsenseClient: 'ca-pub-1234567890123456' };
   const html = renderPage(allPages(idOnly, UPDATED)[0], idOnly, assets);
   expect(html).toContain('<meta name="google-adsense-account" content="ca-pub-1234567890123456">');
-  expect(html).not.toContain('name="adsense-client"');
+  expect(html).toContain('<meta name="adsense-client" content="ca-pub-1234567890123456">');
   expect(html).not.toContain('data-ad-slot');
-  expect(html).not.toContain('data-consent-open');
+  expect(html).toContain('data-consent-open');
 });
 
 test('com AdSense configurado: meta, espaços rotulados "Publicidade" e botão de preferências', () => {

@@ -34,9 +34,6 @@ export interface PageSpec {
 export const esc = (s: string) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/** Há anúncio de verdade para mostrar: ID do AdSense e ao menos um espaço (slot) configurado. */
-export const adsOn = (cfg: SiteConfig) => !!cfg.adsenseClient && Object.values(cfg.slots).some(Boolean);
-
 export const abs = (cfg: SiteConfig, path: string) => cfg.siteUrl.replace(/\/$/, '') + path;
 
 /** Espaço de anúncio: só existe se o AdSense e o slot estiverem configurados; o site.js o preenche depois do consentimento. */
@@ -105,7 +102,7 @@ export function renderPage(spec: PageSpec, cfg: SiteConfig, assets: Assets): str
     '<meta property="og:locale" content="pt_BR">',
     '<meta name="twitter:card" content="summary">',
     cfg.adsenseClient ? `<meta name="google-adsense-account" content="${esc(cfg.adsenseClient)}">` : '',
-    adsOn(cfg) ? `<meta name="adsense-client" content="${esc(cfg.adsenseClient)}">` : '',
+    cfg.adsenseClient ? `<meta name="adsense-client" content="${esc(cfg.adsenseClient)}">` : '',
   ].filter(Boolean).join('\n');
   const trail = crumbs.slice(0, -1).map((c) => `<li><a href="${esc(c.path)}">${esc(c.name)}</a></li>`).join('') + `<li aria-current="page">${esc(spec.h1)}</li>`;
   const related = spec.related?.length
@@ -137,7 +134,7 @@ ${spec.body}
 ${related}
 </main>
 <footer class="c-foot">
-<nav aria-label="Links do site"><a href="/">Planejador</a><a href="/guia-ferias-clt/">Guia de férias pela CLT</a><a href="/sobre/">Sobre</a><a href="/contato/">Contato</a><a href="/privacidade/">Privacidade</a><a href="/termos/">Termos</a>${adsOn(cfg) ? '<button type="button" data-consent-open>Preferências de anúncios</button>' : ''}</nav>
+<nav aria-label="Links do site"><a href="/">Planejador</a><a href="/guia-ferias-clt/">Guia de férias pela CLT</a><a href="/sobre/">Sobre</a><a href="/contato/">Contato</a><a href="/privacidade/">Privacidade</a><a href="/termos/">Termos</a>${cfg.adsenseClient ? '<button type="button" data-consent-open>Preferências de anúncios</button>' : ''}</nav>
 <p>${esc(cfg.siteName)}: mais tempo para o que importa.</p>
 </footer>
 <script type="module" src="/site.js"></script>

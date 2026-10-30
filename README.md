@@ -71,9 +71,11 @@ Estados ainda sem feriados estaduais conferidos (ES, GO, MG, MT) saem com `noind
 datas só mostram planos que começam de segunda a quinta e não nos 2 dias antes de feriado (CLT, art. 134, §3º).
 
 Configuração em `site.config.json`: `siteUrl`, `contactEmail` (exigido pela política de privacidade, LGPD) e os dados do AdSense.
-Os anúncios ficam **desligados** enquanto `adsenseClient` estiver vazio. Para ligar depois da aprovação:
+Os anúncios ficam **desligados** enquanto `adsenseClient` estiver vazio. Com o ID preenchido, o banner de consentimento e o link
+"Preferências de anúncios" aparecem, e o script do AdSense só carrega depois da escolha (anúncios automáticos, se ligados na conta).
+Para usar espaços fixos depois da aprovação:
 
-1. Preencha `adsenseClient` (`ca-pub-...`) e os IDs de `slots` (`content`, `footer`; `app` só se quiser anúncio no fim do app).
+1. Preencha os IDs de `slots` (`content`, `footer`; `app` só se quiser anúncio no fim do app).
 2. Rode `npm run build`: ele gera `ads.txt` e os espaços "Publicidade". O Google também procura `ads.txt` na raiz do domínio
    (`hubproject.space/ads.txt`), que este app não serve: publique o arquivo lá também.
 3. `public/site.js` pede consentimento antes de carregar qualquer anúncio. Aceitar liga o AdSense normal; recusar liga o modo não
@@ -107,7 +109,7 @@ apontando para localhost:8080. Exemplo com Caddy:
 ## Observações
 
 - Para HTTPS, crie um registro DNS tipo A do seu domínio apontando para o IP da VPS antes de configurar o proxy reverso.
-- As fontes vêm do Google Fonts. Se quiser zero dependência externa, baixe-as e sirva localmente.
+- As fontes são servidas localmente (@fontsource), sem requisição ao Google Fonts.
 - As configurações, os planos salvos e o plano escolhido ficam no localStorage do navegador.
 - Os feriados municipais vêm da base aberta acima (e, sem servidor, de `CITIES` em `src/lib/holidays.ts`, que é demonstrativa).
   Confirme as datas com a prefeitura antes de confiar nelas. Os estaduais ainda não cobrem todas as UFs (ES parcial; GO, MG e MT sem registro).
