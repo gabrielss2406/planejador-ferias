@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest';
-import adsRoot from '../../ads/www/ads.txt?raw';
 import site from '../../site.config.json';
-import { bestPlans, bridges, isConfirmed, iso, yearHolidays } from './calc';
+import { ALL_UFS, bestPlans, bridges, isConfirmed, iso, yearHolidays } from './calc';
 import { renderPage, type Assets, type SiteConfig } from './layout';
 import { adsTxt, allPages, paths, robotsTxt, sitemapXml } from './pages';
 
@@ -44,7 +43,9 @@ test('todas as páginas: título e caminho únicos, só as UFs não conferidas f
   expect(new Set(pages.map((p) => p.title)).size).toBe(pages.length);
   expect(new Set(pages.map((p) => p.path)).size).toBe(pages.length);
   const hidden = pages.filter((p) => p.noindex).map((p) => p.path);
-  expect(hidden.sort()).toEqual(['es', 'go', 'mg', 'mt'].flatMap((u) => [2026, 2027, 2028].map((y) => paths.estado(y, u.toUpperCase()))).sort());
+  const unconfirmed = ['es', 'go', 'mg', 'mt'].flatMap((u) => [2026, 2027, 2028].map((y) => paths.estado(y, u.toUpperCase())));
+  const lastYear = ALL_UFS.map((u) => paths.estado(2028, u));
+  expect(hidden.sort()).toEqual([...new Set([...unconfirmed, ...lastYear])].sort());
   expect(isConfirmed('SP')).toBe(true);
   expect(isConfirmed('MG')).toBe(false);
 });
@@ -91,8 +92,10 @@ test('com AdSense configurado: meta, espaços rotulados "Publicidade" e botão d
   expect(html).toContain('data-consent-open');
 });
 
-test('o ads.txt da raiz (ads/www) bate com o gerado de site.config.json', () => {
-  expect(adsRoot).toBe(adsTxt(site as SiteConfig));
+test('ads.txt gerado traz o ID do AdSense de site.config.json', () => {
+  const txt = adsTxt(site as SiteConfig);
+  expect(txt).toContain(site.adsenseClient.replace(/^ca-/, ''));
+  expect(txt).toContain('DIRECT, f08c47fec0942fa0');
 });
 
 test('sitemap, robots e ads.txt', () => {

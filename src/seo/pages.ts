@@ -208,7 +208,8 @@ ${adSlot(cfg, 'footer')}
 <p>Cada município tem feriados próprios, como o aniversário da cidade e o dia do padroeiro. No <a href="/">planejador</a> você escolhe a cidade e os feriados municipais entram no cálculo (a base é aberta e pode estar incompleta: confirme com a prefeitura).</p>
 ${cta()}`;
   return {
-    path: paths.estado(year, uf), updated, noindex: !ok,
+    // fora do índice: UF sem feriado estadual conferido e o ano mais distante (páginas rasas pesam contra a qualidade do site)
+    path: paths.estado(year, uf), updated, noindex: !ok || year === YEARS[YEARS.length - 1],
     title: `Feriados ${year} em ${nome} (${uf}): estaduais, nacionais e feriadões`,
     description: `Feriados de ${year} em ${nome}: datas, pontos facultativos, feriadões e o melhor plano de férias combinando tudo.`,
     h1: `Feriados ${year} em ${nome}`,

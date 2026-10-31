@@ -24,6 +24,17 @@ export function homeHtml(year: number) {
 </ol>
 <p>Nada precisa de cadastro. Suas escolhas ficam no seu navegador; só o recurso de grupo envia um apelido e as datas do plano escolhido ao servidor.</p>
 ${renderToStaticMarkup(createElement(HowItWorks))}
+<h2>Um exemplo prático</h2>
+<p>Em um ano em que o Carnaval e a Sexta-feira Santa caem em fevereiro e março, e Tiradentes cai numa quarta-feira, um período de férias bem posicionado pode transformar poucos dias de férias em mais de uma semana inteira fora do trabalho. O planejador procura esses encaixes para você e mostra quantos dias de folga cada plano rende a mais do que os dias de férias usados. Em muitos anos, 30 dias de férias bem divididos chegam a mais de 40 dias seguidos sem trabalhar, porque os fins de semana e os feriados nas pontas dos períodos não gastam férias.</p>
+<h2>Perguntas frequentes</h2>
+<h3>Posso escolher a data das minhas férias?</h3>
+<p>Quem define a época das férias é o empregador (CLT, art. 136), em geral dentro dos 12 meses seguintes ao período aquisitivo. As datas do planejador são uma proposta para você levar ao RH e negociar.</p>
+<h3>Dá para dividir as férias?</h3>
+<p>Sim, em até 3 períodos e com a sua concordância: um deles com pelo menos 14 dias corridos e os outros com pelo menos 5 dias corridos cada (art. 134, §1º). As férias também não podem começar nos 2 dias que antecedem feriado ou dia de repouso semanal (art. 134, §3º).</p>
+<h3>Quantos dias posso vender?</h3>
+<p>Até um terço das férias, ou seja, 10 dias, no abono pecuniário (art. 143). Nesse caso você descansa 20 dias, e o planejador calcula os melhores planos para essa conta.</p>
+<h3>De onde vêm os feriados?</h3>
+<p>Os nacionais são calculados no próprio site. Os estaduais vêm das leis estaduais e os municipais de uma base aberta, que pode estar incompleta: confirme sempre com a prefeitura. Veja os detalhes na página <a href="${paths.sobre}">Sobre</a>.</p>
 <h2>Guias e consultas</h2>
 <ul>
 <li><a href="${paths.guia}">Guia de férias pela CLT</a>: dias de direito, aviso, pagamento e quem escolhe a data.</li>

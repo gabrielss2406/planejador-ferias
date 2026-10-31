@@ -76,12 +76,21 @@ Os anúncios ficam **desligados** enquanto `adsenseClient` estiver vazio. Com o 
 Para usar espaços fixos depois da aprovação:
 
 1. Preencha os IDs de `slots` (`content`, `footer`; `app` só se quiser anúncio no fim do app).
-2. Rode `npm run build`: ele gera `ads.txt` e os espaços "Publicidade". O Google também procura `ads.txt` na raiz do domínio
-   (`hubproject.space/ads.txt`), que este app não serve: publique o arquivo lá também.
+2. Rode `npm run build`: ele gera `ads.txt` e os espaços "Publicidade". O Google procura `ads.txt` na raiz do domínio
+   cadastrado (`hubproject.space/ads.txt`): aponte o domínio raiz para este mesmo container (ver abaixo).
 3. `public/site.js` pede consentimento antes de carregar qualquer anúncio. Aceitar liga o AdSense normal; recusar liga o modo não
    personalizado. Link "Preferências de anúncios" no rodapé.
 
-No AdSense, cadastre o domínio raiz (`hubproject.space`); subdomínio sozinho foi recusado.
+No AdSense, o site cadastrado é o domínio raiz (`hubproject.space`); subdomínio sozinho foi recusado. O app inteiro é servido
+nos dois hosts (`hubproject.space` e `planejadordeferias.hubproject.space`), apontando ambos para o mesmo container, sem
+redirecionamento: o revisor do AdSense lê a raiz e precisa achar planejador, guias, privacidade e termos nela. As páginas
+mantêm canonical no subdomínio (`siteUrl`). Exemplo com Caddy:
+
+    hubproject.space, www.hubproject.space, planejadordeferias.hubproject.space {
+        reverse_proxy localhost:8080
+    }
+
+O antigo serviço `ads` (página-ponte da raiz) foi removido.
 
 ## Desenvolvimento
 
