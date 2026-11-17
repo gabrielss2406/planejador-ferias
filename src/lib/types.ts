@@ -15,6 +15,16 @@ export interface KeyDate {
   type: KeyDateType;
 }
 
+/** Estrutura de férias imposta pela empresa: períodos de tamanho exato + períodos livres com mínimo próprio. */
+export interface CompanyRule {
+  /** tamanhos exatos, em dias (ex.: [14]) */
+  fixed: number[];
+  /** quantos períodos além dos fixos (ex.: 2) */
+  free: number;
+  /** mínimo de dias de cada período livre */
+  freeMin: number;
+}
+
 export interface Settings {
   year: number;
   city: string;
@@ -31,6 +41,8 @@ export interface Settings {
   penal: boolean;
   split: number;
   custom: KeyDate[];
+  /** regra imposta pela empresa; quando ativa, substitui `parts` e `minPart` */
+  company?: CompanyRule;
   /** município escolhido na busca (código IBGE); sem ele, vale a lista curta de cidades do app */
   ibge?: string;
   /** feriados municipais do município escolhido (anos vizinhos ao do plano), vindos da API */

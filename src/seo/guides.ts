@@ -56,6 +56,7 @@ ${adSlot(cfg, 'content')}
 <h2>A regra do art. 134, §1º da CLT</h2>
 <p>As férias são concedidas em um só período, mas, <strong>com a concordância do empregado</strong>, podem ser usufruídas em até três períodos. Um deles não pode ter menos de <strong>14 dias corridos</strong>, e os demais não podem ter menos de <strong>5 dias corridos</strong> cada um.</p>
 <p>A divisão é sempre um acordo: a empresa não pode impor o fracionamento sozinha, e você não pode exigi-lo. Quem define a época continua sendo o empregador (art. 136), então chegue com uma proposta pronta.</p>
+<p>Algumas empresas definem a divisão por política interna, por exemplo um período de exatamente 14 dias mais dois períodos de no mínimo 5. No <a href="/">planejador</a>, em Mais opções, a <strong>regra da empresa</strong> deixa você informar os períodos de tamanho fixo e quantos períodos livres sobram, e as sugestões respeitam esse formato.</p>
 
 <h2>Quantas divisões existem?</h2>
 <p>Com 30 dias de férias, há ${d30.length} formas de dividir dentro das regras: ${by(d30, 1).length} em um período, ${by(d30, 2).length} em dois e ${by(d30, 3).length} em três. Se você vender 10 dias (veja o <a href="${paths.abono}">abono pecuniário</a>), sobram 20 dias e as formas de dividir caem para ${d20.length}: ${by(d20, 1).length} em um período, ${by(d20, 2).length} em dois e ${by(d20, 3).length} em três.</p>

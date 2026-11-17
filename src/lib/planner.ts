@@ -1,6 +1,6 @@
 import { dateOf, idx, isWeekend, parseISO, wd } from './dates';
 import { buildHolidays } from './holidays';
-import type { GroupKey, Period, PlanOption, PlanResult, Settings } from './types';
+import type { CompanyRule, GroupKey, Period, PlanOption, PlanResult, Settings } from './types';
 
 export function compositions(N: number, k: number, minP: number): number[][] {
   const out: number[][] = [];
@@ -8,6 +8,42 @@ export function compositions(N: number, k: number, minP: number): number[][] {
     if (left === 1) { if (rem >= minP) out.push(cur.concat(rem)); return; }
     for (let a = minP; a <= rem - minP * (left - 1); a++) rec(rem - a, left - 1, cur.concat(a));
   })(N, k, []);
+  return out;
+}
+
+/** Piso legal por período (CLT, art. 134, §1º). */
+const CLT_MIN = 5;
+
+/** Por que a regra da empresa não fecha com o total de dias; `null` quando é possível. */
+export function companyError(total: number, c: CompanyRule): string | null {
+  const sum = c.fixed.reduce((a, b) => a + b, 0), n = c.fixed.length + c.free;
+  if (n < 1) return 'A regra da empresa precisa de pelo menos um período.';
+  if (n > 3) return 'A CLT permite no máximo 3 períodos de férias.';
+  if (c.fixed.some((d) => d < CLT_MIN)) return `Nenhum período pode ter menos de ${CLT_MIN} dias (CLT).`;
+  if (c.free > 0 && c.freeMin < CLT_MIN) return `O mínimo dos períodos livres não pode ser menor que ${CLT_MIN} dias (CLT).`;
+  if (c.free === 0 && sum !== total) return `Os períodos fixos somam ${sum} dias, mas as férias têm ${total}.`;
+  if (c.free > 0 && total - sum < c.free * c.freeMin) {
+    return `Sobram ${total - sum} dias depois dos fixos, mas ${c.free} período(s) livre(s) de no mínimo ${c.freeMin} pedem ${c.free * c.freeMin}.`;
+  }
+  return null;
+}
+
+/** Divisões possíveis (em ordem cronológica) para a regra da empresa; `[]` se ela não fecha. */
+export function companyOrderings(total: number, c: CompanyRule): number[][] {
+  if (companyError(total, c)) return [];
+  const rest = total - c.fixed.reduce((a, b) => a + b, 0);
+  const frees = c.free > 0 ? compositions(rest, c.free, c.freeMin) : [[]];
+  const seen = new Set<string>(), out: number[][] = [];
+  frees.forEach((f) => {
+    // permutações distintas do multiset fixos + livres
+    (function rec(pool: number[], cur: number[]) {
+      if (!pool.length) { const key = cur.join(','); if (!seen.has(key)) { seen.add(key); out.push(cur); } return; }
+      new Set(pool).forEach((v) => {
+        const i = pool.indexOf(v);
+        rec([...pool.slice(0, i), ...pool.slice(i + 1)], cur.concat(v));
+      });
+    })([...c.fixed, ...f], []);
+  });
   return out;
 }
 
@@ -64,7 +100,11 @@ export function plan(S: Settings): PlanResult {
   };
 
   const orderings: number[][] = [];
-  ([1, 2, 3] as const).forEach((k) => {
+  const ruleError = S.company ? companyError(N, S.company) : null;
+  if (S.company) {
+    // a regra da empresa define o número de períodos; a CLT segue valendo (maior período >= maxMin)
+    companyOrderings(N, S.company).forEach((c) => { if (Math.max(...c) >= maxMin) orderings.push(c); });
+  } else ([1, 2, 3] as const).forEach((k) => {
     if (!S.parts[k]) return;
     if (k === 1) { if (N >= minP) orderings.push([N]); }
     else compositions(N, k, minP).forEach((c) => { if (Math.max(...c) >= maxMin) orderings.push(c); });
@@ -147,5 +187,5 @@ export function plan(S: Settings): PlanResult {
     r.off = off; r.gain = off - N;
   };
   (['all', '1', '2', '3'] as GroupKey[]).forEach((g) => groups[g].forEach(enrich));
-  return { ...ctx, groups, error: orderings.length ? null : 'Nenhuma divisão de períodos é possível com essas regras.' };
+  return { ...ctx, groups, error: orderings.length ? null : ruleError ?? 'Nenhuma divisão de períodos é possível com essas regras.' };
 }

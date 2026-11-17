@@ -3,6 +3,7 @@ import { CITIES, findCity, UFS } from '../lib/holidays';
 import type { CityStatus } from '../hooks/useCityHolidays';
 import type { PlanResult, Settings } from '../lib/types';
 import { CityPicker } from './CityPicker';
+import { CompanyRule, describeRule } from './CompanyRule';
 import { KeyDatesForm } from './KeyDatesForm';
 import { NumberField } from './NumberField';
 
@@ -69,18 +70,30 @@ export function QuickParams({ settings: S, update, result, cityStatus }: Props &
         </div>
       </div>
 
-      <fieldset className="p-per">
-        <legend>Períodos</legend>
-        <div className="seg">
-          {([1, 2, 3] as const).map((k) => (
-            <label key={k} className="segopt">
-              <input type="radio" name="parts" checked={maxK === k}
-                onChange={() => update({ parts: { 1: true, 2: k >= 2, 3: k >= 3 } })} />
-              <span>até {k}<span className="sr"> período{k > 1 ? 's' : ''}</span></span>
-            </label>
-          ))}
+      {S.company ? (
+        <div className="p-per" role="group" aria-labelledby="per-l">
+          <span className="lbl" id="per-l">Períodos</span>
+          <div className="seg">
+            <button type="button" aria-pressed="true" onClick={() => update({ company: undefined })}
+              aria-label={`Regra da empresa: ${describeRule(S.company)}. Toque para remover.`}>
+              Empresa: {describeRule(S.company)}
+            </button>
+          </div>
         </div>
-      </fieldset>
+      ) : (
+        <fieldset className="p-per">
+          <legend>Períodos</legend>
+          <div className="seg">
+            {([1, 2, 3] as const).map((k) => (
+              <label key={k} className="segopt">
+                <input type="radio" name="parts" checked={maxK === k}
+                  onChange={() => update({ parts: { 1: true, 2: k >= 2, 3: k >= 3 } })} />
+                <span>até {k}<span className="sr"> período{k > 1 ? 's' : ''}</span></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       <p className="hint p-hint" id="city-hint">{hint}</p>
     </section>
@@ -161,6 +174,8 @@ export function OptionsBody({ settings: S, update }: Props) {
           </p>
         </div>
       </details>
+
+      <CompanyRule rule={S.company} total={S.total} onChange={(company) => update({ company })} />
 
       <details>
         <summary>Regras da CLT</summary>
